@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Cmis4owncloud : Here an CMIS adaptor for owncloud build. It will use the Owncloud API, Apache Chemistry and leverage the Android Client for Owncloud as a starting point" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Cmis4owncloud</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/uzuzjmd/CMIS4Owncloud">View on GitHub</a>
+
+          <h1 id="project_title">Cmis4owncloud</h1>
+          <h2 id="project_tagline">Here an CMIS adaptor for owncloud build. It will use the Owncloud API, Apache Chemistry and leverage the Android Client for Owncloud as a starting point</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/uzuzjmd/CMIS4Owncloud/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/uzuzjmd/CMIS4Owncloud/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>
+<a name="welcome-to-cmis4owncloud" class="anchor" href="#welcome-to-cmis4owncloud"><span class="octicon octicon-link"></span></a>Welcome to CMIS4Owncloud.</h3>
+
+<p>If you want to get started, do the following:</p>
+
+<ol>
+<li>build apache chemistry with maven: 
+<a href="http://chemistry.apache.org/opencmis-how-to-build.html">http://chemistry.apache.org/opencmis-how-to-build.html</a>
+</li>
+<li>download tomcat server </li>
+<li>change the pom.xml to the server path (as shown below)</li>
+<li>build the project with maven using mvn clean package</li>
+<li>check <a href="http://localhost:8080/cmis4owncloud/">http://localhost:8080/cmis4owncloud/</a> for success</li>
+</ol><p><code>&lt;plugin&gt;</code> <br><code>&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;</code><br><code>&lt;artifactId&gt;maven-war-plugin&lt;/artifactId&gt;</code> <br><code>&lt;configuration&gt;</code> <br><code>&lt;warName&gt;cmis4owncloud&lt;/warName&gt;</code> <br><code>&lt;outputDirectory&gt;I:\xampp\tomcat\webapps&lt;/outputDirectory&gt;</code> <br><code>&lt;/configuration&gt;</code> <br><code>&lt;/plugin&gt;</code></p>
+
+<p>This will create the template for chemistry and use the file system as repository. This project will then step by setup replace the file repository implementation with calls to the owncloud api. In order to test this, you can use the OpenCMIS Workbench from <a href="http://chemistry.apache.org/java/download.html">http://chemistry.apache.org/java/download.html</a></p>
+
+<h3>
+<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+
+<p>For now I am the only one working on this. But help is always welcome.</p>
+
+<h3>
+<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+
+<p><a href="mailto:julian.dehne@gmail.com">julian.dehne@gmail.com</a></p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Cmis4owncloud maintained by <a href="https://github.com/uzuzjmd">uzuzjmd</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
