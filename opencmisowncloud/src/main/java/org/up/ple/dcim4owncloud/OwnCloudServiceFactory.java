@@ -1,10 +1,10 @@
 package org.up.ple.dcim4owncloud;
 
-import org.apache.chemistry.opencmis.commons.impl.server.AbstractServiceFactory;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.CmisService;
+import org.apache.chemistry.opencmis.fileshare.FileShareCmisServiceFactory;
 
-public class ServiceFactory  extends AbstractServiceFactory {
+public class OwnCloudServiceFactory  extends FileShareCmisServiceFactory {
 
 	@Override
 	public CmisService getService(CallContext context) {

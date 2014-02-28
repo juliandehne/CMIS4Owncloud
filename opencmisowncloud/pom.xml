@@ -15,21 +15,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<groupId>up.ple.owncloudadaptor</groupId>
-	<artifactId>cmis4owncloud</artifactId>
-	<name>cmis4owncloud</name>
+	<artifactId>cmis4owncloudalpha</artifactId>
+	<name>cmis4owncloudalpha</name>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-
-
-	<!-- <osgi.version>5.0.0</osgi.version> -->
-	<!-- <felix.plugin.version>2.3.7</felix.plugin.version> -->
-	<!-- <junit.version>4.11</junit.version> -->
-	<!-- <slf4j.version>1.7.5</slf4j.version> -->
-	<!-- <log4j.version>1.2.17</log4j.version> -->
-	<!-- <apacheclient.version>4.2.6</apacheclient.version> -->
-	<!-- <cxf.version>2.7.7</cxf.version> -->
-	<!-- <axis2.version>1.6.2</axis2.version> -->
-
 
 
 	<repositories>
@@ -57,21 +46,6 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<!-- <parent> -->
-	<!-- <groupId>org.apache.chemistry.opencmis</groupId> -->
-	<!-- <artifactId>chemistry-opencmis</artifactId> -->
-	<!-- <version>1.0.0-SNAPSHOT</version> -->
-	<!-- <relativePath>../../pom.xml</relativePath> -->
-	<!-- </parent> -->
-
-
-
-	<!-- <artifactId>chemistry-opencmis-server-fileshare</artifactId> -->
-
-
-	<!-- <properties> -->
-	<!-- <parentBasedir>../../</parentBasedir> -->
-	<!-- </properties> -->
 
 	<build>
 		<plugins>
@@ -120,15 +94,16 @@
 						</overlay>
 					</overlays>
 				</configuration>
-			</plugin>
+			</plugin>			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
-					<warName>cmis4owncloud</warName>
+					<warName>cmis4owncloudalpha</warName>
 					<outputDirectory>I:\xampp\tomcat\webapps</outputDirectory>
 				</configuration>
 			</plugin>
+			<!-- 					change this above -->
 
 		</plugins>
 	</build>
@@ -165,16 +140,3 @@
 	</dependencies>
 </project>
 
-
-<!-- <dependency> -->
-		<!-- <groupId>org.apache.chemistry.opencmis</groupId> -->
-		<!-- <artifactId>chemistry-opencmis</artifactId> -->
-		<!-- <version>1.0.0-SNAPSHOT</version> -->
-		<!-- <type>pom</type> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.chemistry.opencmis</groupId> -->
-		<!-- <artifactId>chemistry-opencmis-server-bindings-war</artifactId> -->
-		<!-- <version>1.0.0-SNAPSHOT</version> -->
-		<!-- <type>war</type> -->
-		<!-- </dependency> -->
