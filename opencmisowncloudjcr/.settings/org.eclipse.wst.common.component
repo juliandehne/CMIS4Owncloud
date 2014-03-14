@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="chemistry-opencmis-server-jcr">
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <dependent-module archiveName="chemistry-opencmis-commons-api-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/chemistry-opencmis-commons-api/chemistry-opencmis-commons-api">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="chemistry-opencmis-server-support-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/chemistry-opencmis-server-support/chemistry-opencmis-server-support">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/" handle="module:/overlay/var/M2_REPO/org/apache/chemistry/opencmis/chemistry-opencmis-server-bindings-war/1.0.0-SNAPSHOT/chemistry-opencmis-server-bindings-war-1.0.0-SNAPSHOT.war?unpackFolder=target/m2e-wtp/overlays&amp;includes=**;META-INF/THIRD-PARTY-LICENSES&amp;excludes=META-INF/MANIFEST.MF">
+            <dependency-type>consumes</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/" handle="module:/overlay/slf/?includes=**/**&amp;excludes=META-INF/MANIFEST.MF">
+            <dependency-type>consumes</dependency-type>
+        </dependent-module>
+        <property name="context-root" value="chemistry-opencmis-server-jcr"/>
+        <property name="java-output-path" value="/chemistry-opencmis-server-jcr/target/classes"/>
+    </wb-module>
+</project-modules>
