@@ -222,6 +222,8 @@ public class OwnCloudServiceFactory extends AbstractServiceFactory {
 
 					LOG.info("Adding repository '{}': {}", repositoryId, root);
 
+					// query root path
+
 					OwnCloudFileShareRepository fsr = new OwnCloudFileShareRepository(
 							repositoryId, root, typeManager);
 					repositoryManager.addRepository(fsr);

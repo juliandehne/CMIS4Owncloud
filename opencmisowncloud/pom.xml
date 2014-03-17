@@ -43,7 +43,6 @@
 	</repositories>
 
 
-
 	<modelVersion>4.0.0</modelVersion>
 
 
@@ -94,7 +93,7 @@
 						</overlay>
 					</overlays>
 				</configuration>
-			</plugin>			
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -103,7 +102,7 @@
 					<outputDirectory>I:\xampp\tomcat\webapps</outputDirectory>
 				</configuration>
 			</plugin>
-			<!-- 					change this above -->
+			<!-- change this above -->
 
 		</plugins>
 	</build>
@@ -125,18 +124,23 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.5</version>
 		</dependency>
-		<dependency>			
+		<dependency>
 			<groupId>org.apache.chemistry.opencmis</groupId>
 			<artifactId>chemistry-opencmis-server-bindings</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>			
+		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>2.4</version>
 			<scope>provided</scope>
-		</dependency>		
+		</dependency>
+		<dependency>
+			<groupId>com.github.lookfirst</groupId>
+			<artifactId>sardine</artifactId>
+			<version>5.1</version>
+		</dependency>
 	</dependencies>
 </project>
 
