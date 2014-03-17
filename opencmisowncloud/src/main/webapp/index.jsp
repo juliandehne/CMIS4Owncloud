@@ -1,6 +1,7 @@
+<%@page import="org.up.ple.dcim4owncloud.OwnCloudCmisServiceImpl"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@ page import="org.apache.chemistry.opencmis.fileshare.*" %>
-<%@ page import="org.up.ple.dcim4owncloud.OwnCloudServiceFactory" %>
+<%@ page import="org.up.ple.dcim4owncloud.*" %>
 <%@ page import="org.apache.chemistry.opencmis.commons.definitions.*" %>
 <%
 	org.up.ple.dcim4owncloud.OwnCloudServiceFactory factory = (org.up.ple.dcim4owncloud.OwnCloudServiceFactory) application.getAttribute("org.apache.chemistry.opencmis.servicesfactory");
@@ -79,7 +80,7 @@
 <table>
 <tr><th>Repository Id</th><th>Root Directory</th></tr>
 <%
-	for (FileShareRepository fsr: factory.getRepositoryManager().getRepositories()) {
+	for (OwnCloudFileShareRepository fsr: factory.getRepositoryManager().getRepositories()) {
 %>
 <tr><td><%= fsr.getRepositoryId() %></td><td><%= fsr.getRootDirectory() %></td></tr>
 <% } %>

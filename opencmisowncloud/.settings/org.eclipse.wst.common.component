@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project-modules id="moduleCoreId" project-version="1.5.0">
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
     <wb-module deploy-name="chemistry-opencmis-server-fileshare">
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
@@ -9,9 +8,6 @@
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="chemistry-opencmis-commons-api-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/chemistry-opencmis-commons-api/chemistry-opencmis-commons-api">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="chemistry-opencmis-commons-impl-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/chemistry-opencmis-commons-impl/chemistry-opencmis-commons-impl">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/" handle="module:/overlay/var/M2_REPO/org/apache/chemistry/opencmis/chemistry-opencmis-server-bindings-war/1.0.0-SNAPSHOT/chemistry-opencmis-server-bindings-war-1.0.0-SNAPSHOT.war?unpackFolder=target/m2e-wtp/overlays&amp;includes=**;META-INF/THIRD-PARTY-LICENSES&amp;excludes=index.html;css/**;images/**;web/**;WEB-INF/classes/sample-repository.properties;WEB-INF/token/**;WEB-INF/websphere/**">
