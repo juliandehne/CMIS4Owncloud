@@ -1,8 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@ page import="org.apache.chemistry.opencmis.fileshare.*" %>
+<%@ page import="org.up.ple.dcim4owncloud.OwnCloudServiceFactory" %>
 <%@ page import="org.apache.chemistry.opencmis.commons.definitions.*" %>
 <%
-   FileShareCmisServiceFactory factory = (FileShareCmisServiceFactory) application.getAttribute("org.apache.chemistry.opencmis.servicesfactory");
+	org.up.ple.dcim4owncloud.OwnCloudServiceFactory factory = (org.up.ple.dcim4owncloud.OwnCloudServiceFactory) application.getAttribute("org.apache.chemistry.opencmis.servicesfactory");
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
@@ -10,7 +11,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
   <link rel="stylesheet" type="text/css" href="css/opencmis.css">
-  <title>OpenCMIS FileShare Server</title>
+  <title>OpenCMIS Owncloud Adaptor </title>
   <style type="text/css">
   <!--
   body {
@@ -54,9 +55,9 @@
 </head>
 <body>
 
-<h1>OpenCMIS FileShare Server</h1>
+<h1>OpenCMIS Owncloud Adaptor </h1>
 
-<p style="font-weight: bold">The OpenCMIS FileShare server is up and running.</p>
+<p style="font-weight: bold">The OpenCMIS Owncloud Adaptor is up and running.</p>
 <p>You need a CMIS client to access this server. Download the <a href="http://chemistry.apache.org/java/developing/tools/dev-tools-workbench.html">CMIS Workbench</a>.</p>
 
 <h2>Access Information</h2>
@@ -77,7 +78,9 @@
 
 <table>
 <tr><th>Repository Id</th><th>Root Directory</th></tr>
-<% for (FileShareRepository fsr: factory.getRepositoryManager().getRepositories()) { %>
+<%
+	for (FileShareRepository fsr: factory.getRepositoryManager().getRepositories()) {
+%>
 <tr><td><%= fsr.getRepositoryId() %></td><td><%= fsr.getRootDirectory() %></td></tr>
 <% } %>
 </table>
