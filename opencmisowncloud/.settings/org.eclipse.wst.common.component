@@ -18,6 +18,6 @@
             <dependency-type>consumes</dependency-type>
         </dependent-module>
         <property name="java-output-path" value="/chemistry-opencmis-server-fileshare/target/classes"/>
-        <property name="context-root" value="cmis4owncloud"/>
+        <property name="context-root" value="cmis4owncloudalpha"/>
     </wb-module>
 </project-modules>

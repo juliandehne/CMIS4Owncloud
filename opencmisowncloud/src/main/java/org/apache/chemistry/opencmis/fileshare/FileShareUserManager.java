@@ -30,71 +30,81 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
  */
 public class FileShareUserManager {
 
-    private final Map<String, String> logins;
+	private final Map<String, String> logins;
 
-    public FileShareUserManager() {
-        logins = new HashMap<String, String>();
-    }
+	public FileShareUserManager() {
+		logins = new HashMap<String, String>();
+	}
 
-    /**
-     * Returns all logins.
-     */
-    public synchronized Collection<String> getLogins() {
-        return logins.keySet();
-    }
+	/**
+	 * Returns all logins.
+	 */
+	public synchronized Collection<String> getLogins() {
+		return logins.keySet();
+	}
 
-    /**
-     * Adds a login.
-     */
-    public synchronized void addLogin(String username, String password) {
-        if (username == null || password == null) {
-            return;
-        }
+	/**
+	 * Adds a login.
+	 */
+	public synchronized void addLogin(String username, String password) {
+		if (username == null || password == null) {
+			return;
+		}
 
-        logins.put(username.trim(), password);
-    }
+		logins.put(username.trim(), password);
+	}
 
-    /**
-     * Takes user and password from the CallContext and checks them.
-     */
-    public synchronized String authenticate(CallContext context) {
-        // try to get the remote user first
-        // HttpServletRequest request = (HttpServletRequest)
-        // context.get(CallContext.HTTP_SERVLET_REQUEST);
-        // if (request != null && request.getRemoteUser() != null) {
-        // return request.getRemoteUser();
-        // }
+	/**
+	 * Takes user and password from the CallContext and checks them.
+	 */
+	public synchronized String authenticate(CallContext context) {
+		// try to get the remote user first
+		// HttpServletRequest request = (HttpServletRequest)
+		// context.get(CallContext.HTTP_SERVLET_REQUEST);
+		// if (request != null && request.getRemoteUser() != null) {
+		// return request.getRemoteUser();
+		// }
 
-        // check user and password
-        if (!authenticate(context.getUsername(), context.getPassword())) {
-            throw new CmisPermissionDeniedException("Invalid username or password.");
-        }
+		// check user and password
+		if (!authenticate(context.getUsername(), context.getPassword())) {
+			throw new CmisPermissionDeniedException(
+					"Invalid username or password.");
+		}
 
-        return context.getUsername();
-    }
+		return context.getUsername();
+	}
 
-    /**
-     * Authenticates a user against the configured logins.
-     */
-    private synchronized boolean authenticate(String username, String password) {
-        String pwd = logins.get(username);
-        if (pwd == null) {
-            return false;
-        }
+	/**
+	 * Authenticates a user against the configured logins.
+	 */
+	private synchronized boolean authenticate(String username, String password) {
+		String pwd = logins.get(username);
+		if (pwd == null) {
+			return false;
+		}
 
-        return pwd.equals(password);
-    }
+		return pwd.equals(password);
+	}
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
+	public String getDefaultUserName() {
+		return logins.keySet().iterator().next();
+	}
 
-        for (String user : logins.keySet()) {
-            sb.append('[');
-            sb.append(user);
-            sb.append(']');
-        }
+	public String getDefaultPassword() {
+		return logins.values().iterator().next();
+	}
 
-        return sb.toString();
-    }
+	@Override
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+
+		for (String user : logins.keySet()) {
+			sb.append('[');
+			sb.append(user);
+			sb.append(']');
+		}
+
+		return sb.toString();
+	}
 }

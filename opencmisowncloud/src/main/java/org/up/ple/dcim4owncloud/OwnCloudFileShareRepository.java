@@ -121,11 +121,16 @@ import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.fileshare.ContentRangeInputStream;
 import org.apache.chemistry.opencmis.fileshare.FileShareTypeManager;
+import org.apache.chemistry.opencmis.fileshare.FileShareUserManager;
 import org.apache.chemistry.opencmis.fileshare.FileShareUtils;
 import org.apache.chemistry.opencmis.server.impl.ServerVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.up.ple.dcim4owncloud.configuration.OwnCloudConfigurationLoader;
+import org.up.ple.dcim4owncloud.util.StreamUtil;
+
+import com.github.sardine.Sardine;
+import com.github.sardine.SardineFactory;
 
 /**
  * Implements all repository operations.
@@ -146,7 +151,7 @@ public class OwnCloudFileShareRepository {
 	/** Repository id. */
 	private final String repositoryId;
 	/** Root directory. */
-	private final File root;
+	private File root = null;
 	/** Types. */
 	private final FileShareTypeManager typeManager;
 	/** Users. */
@@ -157,9 +162,15 @@ public class OwnCloudFileShareRepository {
 	/** CMIS 1.1 repository info. */
 	private final RepositoryInfo repositoryInfo11;
 
+	private FileShareUserManager userManager;
+
 	public OwnCloudFileShareRepository(final String repositoryId,
-			final String rootPath, final FileShareTypeManager typeManager) {
-		// setting logger
+			final FileShareTypeManager typeManager2,
+			final FileShareUserManager userManager) {
+
+		this.userManager = userManager;
+
+		// handle different root PATH TODO
 
 		// check repository id
 		if (repositoryId == null || repositoryId.trim().length() == 0) {
@@ -169,17 +180,20 @@ public class OwnCloudFileShareRepository {
 		this.repositoryId = repositoryId;
 
 		// check root folder
-		if (rootPath == null || rootPath.trim().length() == 0) {
+		if (userManager == null) {
 			throw new IllegalArgumentException("Invalid root folder!");
 		}
 
-		root = new File(rootPath);
-		if (!root.isDirectory()) {
-			throw new IllegalArgumentException("Root is not a directory!");
+		try {
+			initRootFile(userManager);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			debug(e1.getMessage());
 		}
 
 		// set type manager objects
-		this.typeManager = typeManager;
+		this.typeManager = typeManager2;
 
 		// set up read-write user map
 		readWriteUserMap = new HashMap<String, Boolean>();
@@ -193,10 +207,22 @@ public class OwnCloudFileShareRepository {
 		try {
 			String owncloudurl = loader.getOwnCloudAddress();
 			debug(owncloudurl);
-
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	private void initRootFile(final FileShareUserManager userManager)
+			throws IOException {
+		Sardine sardine = SardineFactory.begin();
+		sardine.setCredentials(userManager.getDefaultUserName(),
+				userManager.getDefaultPassword());
+		OwnCloudConfigurationLoader loader = new OwnCloudConfigurationLoader();
+		InputStream in = sardine.get(loader.getOwnCloudAddress());
+		root = StreamUtil.stream2file(in);
+		if (!root.isDirectory()) {
+			throw new IllegalArgumentException("Root is not a directory!");
 		}
 	}
 
@@ -211,7 +237,7 @@ public class OwnCloudFileShareRepository {
 
 		repositoryInfo.setCmisVersionSupported(cmisVersion.value());
 
-		repositoryInfo.setProductName("OwnCloud webdav repository");
+		repositoryInfo.setProductName("OpenCMIS FileShare");
 		repositoryInfo.setProductVersion(ServerVersion.OPENCMIS_VERSION);
 		repositoryInfo.setVendorName("OpenCMIS");
 
@@ -2262,16 +2288,25 @@ public class OwnCloudFileShareRepository {
 			throw new CmisPermissionDeniedException("No user context!");
 		}
 
-		Boolean readOnly = readWriteUserMap.get(context.getUsername());
-		if (readOnly == null) {
-			throw new CmisPermissionDeniedException("Unknown user!");
+		// Boolean readOnly = readWriteUserMap.get(context.getUsername());
+		// if (readOnly == null) {
+		// throw new CmisPermissionDeniedException("Unknown user!");
+		// }
+		//
+		// if (readOnly.booleanValue() && writeRequired) {
+		// throw new CmisPermissionDeniedException("No write permission!");
+		// }
+
+		try {
+			Sardine sardine = SardineFactory.begin(context.getUsername(),
+					context.getPassword());
+			OwnCloudConfigurationLoader cloudConfigurationLoader = new OwnCloudConfigurationLoader();
+			sardine.get(cloudConfigurationLoader.getOwnCloudAddress());
+		} catch (IOException e) {
+			return false;
 		}
 
-		if (readOnly.booleanValue() && writeRequired) {
-			throw new CmisPermissionDeniedException("No write permission!");
-		}
-
-		return readOnly.booleanValue();
+		return true;
 	}
 
 	/**
@@ -2360,4 +2395,5 @@ public class OwnCloudFileShareRepository {
 			LOG.debug("<{}> {}", repositoryId, msg);
 		}
 	}
+
 }

@@ -218,14 +218,13 @@ public class OwnCloudServiceFactory extends AbstractServiceFactory {
 					}
 				} else {
 					// new repository
-					String root = replaceSystemProperties(parameters.get(key));
-
-					LOG.info("Adding repository '{}': {}", repositoryId, root);
-
-					// query root path
+					// String root =
+					// replaceSystemProperties(parameters.get(key));
+					// LOG.info("Adding repository '{}': {}", repositoryId,
+					// root);
 
 					OwnCloudFileShareRepository fsr = new OwnCloudFileShareRepository(
-							repositoryId, root, typeManager);
+							repositoryId, typeManager, userManager);
 					repositoryManager.addRepository(fsr);
 				}
 			}
