@@ -4,13 +4,17 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.fileshare.FileShareUserManager;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.up.ple.dcim4owncloud.configuration.OwnCloudConfigurationLoader;
@@ -32,36 +36,104 @@ public class OwncloudWebDavFile extends File {
 	private OwnCloudConfigurationLoader loader;
 
 	private List<DavResource> resources;
+	private OwncloudWebDavFile parent;
+	private DavResource resource = null;
 
 	private Sardine sardine;
 
 	private String webdavPath;
 
+	private boolean isDir;
+
+	private FileShareUserManager userManager;
+
 	@Deprecated
 	public OwncloudWebDavFile(File parent, String child) {
 		super(parent, child);
+		try {
+			throw new Exception("Not implemented");
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.error(e.getMessage());
+		}
 	}
 
 	@Deprecated
 	public OwncloudWebDavFile(String pathname) {
 		super(pathname);
+		try {
+			throw new Exception("Not implemented");
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.error(e.getMessage());
+		}
 	}
 
 	public OwncloudWebDavFile(String pathname, FileShareUserManager userManager) {
 		super(pathname);
+		this.userManager = userManager;
 		sardine = getSardineEndpoint(userManager);
 		loader = new OwnCloudConfigurationLoader();
-		getResources(pathname, userManager);
+		webdavPath = loader.getOwnCloudAddress() + pathname;
+
+		initParent();
+		getResource();
+
+		// isDir = webdavPath.endsWith("/");
+		isDir = resource.isDirectory();
+		if (isDir) {
+			initResources();
+		}
+
+	}
+
+	private void initParent() {
+		if (getName() != "/") {
+			this.parent = new OwncloudWebDavFile(webdavPath.substring(0,
+					webdavPath.lastIndexOf('/') - 1), userManager);
+		} else {
+			LOG.debug("root does not have parent dir and parent remains null");
+		}
+	}
+
+	private void getResource() {
+		try {
+			/**
+			 * we assume that every path to file is unique
+			 */
+			resource = sardine.getResources(webdavPath).iterator().next();
+		} catch (com.github.sardine.impl.SardineException e) {
+			LOG.debug(e.getMessage());
+			LOG.warn("could not authenticate for user"
+					+ userManager.getDefaultUserName() + ":"
+					+ userManager.getDefaultPassword());
+		} catch (IOException e) {
+			LOG.error("could not get resources for "
+					+ loader.getOwnCloudAddress() + webdavPath + e.getMessage());
+		}
+
 	}
 
 	@Deprecated
 	public OwncloudWebDavFile(String parent, String child) {
 		super(parent, child);
+		try {
+			throw new Exception("Not implemented");
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.error(e.getMessage());
+		}
 	}
 
 	@Deprecated
 	public OwncloudWebDavFile(URI uri) {
 		super(uri);
+		try {
+			throw new Exception("Not implemented");
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.error(e.getMessage());
+		}
 	}
 
 	@Override
@@ -69,76 +141,106 @@ public class OwncloudWebDavFile extends File {
 		return false;
 	}
 
+	@Deprecated
 	@Override
 	public boolean canRead() {
-		// TODO Auto-generated method stub
-		return super.canRead();
+		try {
+			throw new Exception("Not implemented");
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.error(e.getMessage());
+		}
+		return true;
 	}
 
+	@Deprecated
 	@Override
 	public boolean canWrite() {
-		// TODO Auto-generated method stub
-		return super.canWrite();
+		try {
+			throw new Exception("Not implemented");
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.error(e.getMessage());
+		}
+		return true;
 	}
 
 	@Override
 	public int compareTo(File pathname) {
-		// TODO Auto-generated method stub
-		return super.compareTo(pathname);
+		return getName().equals(pathname) ? 1 : 0;
 	}
 
+	/**
+	 * atomically creating files without content is not allowed!
+	 */
 	@Override
 	public boolean createNewFile() throws IOException {
-		// TODO Auto-generated method stub
-		return super.createNewFile();
+		return false;
 	}
 
 	@Override
 	public boolean delete() {
-		// TODO Auto-generated method stub
-		return super.delete();
+		try {
+			sardine.delete(webdavPath);
+		} catch (IOException e) {
+			LOG.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
 	}
 
+	/**
+	 * this function does not make sense in this context
+	 */
+	@Deprecated
 	@Override
 	public void deleteOnExit() {
-		// TODO Auto-generated method stub
-		super.deleteOnExit();
+		try {
+			throw new Exception("Not implemented");
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.error(e.getMessage());
+		}
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		// TODO Auto-generated method stub
-		return super.equals(obj);
+		return ((File) obj).getName().equals(this.getName());
 	}
 
 	@Override
 	public boolean exists() {
-		// TODO Auto-generated method stub
-		return super.exists();
+		return (boolean) (resource != null);
 	}
 
+	/**
+	 * this function does not make sense in this context
+	 */
+	@Deprecated
 	@Override
 	public File getAbsoluteFile() {
-		// TODO Auto-generated method stub
-		return super.getAbsoluteFile();
+		try {
+			throw new Exception("Not implemented");
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.error(e.getMessage());
+		}
+		return this;
 	}
 
 	@Override
 	public String getAbsolutePath() {
-		// TODO Auto-generated method stub
-		return super.getAbsolutePath();
+		return this.getName();
 	}
 
 	@Override
 	public File getCanonicalFile() throws IOException {
-		// TODO Auto-generated method stub
-		return super.getCanonicalFile();
+		return this;
 	}
 
 	@Override
 	public String getCanonicalPath() throws IOException {
-		// TODO Auto-generated method stub
-		return super.getCanonicalPath();
+		return this.getName();
 	}
 
 	/**
@@ -151,32 +253,22 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return super.getName();
 	}
 
 	@Override
 	public String getParent() {
-		// TODO Auto-generated method stub
-		return super.getParent();
+		return parent.getName();
 	}
 
 	@Override
 	public File getParentFile() {
-		// TODO Auto-generated method stub
-		return super.getParentFile();
+		return parent;
 	}
 
 	@Override
 	public String getPath() {
-		// TODO Auto-generated method stub
-		return super.getPath();
-	}
-
-	private void getResources(String pathname, FileShareUserManager userManager) {
-		webdavPath = loader.getOwnCloudAddress() + pathname;
-		initResources(pathname, userManager);
-
+		return getName();
 	}
 
 	private Sardine getSardineEndpoint(final FileShareUserManager userManager) {
@@ -214,7 +306,7 @@ public class OwncloudWebDavFile extends File {
 		return super.hashCode();
 	}
 
-	private void initResources(String pathname, FileShareUserManager userManager) {
+	private void initResources() {
 		try {
 			resources = sardine.list(webdavPath);
 		} catch (com.github.sardine.impl.SardineException e) {
@@ -224,110 +316,151 @@ public class OwncloudWebDavFile extends File {
 					+ userManager.getDefaultPassword());
 		} catch (IOException e) {
 			LOG.error("could not get resources for "
-					+ loader.getOwnCloudAddress() + pathname + e.getMessage());
+					+ loader.getOwnCloudAddress() + webdavPath + e.getMessage());
 		}
 	}
 
 	@Override
 	public boolean isAbsolute() {
-		// TODO Auto-generated method stub
-		return super.isAbsolute();
+		return true;
 	}
 
 	@Override
 	public boolean isDirectory() {
-		// TODO Auto-generated method stub
-		return super.isDirectory();
+		return isDir;
 	}
 
 	@Override
 	public boolean isFile() {
-		// TODO Auto-generated method stub
-		return super.isFile();
+		return !isDir;
 	}
 
 	@Override
 	public boolean isHidden() {
-		// TODO Auto-generated method stub
-		return super.isHidden();
+		return false;
 	}
 
 	@Override
 	public long lastModified() {
-		// TODO Auto-generated method stub
-		return super.lastModified();
+		return resource.getModified().getTime();
 	}
 
 	@Override
 	public long length() {
-		// TODO Auto-generated method stub
-		return super.length();
+		if (!isDir) {
+			return (long) resource.getContentLength();
+		} else {
+			return -1;
+		}
 	}
 
 	@Override
 	public String[] list() {
-		// TODO Auto-generated method stub
-		return super.list();
+		String[] result = new String[resources.size()];
+		Iterator<DavResource> it = resources.iterator();
+		int i = 0;
+		while (it.hasNext()) {
+			result[i] = it.next().toString();
+			i++;
+		}
+		if (isDir) {
+
+		}
+		return result;
 	}
 
+	@Deprecated
 	@Override
 	public String[] list(FilenameFilter filter) {
-		// TODO Auto-generated method stub
-		return super.list(filter);
+		try {
+			throw new Exception("Not implemented");
+		} catch (Exception e) {
+			LOG.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
 	public File[] listFiles() {
-		// TODO Auto-generated method stub
-		return super.listFiles();
+		HashSet<File> files = new HashSet<File>();
+		Iterator<DavResource> it = resources.iterator();
+		while (it.hasNext()) {
+			files.add(new OwncloudWebDavFile(it.next().toString()));
+		}
+		return files.toArray(new File[resources.size()]);
 	}
 
+	@Deprecated
 	@Override
 	public File[] listFiles(FileFilter filter) {
-		// TODO Auto-generated method stub
-		return super.listFiles(filter);
+		return listFiles();
 	}
 
+	@Deprecated
 	@Override
 	public File[] listFiles(FilenameFilter filter) {
-		// TODO Auto-generated method stub
-		return super.listFiles(filter);
+		return listFiles();
 	}
 
 	@Override
 	public boolean mkdir() {
-		// TODO Auto-generated method stub
+		try {
+			sardine.createDirectory(webdavPath);
+		} catch (IOException e) {
+			LOG.error(e.getMessage());
+			e.printStackTrace();
+		}
 		return super.mkdir();
 	}
 
+	@Deprecated
 	@Override
 	public boolean mkdirs() {
-		// TODO Auto-generated method stub
+		try {
+			sardine.createDirectory(webdavPath);
+		} catch (IOException e) {
+			LOG.error(e.getMessage());
+			e.printStackTrace();
+		}
 		return super.mkdirs();
 	}
 
 	@Override
 	public boolean renameTo(File dest) {
-		// TODO Auto-generated method stub
-		return super.renameTo(dest);
+		if (!isDir) {
+			try {
+				InputStream inputstream = sardine.get(webdavPath);
+				webdavPath = loader.getOwnCloudAddress() + dest.getName();
+				sardine.put(webdavPath, IOUtils.toByteArray(inputstream));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return true;
 	}
 
+	/**
+	 * executable files are not supported
+	 */
 	@Override
 	public boolean setExecutable(boolean executable) {
-		// TODO Auto-generated method stub
-		return super.setExecutable(executable);
+		return false;
 	}
 
+	/**
+	 * executable files are not supported
+	 */
 	@Override
 	public boolean setExecutable(boolean executable, boolean ownerOnly) {
-		// TODO Auto-generated method stub
-		return super.setExecutable(executable, ownerOnly);
+		return false;
 	}
 
 	@Override
 	public boolean setLastModified(long time) {
-		// TODO Auto-generated method stub
-		return super.setLastModified(time);
+		resource.getModified().setTime(time);
+		return isDir;
 	}
 
 	@Override
@@ -383,5 +516,10 @@ public class OwncloudWebDavFile extends File {
 		// TODO Auto-generated method stub
 		return super.toURL();
 	}
+
+	/**
+	 * byte[] data = FileUtils.readFileToByteArray(new
+	 * File("/testdav/test_file.txt")); sardine.put(url+"/test/test.txt", data);
+	 */
 
 }

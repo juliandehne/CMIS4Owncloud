@@ -170,8 +170,6 @@ public class OwnCloudFileShareRepository {
 
 		this.userManager = userManager;
 
-		// handle different root PATH TODO
-
 		// check repository id
 		if (repositoryId == null || repositoryId.trim().length() == 0) {
 			throw new IllegalArgumentException("Invalid repository id!");
@@ -181,13 +179,13 @@ public class OwnCloudFileShareRepository {
 
 		// check root folder
 		if (userManager == null) {
+			// check whether this makes sense
 			throw new IllegalArgumentException("Invalid root folder!");
 		}
 
 		try {
 			initRootFile(userManager);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			debug(e1.getMessage());
 		}
@@ -206,7 +204,7 @@ public class OwnCloudFileShareRepository {
 
 	private void initRootFile(final FileShareUserManager userManager)
 			throws IOException {
-		root = new OwncloudWebDavFile("");
+		root = new OwncloudWebDavFile("/", userManager);
 		if (!root.isDirectory()) {
 			throw new IllegalArgumentException("Root is not a directory!");
 		}
