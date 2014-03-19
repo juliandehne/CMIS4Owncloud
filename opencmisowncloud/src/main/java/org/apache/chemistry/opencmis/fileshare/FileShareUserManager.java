@@ -87,11 +87,11 @@ public class FileShareUserManager {
 	}
 
 	public String getDefaultUserName() {
-		return logins.keySet().iterator().next();
+		return "root";
 	}
 
 	public String getDefaultPassword() {
-		return logins.values().iterator().next();
+		return logins.get("root");
 	}
 
 	@Override

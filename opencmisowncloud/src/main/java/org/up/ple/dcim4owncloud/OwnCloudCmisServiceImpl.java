@@ -26,298 +26,360 @@ import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.CmisExtensionElementImpl;
-import org.apache.chemistry.opencmis.commons.impl.dataobjects.ExtensionDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectListImpl;
 import org.apache.chemistry.opencmis.commons.impl.server.AbstractCmisService;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
-import org.apache.chemistry.opencmis.fileshare.FileShareRepository;
-import org.apache.chemistry.opencmis.fileshare.FileShareRepositoryManager;
 
-public class OwnCloudCmisServiceImpl extends AbstractCmisService  {
+public class OwnCloudCmisServiceImpl extends AbstractCmisService {
 
-	 private final OwnCloudFileShareRepositoryManager repositoryManager;
-	    private CallContext context;
+	private final OwnCloudFileShareRepositoryManager repositoryManager;
+	private CallContext context;
 
-	    public OwnCloudCmisServiceImpl(final OwnCloudFileShareRepositoryManager repositoryManager) {
-	        this.repositoryManager = repositoryManager;
-	    }
+	public OwnCloudCmisServiceImpl(
+			final OwnCloudFileShareRepositoryManager repositoryManager) {
+		this.repositoryManager = repositoryManager;
+	}
 
-	    // --- Call Context ---
+	// --- Call Context ---
 
-	    /**
-	     * Sets the call context.
-	     * 
-	     * This method should only be called by the service factory.
-	     */
-	    public void setCallContext(CallContext context) {
-	        this.context = context;
-	    }
+	/**
+	 * Sets the call context.
+	 * 
+	 * This method should only be called by the service factory.
+	 */
+	public void setCallContext(CallContext context) {
+		this.context = context;
+	}
 
-	    /**
-	     * Gets the call context.
-	     */
-	    public CallContext getCallContext() {
-	        return context;
-	    }
+	/**
+	 * Gets the call context.
+	 */
+	public CallContext getCallContext() {
+		return context;
+	}
 
-	    /**
-	     * Gets the repository for the current call.
-	     */
-	    public OwnCloudFileShareRepository getRepository() {
-	        return repositoryManager.getRepository(getCallContext().getRepositoryId());
-	    }
+	/**
+	 * Gets the repository for the current call.
+	 */
+	public OwnCloudFileShareRepository getRepository() {
+		return repositoryManager.getRepository(getCallContext()
+				.getRepositoryId());
+	}
 
-	    // --- repository service ---
+	// --- repository service ---
 
-	    @Override
-	    public RepositoryInfo getRepositoryInfo(String repositoryId, ExtensionsData extension) {
-	        for (OwnCloudFileShareRepository fsr : repositoryManager.getRepositories()) {
-	            if (fsr.getRepositoryId().equals(repositoryId)) {
-	                return fsr.getRepositoryInfo(getCallContext());
-	            }
-	        }
+	@Override
+	public RepositoryInfo getRepositoryInfo(String repositoryId,
+			ExtensionsData extension) {
+		for (OwnCloudFileShareRepository fsr : repositoryManager
+				.getRepositories()) {
+			if (fsr.getRepositoryId().equals(repositoryId)) {
+				return fsr.getRepositoryInfo(getCallContext());
+			}
+		}
 
-	        throw new CmisObjectNotFoundException("Unknown repository '" + repositoryId + "'!");
-	    }
+		throw new CmisObjectNotFoundException("Unknown repository '"
+				+ repositoryId + "'!");
+	}
 
-	    @Override
-	    public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
-	        List<RepositoryInfo> result = new ArrayList<RepositoryInfo>();
+	@Override
+	public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
+		List<RepositoryInfo> result = new ArrayList<RepositoryInfo>();
 
-	        for (OwnCloudFileShareRepository fsr : repositoryManager.getRepositories()) {
-	            result.add(fsr.getRepositoryInfo(getCallContext()));
-	        }
+		for (OwnCloudFileShareRepository fsr : repositoryManager
+				.getRepositories()) {
+			result.add(fsr.getRepositoryInfo(getCallContext()));
+		}
 
-	        return result;
-	    }
+		return result;
+	}
 
-	    @Override
-	    public TypeDefinitionList getTypeChildren(String repositoryId, String typeId, Boolean includePropertyDefinitions,
-	            BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-	        return getRepository().getTypeChildren(getCallContext(), typeId, includePropertyDefinitions, maxItems,
-	                skipCount);
-	    }
+	@Override
+	public TypeDefinitionList getTypeChildren(String repositoryId,
+			String typeId, Boolean includePropertyDefinitions,
+			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+		return getRepository().getTypeChildren(getCallContext(), typeId,
+				includePropertyDefinitions, maxItems, skipCount);
+	}
 
-	    @Override
-	    public TypeDefinition getTypeDefinition(String repositoryId, String typeId, ExtensionsData extension) {
-	        return getRepository().getTypeDefinition(getCallContext(), typeId);
-	    }
+	@Override
+	public TypeDefinition getTypeDefinition(String repositoryId, String typeId,
+			ExtensionsData extension) {
+		return getRepository().getTypeDefinition(getCallContext(), typeId);
+	}
 
-	    @Override
-	    public List<TypeDefinitionContainer> getTypeDescendants(String repositoryId, String typeId, BigInteger depth,
-	            Boolean includePropertyDefinitions, ExtensionsData extension) {
-	        return getRepository().getTypeDescendants(getCallContext(), typeId, depth, includePropertyDefinitions);
-	    }
+	@Override
+	public List<TypeDefinitionContainer> getTypeDescendants(
+			String repositoryId, String typeId, BigInteger depth,
+			Boolean includePropertyDefinitions, ExtensionsData extension) {
+		return getRepository().getTypeDescendants(getCallContext(), typeId,
+				depth, includePropertyDefinitions);
+	}
 
-	    // --- navigation service ---
+	// --- navigation service ---
 
-	    @Override
-	    public ObjectInFolderList getChildren(String repositoryId, String folderId, String filter, String orderBy,
-	            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-	            Boolean includePathSegment, BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-	        return getRepository().getChildren(getCallContext(), folderId, filter, includeAllowableActions,
-	                includePathSegment, maxItems, skipCount, this);
-	    }
+	@Override
+	public ObjectInFolderList getChildren(String repositoryId, String folderId,
+			String filter, String orderBy, Boolean includeAllowableActions,
+			IncludeRelationships includeRelationships, String renditionFilter,
+			Boolean includePathSegment, BigInteger maxItems,
+			BigInteger skipCount, ExtensionsData extension) {
+		return getRepository().getChildren(getCallContext(), folderId, filter,
+				includeAllowableActions, includePathSegment, maxItems,
+				skipCount, this);
+	}
 
-	    @Override
-	    public List<ObjectInFolderContainer> getDescendants(String repositoryId, String folderId, BigInteger depth,
-	            String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-	            String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
-	        return getRepository().getDescendants(getCallContext(), folderId, depth, filter, includeAllowableActions,
-	                includePathSegment, this, false);
-	    }
+	@Override
+	public List<ObjectInFolderContainer> getDescendants(String repositoryId,
+			String folderId, BigInteger depth, String filter,
+			Boolean includeAllowableActions,
+			IncludeRelationships includeRelationships, String renditionFilter,
+			Boolean includePathSegment, ExtensionsData extension) {
+		return getRepository().getDescendants(getCallContext(), folderId,
+				depth, filter, includeAllowableActions, includePathSegment,
+				this, false);
+	}
 
-	    @Override
-	    public ObjectData getFolderParent(String repositoryId, String folderId, String filter, ExtensionsData extension) {
-	        return getRepository().getFolderParent(getCallContext(), folderId, filter, this);
-	    }
+	@Override
+	public ObjectData getFolderParent(String repositoryId, String folderId,
+			String filter, ExtensionsData extension) {
+		return getRepository().getFolderParent(getCallContext(), folderId,
+				filter, this);
+	}
 
-	    @Override
-	    public List<ObjectInFolderContainer> getFolderTree(String repositoryId, String folderId, BigInteger depth,
-	            String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-	            String renditionFilter, Boolean includePathSegment, ExtensionsData extension) {
-	        return getRepository().getDescendants(getCallContext(), folderId, depth, filter, includeAllowableActions,
-	                includePathSegment, this, true);
-	    }
+	@Override
+	public List<ObjectInFolderContainer> getFolderTree(String repositoryId,
+			String folderId, BigInteger depth, String filter,
+			Boolean includeAllowableActions,
+			IncludeRelationships includeRelationships, String renditionFilter,
+			Boolean includePathSegment, ExtensionsData extension) {
+		return getRepository().getDescendants(getCallContext(), folderId,
+				depth, filter, includeAllowableActions, includePathSegment,
+				this, true);
+	}
 
-	    @Override
-	    public List<ObjectParentData> getObjectParents(String repositoryId, String objectId, String filter,
-	            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-	            Boolean includeRelativePathSegment, ExtensionsData extension) {
-	        return getRepository().getObjectParents(getCallContext(), objectId, filter, includeAllowableActions,
-	                includeRelativePathSegment, this);
-	    }
+	@Override
+	public List<ObjectParentData> getObjectParents(String repositoryId,
+			String objectId, String filter, Boolean includeAllowableActions,
+			IncludeRelationships includeRelationships, String renditionFilter,
+			Boolean includeRelativePathSegment, ExtensionsData extension) {
+		return getRepository().getObjectParents(getCallContext(), objectId,
+				filter, includeAllowableActions, includeRelativePathSegment,
+				this);
+	}
 
-	    @Override
-	    public ObjectList getCheckedOutDocs(String repositoryId, String folderId, String filter, String orderBy,
-	            Boolean includeAllowableActions, IncludeRelationships includeRelationships, String renditionFilter,
-	            BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-	        ObjectListImpl result = new ObjectListImpl();
-	        result.setHasMoreItems(false);
-	        result.setNumItems(BigInteger.ZERO);
-	        List<ObjectData> emptyList = Collections.emptyList();
-	        result.setObjects(emptyList);
+	@Override
+	public ObjectList getCheckedOutDocs(String repositoryId, String folderId,
+			String filter, String orderBy, Boolean includeAllowableActions,
+			IncludeRelationships includeRelationships, String renditionFilter,
+			BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
+		ObjectListImpl result = new ObjectListImpl();
+		result.setHasMoreItems(false);
+		result.setNumItems(BigInteger.ZERO);
+		List<ObjectData> emptyList = Collections.emptyList();
+		result.setObjects(emptyList);
 
-	        return result;
-	    }
+		return result;
+	}
 
-	    // --- object service ---
+	// --- object service ---
 
-	    @Override
-	    public String create(String repositoryId, Properties properties, String folderId, ContentStream contentStream,
-	            VersioningState versioningState, List<String> policies, ExtensionsData extension) {
-	        ObjectData object = getRepository().create(getCallContext(), properties, folderId, contentStream,
-	                versioningState, this);
+	@Override
+	public String create(String repositoryId, Properties properties,
+			String folderId, ContentStream contentStream,
+			VersioningState versioningState, List<String> policies,
+			ExtensionsData extension) {
+		ObjectData object = getRepository().create(getCallContext(),
+				properties, folderId, contentStream, versioningState, this);
 
-	        return object.getId();
-	    }
+		return object.getId();
+	}
 
-	    @Override
-	    public String createDocument(String repositoryId, Properties properties, String folderId,
-	            ContentStream contentStream, VersioningState versioningState, List<String> policies, Acl addAces,
-	            Acl removeAces, ExtensionsData extension) {
-	        return getRepository().createDocument(getCallContext(), properties, folderId, contentStream, versioningState);
-	    }
+	@Override
+	public String createDocument(String repositoryId, Properties properties,
+			String folderId, ContentStream contentStream,
+			VersioningState versioningState, List<String> policies,
+			Acl addAces, Acl removeAces, ExtensionsData extension) {
+		return getRepository().createDocument(getCallContext(), properties,
+				folderId, contentStream, versioningState);
+	}
 
-	    @Override
-	    public String createDocumentFromSource(String repositoryId, String sourceId, Properties properties,
-	            String folderId, VersioningState versioningState, List<String> policies, Acl addAces, Acl removeAces,
-	            ExtensionsData extension) {
-	        return getRepository().createDocumentFromSource(getCallContext(), sourceId, properties, folderId,
-	                versioningState);
-	    }
+	@Override
+	public String createDocumentFromSource(String repositoryId,
+			String sourceId, Properties properties, String folderId,
+			VersioningState versioningState, List<String> policies,
+			Acl addAces, Acl removeAces, ExtensionsData extension) {
+		return getRepository().createDocumentFromSource(getCallContext(),
+				sourceId, properties, folderId, versioningState);
+	}
 
-	    @Override
-	    public String createFolder(String repositoryId, Properties properties, String folderId, List<String> policies,
-	            Acl addAces, Acl removeAces, ExtensionsData extension) {
-	        return getRepository().createFolder(getCallContext(), properties, folderId);
-	    }
+	@Override
+	public String createFolder(String repositoryId, Properties properties,
+			String folderId, List<String> policies, Acl addAces,
+			Acl removeAces, ExtensionsData extension) {
+		return getRepository().createFolder(getCallContext(), properties,
+				folderId);
+	}
 
-	    @Override
-	    public void deleteObjectOrCancelCheckOut(String repositoryId, String objectId, Boolean allVersions,
-	            ExtensionsData extension) {
-	        getRepository().deleteObject(getCallContext(), objectId);
-	    }
+	@Override
+	public void deleteObjectOrCancelCheckOut(String repositoryId,
+			String objectId, Boolean allVersions, ExtensionsData extension) {
+		getRepository().deleteObject(getCallContext(), objectId);
+	}
 
-	    @Override
-	    public FailedToDeleteData deleteTree(String repositoryId, String folderId, Boolean allVersions,
-	            UnfileObject unfileObjects, Boolean continueOnFailure, ExtensionsData extension) {
-	        return getRepository().deleteTree(getCallContext(), folderId, continueOnFailure);
-	    }
+	@Override
+	public FailedToDeleteData deleteTree(String repositoryId, String folderId,
+			Boolean allVersions, UnfileObject unfileObjects,
+			Boolean continueOnFailure, ExtensionsData extension) {
+		return getRepository().deleteTree(getCallContext(), folderId,
+				continueOnFailure);
+	}
 
-	    @Override
-	    public AllowableActions getAllowableActions(String repositoryId, String objectId, ExtensionsData extension) {
-	        return getRepository().getAllowableActions(getCallContext(), objectId);
-	    }
+	@Override
+	public AllowableActions getAllowableActions(String repositoryId,
+			String objectId, ExtensionsData extension) {
+		return getRepository().getAllowableActions(getCallContext(), objectId);
+	}
 
-	    @Override
-	    public ContentStream getContentStream(String repositoryId, String objectId, String streamId, BigInteger offset,
-	            BigInteger length, ExtensionsData extension) {
-	        return getRepository().getContentStream(getCallContext(), objectId, offset, length);
-	    }
+	@Override
+	public ContentStream getContentStream(String repositoryId, String objectId,
+			String streamId, BigInteger offset, BigInteger length,
+			ExtensionsData extension) {
+		return getRepository().getContentStream(getCallContext(), objectId,
+				offset, length);
+	}
 
-	    @Override
-	    public ObjectData getObject(String repositoryId, String objectId, String filter, Boolean includeAllowableActions,
-	            IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
-	            Boolean includeAcl, ExtensionsData extension) {
-	        return getRepository().getObject(getCallContext(), objectId, null, filter, includeAllowableActions, includeAcl,
-	                this);
-	    }
+	@Override
+	public ObjectData getObject(String repositoryId, String objectId,
+			String filter, Boolean includeAllowableActions,
+			IncludeRelationships includeRelationships, String renditionFilter,
+			Boolean includePolicyIds, Boolean includeAcl,
+			ExtensionsData extension) {
+		OwnCloudFileShareRepository repository = getRepository();
+		CallContext callContext = getCallContext();
 
-	    @Override
-	    public ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
-	            IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
-	            Boolean includeAcl, ExtensionsData extension) {
-	        return getRepository().getObjectByPath(getCallContext(), path, filter, includeAllowableActions, includeAcl,
-	                this);
-	    }
+		return repository.getObject(callContext, objectId, null, filter,
+				includeAllowableActions, includeAcl, this);
+	}
 
-	    @Override
-	    public Properties getProperties(String repositoryId, String objectId, String filter, ExtensionsData extension) {
-	        ObjectData object = getRepository().getObject(getCallContext(), objectId, null, filter, false, false, this);
-	        return object.getProperties();
-	    }
+	@Override
+	public ObjectData getObjectByPath(String repositoryId, String path,
+			String filter, Boolean includeAllowableActions,
+			IncludeRelationships includeRelationships, String renditionFilter,
+			Boolean includePolicyIds, Boolean includeAcl,
+			ExtensionsData extension) {
+		return getRepository().getObjectByPath(getCallContext(), path, filter,
+				includeAllowableActions, includeAcl, this);
+	}
 
-	    @Override
-	    public List<RenditionData> getRenditions(String repositoryId, String objectId, String renditionFilter,
-	            BigInteger maxItems, BigInteger skipCount, ExtensionsData extension) {
-	        return Collections.emptyList();
-	    }
+	@Override
+	public Properties getProperties(String repositoryId, String objectId,
+			String filter, ExtensionsData extension) {
+		ObjectData object = getRepository().getObject(getCallContext(),
+				objectId, null, filter, false, false, this);
+		return object.getProperties();
+	}
 
-	    @Override
-	    public void moveObject(String repositoryId, Holder<String> objectId, String targetFolderId, String sourceFolderId,
-	            ExtensionsData extension) {
-	        getRepository().moveObject(getCallContext(), objectId, targetFolderId, this);
-	    }
+	@Override
+	public List<RenditionData> getRenditions(String repositoryId,
+			String objectId, String renditionFilter, BigInteger maxItems,
+			BigInteger skipCount, ExtensionsData extension) {
+		return Collections.emptyList();
+	}
 
-	    @Override
-	    public void setContentStream(String repositoryId, Holder<String> objectId, Boolean overwriteFlag,
-	            Holder<String> changeToken, ContentStream contentStream, ExtensionsData extension) {
-	        getRepository().changeContentStream(getCallContext(), objectId, overwriteFlag, contentStream, false);
-	    }
+	@Override
+	public void moveObject(String repositoryId, Holder<String> objectId,
+			String targetFolderId, String sourceFolderId,
+			ExtensionsData extension) {
+		getRepository().moveObject(getCallContext(), objectId, targetFolderId,
+				this);
+	}
 
-	    @Override
-	    public void appendContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
-	            ContentStream contentStream, boolean isLastChunk, ExtensionsData extension) {
-	        getRepository().changeContentStream(getCallContext(), objectId, true, contentStream, true);
-	    }
+	@Override
+	public void setContentStream(String repositoryId, Holder<String> objectId,
+			Boolean overwriteFlag, Holder<String> changeToken,
+			ContentStream contentStream, ExtensionsData extension) {
+		getRepository().changeContentStream(getCallContext(), objectId,
+				overwriteFlag, contentStream, false);
+	}
 
-	    @Override
-	    public void deleteContentStream(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
-	            ExtensionsData extension) {
-	        getRepository().changeContentStream(getCallContext(), objectId, true, null, false);
-	    }
+	@Override
+	public void appendContentStream(String repositoryId,
+			Holder<String> objectId, Holder<String> changeToken,
+			ContentStream contentStream, boolean isLastChunk,
+			ExtensionsData extension) {
+		getRepository().changeContentStream(getCallContext(), objectId, true,
+				contentStream, true);
+	}
 
-	    @Override
-	    public void updateProperties(String repositoryId, Holder<String> objectId, Holder<String> changeToken,
-	            Properties properties, ExtensionsData extension) {
-	        getRepository().updateProperties(getCallContext(), objectId, properties, this);
-	    }
+	@Override
+	public void deleteContentStream(String repositoryId,
+			Holder<String> objectId, Holder<String> changeToken,
+			ExtensionsData extension) {
+		getRepository().changeContentStream(getCallContext(), objectId, true,
+				null, false);
+	}
 
-	    @Override
-	    public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(String repositoryId,
-	            List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken, Properties properties,
-	            List<String> addSecondaryTypeIds, List<String> removeSecondaryTypeIds, ExtensionsData extension) {
-	        return getRepository().bulkUpdateProperties(getCallContext(), objectIdAndChangeToken, properties, this);
-	    }
+	@Override
+	public void updateProperties(String repositoryId, Holder<String> objectId,
+			Holder<String> changeToken, Properties properties,
+			ExtensionsData extension) {
+		getRepository().updateProperties(getCallContext(), objectId,
+				properties, this);
+	}
 
-	    // --- versioning service ---
+	@Override
+	public List<BulkUpdateObjectIdAndChangeToken> bulkUpdateProperties(
+			String repositoryId,
+			List<BulkUpdateObjectIdAndChangeToken> objectIdAndChangeToken,
+			Properties properties, List<String> addSecondaryTypeIds,
+			List<String> removeSecondaryTypeIds, ExtensionsData extension) {
+		return getRepository().bulkUpdateProperties(getCallContext(),
+				objectIdAndChangeToken, properties, this);
+	}
 
-	    @Override
-	    public List<ObjectData> getAllVersions(String repositoryId, String objectId, String versionSeriesId, String filter,
-	            Boolean includeAllowableActions, ExtensionsData extension) {
-	        ObjectData theVersion = getRepository().getObject(getCallContext(), objectId, versionSeriesId, filter,
-	                includeAllowableActions, false, this);
+	// --- versioning service ---
 
-	        return Collections.singletonList(theVersion);
-	    }
+	@Override
+	public List<ObjectData> getAllVersions(String repositoryId,
+			String objectId, String versionSeriesId, String filter,
+			Boolean includeAllowableActions, ExtensionsData extension) {
+		ObjectData theVersion = getRepository().getObject(getCallContext(),
+				objectId, versionSeriesId, filter, includeAllowableActions,
+				false, this);
 
-	    @Override
-	    public ObjectData getObjectOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
-	            Boolean major, String filter, Boolean includeAllowableActions, IncludeRelationships includeRelationships,
-	            String renditionFilter, Boolean includePolicyIds, Boolean includeAcl, ExtensionsData extension) {
-	        return getRepository().getObject(getCallContext(), objectId, versionSeriesId, filter, includeAllowableActions,
-	                includeAcl, this);
-	    }
+		return Collections.singletonList(theVersion);
+	}
 
-	    @Override
-	    public Properties getPropertiesOfLatestVersion(String repositoryId, String objectId, String versionSeriesId,
-	            Boolean major, String filter, ExtensionsData extension) {
-	        ObjectData object = getRepository().getObject(getCallContext(), objectId, versionSeriesId, filter, false,
-	                false, null);
+	@Override
+	public ObjectData getObjectOfLatestVersion(String repositoryId,
+			String objectId, String versionSeriesId, Boolean major,
+			String filter, Boolean includeAllowableActions,
+			IncludeRelationships includeRelationships, String renditionFilter,
+			Boolean includePolicyIds, Boolean includeAcl,
+			ExtensionsData extension) {
+		return getRepository().getObject(getCallContext(), objectId,
+				versionSeriesId, filter, includeAllowableActions, includeAcl,
+				this);
+	}
 
-	        return object.getProperties();
-	    }
+	@Override
+	public Properties getPropertiesOfLatestVersion(String repositoryId,
+			String objectId, String versionSeriesId, Boolean major,
+			String filter, ExtensionsData extension) {
+		ObjectData object = getRepository().getObject(getCallContext(),
+				objectId, versionSeriesId, filter, false, false, null);
 
-	    // --- ACL service ---
+		return object.getProperties();
+	}
 
-	    @Override
-	    public Acl getAcl(String repositoryId, String objectId, Boolean onlyBasicPermissions, ExtensionsData extension) {
-	        return getRepository().getAcl(getCallContext(), objectId);
-	    }
+	// --- ACL service ---
 
-	
+	@Override
+	public Acl getAcl(String repositoryId, String objectId,
+			Boolean onlyBasicPermissions, ExtensionsData extension) {
+		return getRepository().getAcl(getCallContext(), objectId);
+	}
 
 }

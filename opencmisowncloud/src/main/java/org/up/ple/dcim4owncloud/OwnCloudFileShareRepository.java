@@ -127,7 +127,7 @@ import org.apache.chemistry.opencmis.server.impl.ServerVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.up.ple.dcim4owncloud.configuration.OwnCloudConfigurationLoader;
-import org.up.ple.dcim4owncloud.util.StreamUtil;
+import org.up.ple.dcim4owncloud.webdav.OwncloudWebDavFile;
 
 import com.github.sardine.Sardine;
 import com.github.sardine.SardineFactory;
@@ -202,25 +202,11 @@ public class OwnCloudFileShareRepository {
 		repositoryInfo10 = createRepositoryInfo(CmisVersion.CMIS_1_0);
 		repositoryInfo11 = createRepositoryInfo(CmisVersion.CMIS_1_1);
 
-		// // setup sardine for webdav access to owncloud
-		OwnCloudConfigurationLoader loader = new OwnCloudConfigurationLoader();
-		try {
-			String owncloudurl = loader.getOwnCloudAddress();
-			debug(owncloudurl);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	private void initRootFile(final FileShareUserManager userManager)
 			throws IOException {
-		Sardine sardine = SardineFactory.begin();
-		sardine.setCredentials(userManager.getDefaultUserName(),
-				userManager.getDefaultPassword());
-		OwnCloudConfigurationLoader loader = new OwnCloudConfigurationLoader();
-		InputStream in = sardine.get(loader.getOwnCloudAddress());
-		root = StreamUtil.stream2file(in);
+		root = new OwncloudWebDavFile("");
 		if (!root.isDirectory()) {
 			throw new IllegalArgumentException("Root is not a directory!");
 		}
@@ -1559,11 +1545,13 @@ public class OwnCloudFileShareRepository {
 	 * Compiles an object type object from a file or folder.
 	 */
 	private ObjectData compileObjectData(CallContext context, File file,
-			Set<String> filter, boolean includeAllowableActions,
-			boolean includeAcl, boolean userReadOnly,
+			Set<String> filter, Boolean includeAllowableActions,
+			Boolean includeAcl, Boolean userReadOnly,
 			ObjectInfoHandler objectInfos) {
 		ObjectDataImpl result = new ObjectDataImpl();
 		ObjectInfoImpl objectInfo = new ObjectInfoImpl();
+		debug("compileObjectData");
+		debug(file.getName());
 
 		result.setProperties(compileProperties(context, file, filter,
 				objectInfo));
@@ -1591,9 +1579,12 @@ public class OwnCloudFileShareRepository {
 	 */
 	private Properties compileProperties(CallContext context, File file,
 			Set<String> orgfilter, ObjectInfoImpl objectInfo) {
+
 		if (file == null) {
 			throw new IllegalArgumentException("File must not be null!");
 		}
+
+		debug("compileProperties" + file.getName());
 
 		// we can't gather properties if the file or folder doesn't exist
 		if (!file.exists()) {
@@ -1608,6 +1599,7 @@ public class OwnCloudFileShareRepository {
 		String typeId = null;
 
 		if (file.isDirectory()) {
+			debug("file" + file.getName() + "ist dir");
 			typeId = BaseTypeId.CMIS_FOLDER.value();
 			objectInfo.setBaseType(BaseTypeId.CMIS_FOLDER);
 			objectInfo.setTypeId(typeId);
@@ -1627,6 +1619,7 @@ public class OwnCloudFileShareRepository {
 			objectInfo.setWorkingCopyId(null);
 			objectInfo.setWorkingCopyOriginalId(null);
 		} else {
+			debug("file" + file.getName() + "ist file");
 			typeId = BaseTypeId.CMIS_DOCUMENT.value();
 			objectInfo.setBaseType(BaseTypeId.CMIS_DOCUMENT);
 			objectInfo.setTypeId(typeId);
@@ -1802,6 +1795,9 @@ public class OwnCloudFileShareRepository {
 	 */
 	private void readCustomProperties(File file, PropertiesImpl properties,
 			Set<String> filter, ObjectInfoImpl objectInfo) {
+
+		debug("readCustomProperties" + file.getName());
+
 		File propFile = getPropertiesFile(file);
 
 		// if it doesn't exists, ignore it
@@ -1889,6 +1885,7 @@ public class OwnCloudFileShareRepository {
 	 */
 	private PropertiesImpl compileWriteProperties(String typeId,
 			String creator, String modifier, Properties properties) {
+
 		PropertiesImpl result = new PropertiesImpl();
 		Set<String> addedProps = new HashSet<String>();
 
@@ -1957,6 +1954,9 @@ public class OwnCloudFileShareRepository {
 	 * Writes the properties for a document or folder.
 	 */
 	private void writePropertiesFile(File file, Properties properties) {
+
+		debug("writePropertiesFile" + file.getName());
+
 		File propFile = getPropertiesFile(file);
 
 		// if no properties set delete the properties file
@@ -2149,6 +2149,9 @@ public class OwnCloudFileShareRepository {
 	 */
 	private AllowableActions compileAllowableActions(File file,
 			boolean userReadOnly) {
+
+		debug("compile allowableActions" + file);
+
 		if (file == null) {
 			throw new IllegalArgumentException("File must not be null!");
 		}
@@ -2341,12 +2344,14 @@ public class OwnCloudFileShareRepository {
 		}
 
 		if (id.equals(ROOT_ID)) {
+			initRootFile(userManager);
 			return root;
+		} else {
+			String relativPath = new String(Base64.decode(id
+					.getBytes("US-ASCII")), "UTF-8").replace('/',
+					File.separatorChar);
+			return new OwncloudWebDavFile(relativPath, userManager);
 		}
-
-		return new File(root, (new String(
-				Base64.decode(id.getBytes("US-ASCII")), "UTF-8")).replace('/',
-				File.separatorChar));
 	}
 
 	/**
@@ -2391,9 +2396,11 @@ public class OwnCloudFileShareRepository {
 	}
 
 	private void debug(String msg) {
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("<{}> {}", repositoryId, msg);
-		}
+		LOG.warn(msg);
+
+		// if (LOG.isDebugEnabled()) {
+		// LOG.warn("<{}> {}", repositoryId, msg);
+		// }
 	}
 
 }

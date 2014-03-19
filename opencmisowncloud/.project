@@ -3,6 +3,7 @@
 	<name>chemistry-opencmis-server-fileshare</name>
 	<comment></comment>
 	<projects>
+		<project>competence-main</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
