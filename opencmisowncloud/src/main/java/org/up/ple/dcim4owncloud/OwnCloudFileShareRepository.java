@@ -536,7 +536,7 @@ public class OwnCloudFileShareRepository {
 
 		// write content, if available
 		if (contentStream != null && contentStream.getStream() != null) {
-			writeContent(newFile, contentStream.getStream());
+			((OwncloudWebDavFile) newFile).put(contentStream.getStream());
 		}
 
 		// set creation date
@@ -837,26 +837,20 @@ public class OwnCloudFileShareRepository {
 					"Content already exists!");
 		}
 
-		OutputStream out = null;
+		/**
+		 * changed original implementation the webdav file now takes over the io
+		 * parts instead of fileoutputstreams
+		 */
 		InputStream in = null;
-		try {
-			out = new FileOutputStream(file, append);
-
-			if (contentStream == null || contentStream.getStream() == null) {
-				// delete content
-				out.write(new byte[0]);
-			} else {
-				// set content
-				in = contentStream.getStream();
-				IOUtils.copy(in, out, BUFFER_SIZE);
-			}
-		} catch (Exception e) {
-			throw new CmisStorageException("Could not write content: "
-					+ e.getMessage(), e);
-		} finally {
-			IOUtils.closeQuietly(out);
-			IOUtils.closeQuietly(in);
+		if (contentStream == null || contentStream.getStream() == null) {
+			// delete content
+			((OwncloudWebDavFile) file).delete();
+		} else {
+			// set content
+			in = contentStream.getStream();
+			((OwncloudWebDavFile) file).put(in);
 		}
+
 	}
 
 	/**

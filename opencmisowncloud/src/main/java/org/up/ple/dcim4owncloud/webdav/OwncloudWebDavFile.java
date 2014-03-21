@@ -463,40 +463,76 @@ public class OwncloudWebDavFile extends File {
 		return isDir;
 	}
 
+	@Deprecated
 	@Override
 	public boolean setReadable(boolean readable) {
-		// TODO Auto-generated method stub
-		return super.setReadable(readable);
+		try {
+			throw new Exception("Not implemented");
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.error(e.getMessage());
+		}
+		return false;
 	}
 
+	@Deprecated
 	@Override
 	public boolean setReadable(boolean readable, boolean ownerOnly) {
-		// TODO Auto-generated method stub
-		return super.setReadable(readable, ownerOnly);
+		try {
+			throw new Exception("Not implemented");
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.error(e.getMessage());
+		}
+		return false;
 	}
 
+	@Deprecated
 	@Override
 	public boolean setReadOnly() {
-		// TODO Auto-generated method stub
-		return super.setReadOnly();
+		try {
+			throw new Exception("Not implemented");
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.error(e.getMessage());
+		}
+		return false;
 	}
 
+	@Deprecated
 	@Override
 	public boolean setWritable(boolean writable) {
-		// TODO Auto-generated method stub
-		return super.setWritable(writable);
+		try {
+			throw new Exception("Not implemented");
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.error(e.getMessage());
+		}
+		return false;
 	}
 
+	@Deprecated
 	@Override
 	public boolean setWritable(boolean writable, boolean ownerOnly) {
-		// TODO Auto-generated method stub
-		return super.setWritable(writable, ownerOnly);
+		try {
+			throw new Exception("Not implemented");
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.error(e.getMessage());
+		}
+		return false;
 	}
 
+	@Deprecated
 	@Override
 	public Path toPath() {
-		// TODO Auto-generated method stub
-		return super.toPath();
+		try {
+			throw new Exception("Not implemented");
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.error(e.getMessage());
+		}
+		return null;
 	}
 
 	@Override
@@ -513,8 +549,20 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public URL toURL() throws MalformedURLException {
+
 		// TODO Auto-generated method stub
 		return super.toURL();
+	}
+
+	public void put(InputStream in) {
+
+		try {
+			sardine.put(webdavPath, in);
+		} catch (IOException e) {
+			LOG.error("could not create file on server" + webdavPath);
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
