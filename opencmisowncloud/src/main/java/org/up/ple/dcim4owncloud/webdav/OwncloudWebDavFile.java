@@ -37,7 +37,7 @@ public class OwncloudWebDavFile extends File {
 
 	private List<DavResource> resources;
 	private OwncloudWebDavFile parent;
-	private DavResource resource = null;
+	// private DavResource resource = null;
 
 	private Sardine sardine;
 
@@ -76,11 +76,10 @@ public class OwncloudWebDavFile extends File {
 		loader = new OwnCloudConfigurationLoader();
 		webdavPath = loader.getOwnCloudAddress() + pathname;
 
-		initParent();
-		getResource();
+		// initParent();
+		// getResource();
 
-		// isDir = webdavPath.endsWith("/");
-		isDir = resource.isDirectory();
+		isDir = webdavPath.endsWith("/");
 		if (isDir) {
 			initResources();
 		}
@@ -89,19 +88,25 @@ public class OwncloudWebDavFile extends File {
 
 	private void initParent() {
 		if (getName() != "/") {
-			this.parent = new OwncloudWebDavFile(webdavPath.substring(0,
-					webdavPath.lastIndexOf('/') - 1), userManager);
+			String parentString = getParentString();
+			this.parent = new OwncloudWebDavFile(parentString, userManager);
 		} else {
 			LOG.debug("root does not have parent dir and parent remains null");
 		}
 	}
 
-	private void getResource() {
+	private String getParentString() {
+		String parentString = webdavPath.substring(0,
+				webdavPath.lastIndexOf('/') - 1);
+		return parentString;
+	}
+
+	private DavResource getResource() {
 		try {
 			/**
 			 * we assume that every path to file is unique
 			 */
-			resource = sardine.getResources(webdavPath).iterator().next();
+			return sardine.getResources(webdavPath).iterator().next();
 		} catch (com.github.sardine.impl.SardineException e) {
 			LOG.debug(e.getMessage());
 			LOG.warn("could not authenticate for user"
@@ -111,6 +116,7 @@ public class OwncloudWebDavFile extends File {
 			LOG.error("could not get resources for "
 					+ loader.getOwnCloudAddress() + webdavPath + e.getMessage());
 		}
+		return null;
 
 	}
 
@@ -210,7 +216,13 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public boolean exists() {
-		return (boolean) (resource != null);
+		try {
+			return (boolean) sardine.exists(webdavPath);
+		} catch (IOException e) {
+			LOG.error("error while checking if existst" + webdavPath);
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	/**
@@ -258,11 +270,12 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public String getParent() {
-		return parent.getName();
+		return getParentString();
 	}
 
 	@Override
 	public File getParentFile() {
+		initParent();
 		return parent;
 	}
 
@@ -340,15 +353,18 @@ public class OwncloudWebDavFile extends File {
 		return false;
 	}
 
+	/**
+	 * dies ist ein sehr teurer aufruf
+	 */
 	@Override
 	public long lastModified() {
-		return resource.getModified().getTime();
+		return getResource().getModified().getTime();
 	}
 
 	@Override
 	public long length() {
 		if (!isDir) {
-			return (long) resource.getContentLength();
+			return (long) getResource().getContentLength();
 		} else {
 			return -1;
 		}
@@ -434,7 +450,7 @@ public class OwncloudWebDavFile extends File {
 				webdavPath = loader.getOwnCloudAddress() + dest.getName();
 				sardine.put(webdavPath, IOUtils.toByteArray(inputstream));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				LOG.error("error while renaming");
 				e.printStackTrace();
 			}
 		}
@@ -457,9 +473,10 @@ public class OwncloudWebDavFile extends File {
 		return false;
 	}
 
+	@Deprecated
 	@Override
 	public boolean setLastModified(long time) {
-		resource.getModified().setTime(time);
+		getResource().getModified().setTime(time);
 		return isDir;
 	}
 

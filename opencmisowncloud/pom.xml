@@ -94,22 +94,22 @@
 					</overlays>
 				</configuration>
 			</plugin>
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-war-plugin</artifactId> -->
-<!-- 				<configuration> -->
-<!-- 					<warName>cmis4owncloudalpha</warName> -->
-<!-- 					<outputDirectory>I:\workspace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\webapps</outputDirectory> -->
-<!-- 				</configuration> -->
-<!-- 			</plugin> -->
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-war-plugin</artifactId> -->
-<!-- 				<configuration> -->
-<!-- 					<warName>cmis4owncloudalpha</warName> -->
-<!-- 					<outputDirectory>I:\jetty-6.1.10\webapps</outputDirectory> -->
-<!-- 				</configuration> -->
-<!-- 			</plugin> -->
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-war-plugin</artifactId> -->
+			<!-- <configuration> -->
+			<!-- <warName>cmis4owncloudalpha</warName> -->
+			<!-- <outputDirectory>I:\workspace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\webapps</outputDirectory> -->
+			<!-- </configuration> -->
+			<!-- </plugin> -->
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-war-plugin</artifactId> -->
+			<!-- <configuration> -->
+			<!-- <warName>cmis4owncloudalpha</warName> -->
+			<!-- <outputDirectory>I:\jetty-6.1.10\webapps</outputDirectory> -->
+			<!-- </configuration> -->
+			<!-- </plugin> -->
 		</plugins>
 	</build>
 
@@ -154,8 +154,7 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
-		</dependency>
-
+		</dependency>		
 	</dependencies>
 </project>
 
