@@ -514,24 +514,18 @@ public class OwnCloudFileShareRepository {
 		}
 
 		// get parent File
-		File parent = getFile(folderId);
+		// File parent = getFile(folderId);
+		File parent = new OwncloudWebDavFile(folderId, userManager);
 		if (!parent.isDirectory()) {
 			throw new CmisObjectNotFoundException("Parent is not a folder!");
 		}
 
 		// check the file
-		File newFile = new File(parent, name);
+		OwncloudWebDavFile newFile = new OwncloudWebDavFile(parent.getName()
+				+ name, userManager);
 		if (newFile.exists()) {
 			throw new CmisNameConstraintViolationException(
 					"Document already exists!");
-		}
-
-		// create the file
-		try {
-			newFile.createNewFile();
-		} catch (IOException e) {
-			throw new CmisStorageException("Could not create file: "
-					+ e.getMessage(), e);
 		}
 
 		// write content, if available
