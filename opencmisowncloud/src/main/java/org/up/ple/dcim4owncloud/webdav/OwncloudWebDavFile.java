@@ -51,7 +51,7 @@ public class OwncloudWebDavFile extends File {
 	public OwncloudWebDavFile(File parent, String child) {
 		super(parent, child);
 		try {
-			throw new Exception("Not implemented");
+			throw new Exception("constuctor not implemented");
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOG.error(e.getMessage());
@@ -62,7 +62,7 @@ public class OwncloudWebDavFile extends File {
 	public OwncloudWebDavFile(String pathname) {
 		super(pathname);
 		try {
-			throw new Exception("Not implemented");
+			throw new Exception("constuctor not implemented");
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOG.error(e.getMessage());
@@ -83,21 +83,20 @@ public class OwncloudWebDavFile extends File {
 		if (isDir) {
 			initResources();
 		}
-
 	}
 
-	private void initParent() {
-		if (getName() != "/") {
-			String parentString = getParentString();
-			this.parent = new OwncloudWebDavFile(parentString, userManager);
-		} else {
-			LOG.debug("root does not have parent dir and parent remains null");
-		}
-	}
+	// private void initParent() {
+	// if (getName() != "/") {
+	// String parentString = getParentString();
+	// this.parent = new OwncloudWebDavFile(parentString, userManager);
+	// } else {
+	// LOG.debug("root does not have parent dir and parent remains null");
+	// }
+	// }
 
 	private String getParentString() {
 		String parentString = webdavPath.substring(0,
-				webdavPath.lastIndexOf('/') - 1);
+				webdavPath.lastIndexOf('/'));
 		return parentString;
 	}
 
@@ -106,7 +105,8 @@ public class OwncloudWebDavFile extends File {
 			/**
 			 * we assume that every path to file is unique
 			 */
-			return sardine.getResources(webdavPath).iterator().next();
+			DavResource resource = sardine.list(webdavPath).iterator().next();
+			return resource;
 		} catch (com.github.sardine.impl.SardineException e) {
 			LOG.debug(e.getMessage());
 			LOG.warn("could not authenticate for user"
@@ -124,7 +124,7 @@ public class OwncloudWebDavFile extends File {
 	public OwncloudWebDavFile(String parent, String child) {
 		super(parent, child);
 		try {
-			throw new Exception("Not implemented");
+			throw new Exception("constuctor not implemented");
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOG.error(e.getMessage());
@@ -135,7 +135,7 @@ public class OwncloudWebDavFile extends File {
 	public OwncloudWebDavFile(URI uri) {
 		super(uri);
 		try {
-			throw new Exception("Not implemented");
+			throw new Exception("constuctor not implemented");
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOG.error(e.getMessage());
@@ -181,6 +181,12 @@ public class OwncloudWebDavFile extends File {
 	 */
 	@Override
 	public boolean createNewFile() throws IOException {
+		try {
+			throw new Exception("Not implemented");
+		} catch (Exception e) {
+			LOG.error(e.getMessage());
+		}
+
 		return false;
 	}
 
@@ -204,7 +210,7 @@ public class OwncloudWebDavFile extends File {
 		try {
 			throw new Exception("Not implemented");
 		} catch (Exception e) {
-			e.printStackTrace();
+
 			LOG.error(e.getMessage());
 		}
 	}
@@ -216,11 +222,14 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public boolean exists() {
+		LOG.debug("checking if file exists" + webdavPath + "\n"
+				+ "with usercredentials" + userManager.getDefaultUserName()
+				+ ":" + userManager.getDefaultUserName());
 		try {
 			return (boolean) sardine.exists(webdavPath);
 		} catch (IOException e) {
 			LOG.error("error while checking if existst" + webdavPath);
-			e.printStackTrace();
+
 		}
 		return false;
 	}
@@ -234,7 +243,7 @@ public class OwncloudWebDavFile extends File {
 		try {
 			throw new Exception("Not implemented");
 		} catch (Exception e) {
-			e.printStackTrace();
+
 			LOG.error(e.getMessage());
 		}
 		return this;
@@ -252,7 +261,7 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public String getCanonicalPath() throws IOException {
-		return this.getName();
+		return this.webdavPath;
 	}
 
 	/**
@@ -265,7 +274,7 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public String getName() {
-		return super.getName();
+		return webdavPath;
 	}
 
 	@Override
@@ -275,8 +284,7 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public File getParentFile() {
-		initParent();
-		return parent;
+		return new OwncloudWebDavFile(getParentString(), userManager);
 	}
 
 	@Override
@@ -296,7 +304,7 @@ public class OwncloudWebDavFile extends File {
 		try {
 			throw new Exception("not implemented");
 		} catch (Exception e) {
-			e.printStackTrace();
+
 			LOG.error(e.getMessage());
 		}
 		return -1;
@@ -307,7 +315,6 @@ public class OwncloudWebDavFile extends File {
 		try {
 			throw new Exception("not implemented");
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOG.error(e.getMessage());
 		}
 		return -1;
@@ -315,8 +322,12 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public int hashCode() {
-		// TODO Auto-generated method stub
-		return super.hashCode();
+		@SuppressWarnings("unused")
+		String test = webdavPath;
+		if (test == null) {
+			LOG.error("webdavPath is null");
+		}
+		return webdavPath.hashCode();
 	}
 
 	private void initResources() {
@@ -392,7 +403,6 @@ public class OwncloudWebDavFile extends File {
 			throw new Exception("Not implemented");
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
-			e.printStackTrace();
 		}
 		return null;
 	}
@@ -402,9 +412,9 @@ public class OwncloudWebDavFile extends File {
 		HashSet<File> files = new HashSet<File>();
 		Iterator<DavResource> it = resources.iterator();
 		while (it.hasNext()) {
-			files.add(new OwncloudWebDavFile(it.next().toString()));
+			files.add(new OwncloudWebDavFile(it.next().toString(), userManager));
 		}
-		return files.toArray(new File[resources.size()]);
+		return files.toArray(new OwncloudWebDavFile[resources.size()]);
 	}
 
 	@Deprecated
@@ -425,7 +435,7 @@ public class OwncloudWebDavFile extends File {
 			sardine.createDirectory(webdavPath);
 		} catch (IOException e) {
 			LOG.error(e.getMessage());
-			e.printStackTrace();
+
 		}
 		return super.mkdir();
 	}
@@ -437,7 +447,7 @@ public class OwncloudWebDavFile extends File {
 			sardine.createDirectory(webdavPath);
 		} catch (IOException e) {
 			LOG.error(e.getMessage());
-			e.printStackTrace();
+
 		}
 		return super.mkdirs();
 	}
@@ -451,7 +461,7 @@ public class OwncloudWebDavFile extends File {
 				sardine.put(webdavPath, IOUtils.toByteArray(inputstream));
 			} catch (IOException e) {
 				LOG.error("error while renaming");
-				e.printStackTrace();
+
 			}
 		}
 		return true;
@@ -486,7 +496,6 @@ public class OwncloudWebDavFile extends File {
 		try {
 			throw new Exception("Not implemented");
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOG.error(e.getMessage());
 		}
 		return false;
@@ -498,7 +507,6 @@ public class OwncloudWebDavFile extends File {
 		try {
 			throw new Exception("Not implemented");
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOG.error(e.getMessage());
 		}
 		return false;
@@ -510,7 +518,6 @@ public class OwncloudWebDavFile extends File {
 		try {
 			throw new Exception("Not implemented");
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOG.error(e.getMessage());
 		}
 		return false;
@@ -522,7 +529,6 @@ public class OwncloudWebDavFile extends File {
 		try {
 			throw new Exception("Not implemented");
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOG.error(e.getMessage());
 		}
 		return false;
@@ -534,7 +540,6 @@ public class OwncloudWebDavFile extends File {
 		try {
 			throw new Exception("Not implemented");
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOG.error(e.getMessage());
 		}
 		return false;
@@ -546,10 +551,9 @@ public class OwncloudWebDavFile extends File {
 		try {
 			throw new Exception("Not implemented");
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOG.error(e.getMessage());
 		}
-		return null;
+		return super.toPath();
 	}
 
 	@Override
@@ -572,12 +576,10 @@ public class OwncloudWebDavFile extends File {
 	}
 
 	public void put(InputStream in) {
-
 		try {
 			sardine.put(webdavPath, in);
 		} catch (IOException e) {
 			LOG.error("could not create file on server" + webdavPath);
-			e.printStackTrace();
 		}
 
 	}
