@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -36,8 +37,6 @@ public class OwncloudWebDavFile extends File {
 	private OwnCloudConfigurationLoader loader;
 
 	private List<DavResource> resources;
-	private OwncloudWebDavFile parent;
-	// private DavResource resource = null;
 
 	private Sardine sardine;
 
@@ -74,14 +73,20 @@ public class OwncloudWebDavFile extends File {
 		this.userManager = userManager;
 		sardine = getSardineEndpoint(userManager);
 		loader = new OwnCloudConfigurationLoader();
-		webdavPath = loader.getOwnCloudAddress() + pathname;
 
-		// initParent();
-		// getResource();
+		initWebdavPath(pathname);
 
 		isDir = webdavPath.endsWith("/");
 		if (isDir) {
 			initResources();
+		}
+	}
+
+	private void initWebdavPath(String pathname) {
+		if (pathname.startsWith("http:")) {
+			webdavPath = pathname;
+		} else {
+			webdavPath = loader.getOwnCloudAddress() + pathname;
 		}
 	}
 
@@ -105,16 +110,16 @@ public class OwncloudWebDavFile extends File {
 			/**
 			 * we assume that every path to file is unique
 			 */
+			sardine = getSardineEndpoint(userManager);
 			DavResource resource = sardine.list(webdavPath).iterator().next();
 			return resource;
 		} catch (com.github.sardine.impl.SardineException e) {
-			LOG.debug(e.getMessage());
-			LOG.warn("could not authenticate for user"
+			LOG.warn("could not get resource" + webdavPath + "for user"
 					+ userManager.getDefaultUserName() + ":"
 					+ userManager.getDefaultPassword());
 		} catch (IOException e) {
-			LOG.error("could not get resources for "
-					+ loader.getOwnCloudAddress() + webdavPath + e.getMessage());
+			LOG.error("could not get resources for: " + webdavPath);
+			e.printStackTrace();
 		}
 		return null;
 
@@ -193,6 +198,7 @@ public class OwncloudWebDavFile extends File {
 	@Override
 	public boolean delete() {
 		try {
+			sardine = getSardineEndpoint(userManager);
 			sardine.delete(webdavPath);
 		} catch (IOException e) {
 			LOG.error(e.getMessage());
@@ -222,14 +228,11 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public boolean exists() {
-		LOG.debug("checking if file exists" + webdavPath + "\n"
-				+ "with usercredentials" + userManager.getDefaultUserName()
-				+ ":" + userManager.getDefaultUserName());
 		try {
+			sardine = getSardineEndpoint(userManager);
 			return (boolean) sardine.exists(webdavPath);
 		} catch (IOException e) {
-			LOG.error("error while checking if existst" + webdavPath);
-
+			LOG.error("error while checking if exists: " + webdavPath);
 		}
 		return false;
 	}
@@ -251,7 +254,7 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public String getAbsolutePath() {
-		return this.getName();
+		return this.webdavPath;
 	}
 
 	@Override
@@ -274,7 +277,9 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public String getName() {
-		return webdavPath;
+		int lastDirIndex = webdavPath.lastIndexOf("/");
+		int lastIndex = webdavPath.length();
+		return webdavPath.substring(lastDirIndex, lastIndex);
 	}
 
 	@Override
@@ -289,7 +294,7 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public String getPath() {
-		return getName();
+		return this.webdavPath;
 	}
 
 	private Sardine getSardineEndpoint(final FileShareUserManager userManager) {
@@ -322,7 +327,6 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public int hashCode() {
-		@SuppressWarnings("unused")
 		String test = webdavPath;
 		if (test == null) {
 			LOG.error("webdavPath is null");
@@ -332,15 +336,14 @@ public class OwncloudWebDavFile extends File {
 
 	private void initResources() {
 		try {
+			sardine = getSardineEndpoint(userManager);
 			resources = sardine.list(webdavPath);
 		} catch (com.github.sardine.impl.SardineException e) {
-			LOG.debug(e.getMessage());
-			LOG.warn("could not authenticate for user"
-					+ userManager.getDefaultUserName() + ":"
-					+ userManager.getDefaultPassword());
+			LOG.error(e.getMessage());
 		} catch (IOException e) {
-			LOG.error("could not get resources for "
-					+ loader.getOwnCloudAddress() + webdavPath + e.getMessage());
+			LOG.error("could not get resources for " + webdavPath
+					+ e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -369,7 +372,9 @@ public class OwncloudWebDavFile extends File {
 	 */
 	@Override
 	public long lastModified() {
-		return getResource().getModified().getTime();
+		Date date = getResource().getModified();
+		Long lastModified = date.getTime();
+		return lastModified;
 	}
 
 	@Override
@@ -383,15 +388,9 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public String[] list() {
-		String[] result = new String[resources.size()];
-		Iterator<DavResource> it = resources.iterator();
-		int i = 0;
-		while (it.hasNext()) {
-			result[i] = it.next().toString();
-			i++;
-		}
-		if (isDir) {
-
+		String[] result = new String[listFiles().length];
+		for (int i = 0; i <= listFiles().length - 1; i++) {
+			result[i] = listFiles()[i].getName();
 		}
 		return result;
 	}
@@ -412,7 +411,12 @@ public class OwncloudWebDavFile extends File {
 		HashSet<File> files = new HashSet<File>();
 		Iterator<DavResource> it = resources.iterator();
 		while (it.hasNext()) {
-			files.add(new OwncloudWebDavFile(it.next().toString(), userManager));
+			DavResource davResource = it.next();
+			String childResource = davResource.toString();
+			if (davResource.isDirectory() && !childResource.endsWith("/")) {
+				childResource += "/";
+			}
+			files.add(new OwncloudWebDavFile(childResource, userManager));
 		}
 		return files.toArray(new OwncloudWebDavFile[resources.size()]);
 	}
@@ -432,6 +436,7 @@ public class OwncloudWebDavFile extends File {
 	@Override
 	public boolean mkdir() {
 		try {
+			sardine = getSardineEndpoint(userManager);
 			sardine.createDirectory(webdavPath);
 		} catch (IOException e) {
 			LOG.error(e.getMessage());
@@ -444,6 +449,7 @@ public class OwncloudWebDavFile extends File {
 	@Override
 	public boolean mkdirs() {
 		try {
+			sardine = getSardineEndpoint(userManager);
 			sardine.createDirectory(webdavPath);
 		} catch (IOException e) {
 			LOG.error(e.getMessage());
@@ -456,7 +462,9 @@ public class OwncloudWebDavFile extends File {
 	public boolean renameTo(File dest) {
 		if (!isDir) {
 			try {
+				sardine = getSardineEndpoint(userManager);
 				InputStream inputstream = sardine.get(webdavPath);
+				sardine.delete(webdavPath);
 				webdavPath = loader.getOwnCloudAddress() + dest.getName();
 				sardine.put(webdavPath, IOUtils.toByteArray(inputstream));
 			} catch (IOException e) {
@@ -558,8 +566,7 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return super.toString();
+		return webdavPath;
 	}
 
 	@Override

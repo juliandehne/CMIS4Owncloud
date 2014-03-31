@@ -1569,8 +1569,9 @@ public class OwnCloudFileShareRepository {
 		if (file == null) {
 			throw new IllegalArgumentException("File must not be null!");
 		}
+		file = new OwncloudWebDavFile(file.getName(), userManager);
 
-		debug("compileProperties" + file.getName());
+		debug("compileProperties: " + file.getName());
 
 		// we can't gather properties if the file or folder doesn't exist
 		if (!file.exists()) {

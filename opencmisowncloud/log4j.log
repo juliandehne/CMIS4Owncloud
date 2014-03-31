@@ -1,0 +1,293 @@
+2014-03-31 15:20:56,948 DEBUG [main] org.apache.http.client.protocol.RequestAddCookies: CookieSpec selected: best-match
+2014-03-31 15:20:56,990 DEBUG [main] org.apache.http.client.protocol.RequestAuthCache: Auth cache not set in the context
+2014-03-31 15:20:56,993 DEBUG [main] org.apache.http.impl.conn.PoolingHttpClientConnectionManager: Connection request: [route: {}->http://uzuzjmd.de:80][total kept alive: 0; route allocated: 0 of 2; total allocated: 0 of 20]
+2014-03-31 15:20:57,043 DEBUG [main] org.apache.http.impl.conn.PoolingHttpClientConnectionManager: Connection leased: [id: 0][route: {}->http://uzuzjmd.de:80][total kept alive: 0; route allocated: 1 of 2; total allocated: 1 of 20]
+2014-03-31 15:20:57,054 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Opening connection {}->http://uzuzjmd.de:80
+2014-03-31 15:20:57,072 DEBUG [main] org.apache.http.conn.HttpClientConnectionManager: Connecting to uzuzjmd.de/81.169.139.20:80
+2014-03-31 15:20:57,078 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Executing request PROPFIND /owncloud/remote.php/webdav/ HTTP/1.1
+2014-03-31 15:20:57,078 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Target auth state: UNCHALLENGED
+2014-03-31 15:20:57,079 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Proxy auth state: UNCHALLENGED
+2014-03-31 15:20:57,082 DEBUG [main] org.apache.http.headers: http-outgoing-0 >> PROPFIND /owncloud/remote.php/webdav/ HTTP/1.1
+2014-03-31 15:20:57,082 DEBUG [main] org.apache.http.headers: http-outgoing-0 >> Depth: 1
+2014-03-31 15:20:57,082 DEBUG [main] org.apache.http.headers: http-outgoing-0 >> Content-Type: text/xml; charset=utf-8
+2014-03-31 15:20:57,082 DEBUG [main] org.apache.http.headers: http-outgoing-0 >> Content-Length: 99
+2014-03-31 15:20:57,082 DEBUG [main] org.apache.http.headers: http-outgoing-0 >> Host: uzuzjmd.de
+2014-03-31 15:20:57,082 DEBUG [main] org.apache.http.headers: http-outgoing-0 >> Connection: Keep-Alive
+2014-03-31 15:20:57,082 DEBUG [main] org.apache.http.headers: http-outgoing-0 >> User-Agent: Sardine/5.1
+2014-03-31 15:20:57,082 DEBUG [main] org.apache.http.headers: http-outgoing-0 >> Accept-Encoding: gzip,deflate
+2014-03-31 15:20:57,083 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "PROPFIND /owncloud/remote.php/webdav/ HTTP/1.1[\r][\n]"
+2014-03-31 15:20:57,083 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "Depth: 1[\r][\n]"
+2014-03-31 15:20:57,083 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "Content-Type: text/xml; charset=utf-8[\r][\n]"
+2014-03-31 15:20:57,083 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "Content-Length: 99[\r][\n]"
+2014-03-31 15:20:57,083 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "Host: uzuzjmd.de[\r][\n]"
+2014-03-31 15:20:57,083 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "Connection: Keep-Alive[\r][\n]"
+2014-03-31 15:20:57,083 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "User-Agent: Sardine/5.1[\r][\n]"
+2014-03-31 15:20:57,084 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2014-03-31 15:20:57,084 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "[\r][\n]"
+2014-03-31 15:20:57,084 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "<?xml version="1.0" encoding="UTF-8" standalone="yes"?><propfind xmlns="DAV:"><allprop/></propfind>"
+2014-03-31 15:20:57,204 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "HTTP/1.1 401 Unauthorized[\r][\n]"
+2014-03-31 15:20:57,204 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Date: Mon, 31 Mar 2014 13:20:58 GMT[\r][\n]"
+2014-03-31 15:20:57,204 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Server: Apache[\r][\n]"
+2014-03-31 15:20:57,205 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Set-Cookie: oca745295bf2=lpm14hp2e18o2oa33tm3m5g9g4; path=/owncloud; HttpOnly[\r][\n]"
+2014-03-31 15:20:57,205 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Expires: Thu, 19 Nov 1981 08:52:00 GMT[\r][\n]"
+2014-03-31 15:20:57,205 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0[\r][\n]"
+2014-03-31 15:20:57,205 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Pragma: no-cache[\r][\n]"
+2014-03-31 15:20:57,205 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "WWW-Authenticate: Basic realm="ownCloud"[\r][\n]"
+2014-03-31 15:20:57,205 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "X-Powered-By: PleskLin[\r][\n]"
+2014-03-31 15:20:57,205 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Content-Length: 291[\r][\n]"
+2014-03-31 15:20:57,205 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Keep-Alive: timeout=5, max=100[\r][\n]"
+2014-03-31 15:20:57,205 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Connection: Keep-Alive[\r][\n]"
+2014-03-31 15:20:57,205 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Content-Type: application/xml; charset=utf-8[\r][\n]"
+2014-03-31 15:20:57,206 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "[\r][\n]"
+2014-03-31 15:20:57,206 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "<?xml version="1.0" encoding="utf-8"?>[\n]"
+2014-03-31 15:20:57,206 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "<d:error xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns">[\n]"
+2014-03-31 15:20:57,206 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "  <s:exception>Sabre_DAV_Exception_NotAuthenticated</s:exception>[\n]"
+2014-03-31 15:20:57,206 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "  <s:message>No basic authentication headers were found</s:message>[\n]"
+2014-03-31 15:20:57,206 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "  <s:sabredav-version>1.7.6</s:sabredav-version>[\n]"
+2014-03-31 15:20:57,206 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "</d:error>[\n]"
+2014-03-31 15:20:57,214 DEBUG [main] org.apache.http.headers: http-outgoing-0 << HTTP/1.1 401 Unauthorized
+2014-03-31 15:20:57,215 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Date: Mon, 31 Mar 2014 13:20:58 GMT
+2014-03-31 15:20:57,215 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Server: Apache
+2014-03-31 15:20:57,215 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Set-Cookie: oca745295bf2=lpm14hp2e18o2oa33tm3m5g9g4; path=/owncloud; HttpOnly
+2014-03-31 15:20:57,215 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Expires: Thu, 19 Nov 1981 08:52:00 GMT
+2014-03-31 15:20:57,216 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+2014-03-31 15:20:57,216 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Pragma: no-cache
+2014-03-31 15:20:57,216 DEBUG [main] org.apache.http.headers: http-outgoing-0 << WWW-Authenticate: Basic realm="ownCloud"
+2014-03-31 15:20:57,216 DEBUG [main] org.apache.http.headers: http-outgoing-0 << X-Powered-By: PleskLin
+2014-03-31 15:20:57,216 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Content-Length: 291
+2014-03-31 15:20:57,216 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Keep-Alive: timeout=5, max=100
+2014-03-31 15:20:57,216 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Connection: Keep-Alive
+2014-03-31 15:20:57,216 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Content-Type: application/xml; charset=utf-8
+2014-03-31 15:20:57,228 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Connection can be kept alive for 5000 MILLISECONDS
+2014-03-31 15:20:57,228 DEBUG [main] org.apache.http.impl.auth.HttpAuthenticator: Authentication required
+2014-03-31 15:20:57,228 DEBUG [main] org.apache.http.impl.auth.HttpAuthenticator: uzuzjmd.de:80 requested authentication
+2014-03-31 15:20:57,228 DEBUG [main] org.apache.http.impl.client.TargetAuthenticationStrategy: Authentication schemes in the order of preference: [negotiate, Kerberos, NTLM, Digest, Basic]
+2014-03-31 15:20:57,228 DEBUG [main] org.apache.http.impl.client.TargetAuthenticationStrategy: Challenge for negotiate authentication scheme not available
+2014-03-31 15:20:57,228 DEBUG [main] org.apache.http.impl.client.TargetAuthenticationStrategy: Challenge for Kerberos authentication scheme not available
+2014-03-31 15:20:57,229 DEBUG [main] org.apache.http.impl.client.TargetAuthenticationStrategy: Challenge for NTLM authentication scheme not available
+2014-03-31 15:20:57,229 DEBUG [main] org.apache.http.impl.client.TargetAuthenticationStrategy: Challenge for Digest authentication scheme not available
+2014-03-31 15:20:57,244 DEBUG [main] org.apache.http.impl.auth.HttpAuthenticator: Selected authentication options: [BASIC]
+2014-03-31 15:20:57,246 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Executing request PROPFIND /owncloud/remote.php/webdav/ HTTP/1.1
+2014-03-31 15:20:57,246 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Target auth state: CHALLENGED
+2014-03-31 15:20:57,246 DEBUG [main] org.apache.http.impl.auth.HttpAuthenticator: Generating response to an authentication challenge using basic scheme
+2014-03-31 15:20:57,262 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Proxy auth state: UNCHALLENGED
+2014-03-31 15:20:57,263 DEBUG [main] org.apache.http.headers: http-outgoing-0 >> PROPFIND /owncloud/remote.php/webdav/ HTTP/1.1
+2014-03-31 15:20:57,263 DEBUG [main] org.apache.http.headers: http-outgoing-0 >> Depth: 1
+2014-03-31 15:20:57,263 DEBUG [main] org.apache.http.headers: http-outgoing-0 >> Content-Type: text/xml; charset=utf-8
+2014-03-31 15:20:57,263 DEBUG [main] org.apache.http.headers: http-outgoing-0 >> Content-Length: 99
+2014-03-31 15:20:57,263 DEBUG [main] org.apache.http.headers: http-outgoing-0 >> Host: uzuzjmd.de
+2014-03-31 15:20:57,263 DEBUG [main] org.apache.http.headers: http-outgoing-0 >> Connection: Keep-Alive
+2014-03-31 15:20:57,263 DEBUG [main] org.apache.http.headers: http-outgoing-0 >> User-Agent: Sardine/5.1
+2014-03-31 15:20:57,263 DEBUG [main] org.apache.http.headers: http-outgoing-0 >> Accept-Encoding: gzip,deflate
+2014-03-31 15:20:57,263 DEBUG [main] org.apache.http.headers: http-outgoing-0 >> Authorization: Basic cm9vdDp2b3lhZ2Vy
+2014-03-31 15:20:57,263 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "PROPFIND /owncloud/remote.php/webdav/ HTTP/1.1[\r][\n]"
+2014-03-31 15:20:57,263 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "Depth: 1[\r][\n]"
+2014-03-31 15:20:57,263 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "Content-Type: text/xml; charset=utf-8[\r][\n]"
+2014-03-31 15:20:57,263 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "Content-Length: 99[\r][\n]"
+2014-03-31 15:20:57,263 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "Host: uzuzjmd.de[\r][\n]"
+2014-03-31 15:20:57,264 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "Connection: Keep-Alive[\r][\n]"
+2014-03-31 15:20:57,264 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "User-Agent: Sardine/5.1[\r][\n]"
+2014-03-31 15:20:57,264 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2014-03-31 15:20:57,264 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "Authorization: Basic cm9vdDp2b3lhZ2Vy[\r][\n]"
+2014-03-31 15:20:57,264 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "[\r][\n]"
+2014-03-31 15:20:57,264 DEBUG [main] org.apache.http.wire: http-outgoing-0 >> "<?xml version="1.0" encoding="UTF-8" standalone="yes"?><propfind xmlns="DAV:"><allprop/></propfind>"
+2014-03-31 15:20:57,599 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "HTTP/1.1 207 Multi-Status[\r][\n]"
+2014-03-31 15:20:57,599 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Date: Mon, 31 Mar 2014 13:20:58 GMT[\r][\n]"
+2014-03-31 15:20:57,600 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Server: Apache[\r][\n]"
+2014-03-31 15:20:57,600 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Set-Cookie: oca745295bf2=oubm2pqrmpplvlg87r5k7uhji4; path=/owncloud; HttpOnly[\r][\n]"
+2014-03-31 15:20:57,600 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Expires: Thu, 19 Nov 1981 08:52:00 GMT[\r][\n]"
+2014-03-31 15:20:57,600 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0[\r][\n]"
+2014-03-31 15:20:57,600 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Pragma: no-cache[\r][\n]"
+2014-03-31 15:20:57,600 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Vary: Brief,Prefer[\r][\n]"
+2014-03-31 15:20:57,600 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "DAV: 1, 3, extended-mkcol, 2[\r][\n]"
+2014-03-31 15:20:57,600 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "X-Powered-By: PleskLin[\r][\n]"
+2014-03-31 15:20:57,600 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Content-Length: 3716[\r][\n]"
+2014-03-31 15:20:57,600 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Keep-Alive: timeout=5, max=99[\r][\n]"
+2014-03-31 15:20:57,601 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Connection: Keep-Alive[\r][\n]"
+2014-03-31 15:20:57,601 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "Content-Type: application/xml; charset=utf-8[\r][\n]"
+2014-03-31 15:20:57,601 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "[\r][\n]"
+2014-03-31 15:20:57,601 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "<?xml version="1.0" encoding="utf-8"?>[\n]"
+2014-03-31 15:20:57,602 DEBUG [main] org.apache.http.wire: http-outgoing-0 << "<d:multistatus xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns" xmlns:oc="http://owncloud.org/ns"><d:response><d:href>/owncloud/remote.php/webdav/</d:href><d:propstat><d:prop><oc:id>00000002oca745295bf2</oc:id><d:getetag>"533917b27c2b7"</d:getetag><d:getlastmodified>Mon, 31 Mar 2014 07:22:21 GMT</d:getlastmodified><d:resourcetype><d:collection/></d:resourcetype><d:quota-used-bytes>1050531836</d:quota-used-bytes><d:quota-available-bytes>20424304644</d:quota-available-bytes></d:prop><d:status>HTTP/1.1 200 OK</d:status></d:propstat></d:response><d:response><d:href>/owncloud/remote.php/webdav/documents/</d:href><d:propstat><d:prop><oc:id>00000003oca745295bf2</oc:id><d:getetag>"530fadc9509d1"</d:getetag><d:getlastmodified>Thu, 27 Feb 2014 21:27:37 GMT</d:getlastmodified><d:resourcetype><d:collection/></d:resourcetype><d:quota-used-bytes>23383</d:quota-used-bytes><d:quota-available-bytes>20424304644</d:quota-available-bytes></d:prop><d:status>HTTP/1.1 200 OK</d:status></d:propstat></d:response><d:response><d:href>/owncloud/remote.php/webdav/lennis_test.png</d:href><d:propstat><d:prop><oc:id>00000012oca745295bf2</oc:id><d:getetag>"530fad350b082"</d:getetag><d:getlastmodified>Mon, 16 Dec 2013 06:35:17 GMT</d:getlastmodified><d:getcontentlength>1481</d:getcontentlength><d:resourcetype/><d:getcontenttype>image/png</d:getcontenttype></d:prop><d:status>HTTP/1.1 200 OK</d:status></d:propstat></d:response><d:response><d:href>/owncloud/remote.php/webdav/music/</d:href><d:propstat><d:prop><oc:id>00000004oca745295bf2</oc:id><d:getetag>"5321fdd319f3d"</d:getetag><d:getlastmodified>Thu, 13 Mar 2014 12:02:36 GMT</d:getlastmodified><d:resourcetype><d:collection/></d:resourcetype><d:quota-used-bytes>665052618</d:quota-used-bytes><d:quota-available-bytes>20424304644</d:quota-available-bytes></d:prop><d:status>HTTP/1.1 200 OK</d:status></d:propstat></d:response><d:response><d:href>/owncloud/remote.php/webdav/ownCloudUserManual.pdf</d:href><d:propstat><d:prop><oc:id>00000005oca745295bf2</oc:id><d:getetag>"530faac7923e0"</d:getetag><d:getlastmodified>Thu, 27 Feb 2014 21:14:46 GMT</d:getlastmodified><d:getcontentlength>1558473</d:getcontentlength><d:resourcetype/><d:getcontenttype>application/pdf</d:getcontenttype></d:prop><d:status>HTTP/1.1 200 OK</d:status></d:propstat></d:response><d:response><d:href>/owncloud/remote.php/webdav/photos/</d:href><d:propstat><d:prop><oc:id>00000006oca745295bf2</oc:id><d:getetag>"530faac792971"</d:getetag><d:getlastmodified>Thu, 27 Feb 2014 21:14:46 GMT</d:getlastmodified><d:resourcetype><d:collection/></d:resourcetype><d:quota-used-bytes>678556</d:quota-used-bytes><d:quota-available-bytes>20424304644</d:quota-available-bytes></d:prop><d:status>HTTP/1.1 200 OK</d:status></d:propstat></d:response><d:response><d:href>/owncloud/remote.php/webdav/software/</d:href><d:propstat><d:prop><oc:id>00000301oca745295bf2</oc:id><d:getetag>"531863f060d9c"</d:getetag><d:getlastmodified>Thu, 06 Mar 2014 12:02:56 GMT</d:getlastmodified><d:resourcetype><d:collection/></d:resourcetype><d:quota-used-bytes>292864000</d:quota-used-bytes><d:quota-available-bytes>20424304644</d:quota-available-bytes></d:prop><d:status>HTTP/1.1 200 OK</d:status></d:propstat></d:response><d:response><d:href>/owncloud/remote.php/webdav/uni/</d:href><d:propstat><d:prop><oc:id>00000049oca745295bf2</oc:id><d:getetag>"533917b26ebee"</d:getetag><d:getlastmodified>Mon, 31 Mar 2014 07:22:21 GMT</d:getlastmodified><d:resourcetype><d:collection/></d:resourcetype><d:quota-used-bytes>90353325</d:quota-used-bytes><d:quota-available-bytes>20424304644</d:quota-available-bytes></d:prop><d:status>HTTP/1.1 200 OK</d:status></d:propstat></d:response></d:multistatus>[\n]"
+2014-03-31 15:20:57,602 DEBUG [main] org.apache.http.headers: http-outgoing-0 << HTTP/1.1 207 Multi-Status
+2014-03-31 15:20:57,603 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Date: Mon, 31 Mar 2014 13:20:58 GMT
+2014-03-31 15:20:57,603 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Server: Apache
+2014-03-31 15:20:57,603 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Set-Cookie: oca745295bf2=oubm2pqrmpplvlg87r5k7uhji4; path=/owncloud; HttpOnly
+2014-03-31 15:20:57,603 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Expires: Thu, 19 Nov 1981 08:52:00 GMT
+2014-03-31 15:20:57,603 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+2014-03-31 15:20:57,603 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Pragma: no-cache
+2014-03-31 15:20:57,603 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Vary: Brief,Prefer
+2014-03-31 15:20:57,603 DEBUG [main] org.apache.http.headers: http-outgoing-0 << DAV: 1, 3, extended-mkcol, 2
+2014-03-31 15:20:57,603 DEBUG [main] org.apache.http.headers: http-outgoing-0 << X-Powered-By: PleskLin
+2014-03-31 15:20:57,603 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Content-Length: 3716
+2014-03-31 15:20:57,603 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Keep-Alive: timeout=5, max=99
+2014-03-31 15:20:57,603 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Connection: Keep-Alive
+2014-03-31 15:20:57,604 DEBUG [main] org.apache.http.headers: http-outgoing-0 << Content-Type: application/xml; charset=utf-8
+2014-03-31 15:20:57,604 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Connection can be kept alive for 5000 MILLISECONDS
+2014-03-31 15:20:57,604 DEBUG [main] org.apache.http.impl.auth.HttpAuthenticator: Authentication succeeded
+2014-03-31 15:20:57,606 DEBUG [main] org.apache.http.impl.client.TargetAuthenticationStrategy: Caching 'basic' auth scheme for http://uzuzjmd.de:80
+2014-03-31 15:20:57,627 DEBUG [main] org.apache.http.client.protocol.ResponseProcessCookies: Cookie accepted [oca745295bf2="oubm2pqrmpplvlg87r5k7uhji4", version:0, domain:uzuzjmd.de, path:/owncloud, expiry:null]
+2014-03-31 15:20:58,091 DEBUG [main] org.apache.http.impl.conn.PoolingHttpClientConnectionManager: Connection [id: 0][route: {}->http://uzuzjmd.de:80] can be kept alive for 5.0 seconds
+2014-03-31 15:20:58,092 DEBUG [main] org.apache.http.impl.conn.PoolingHttpClientConnectionManager: Connection released: [id: 0][route: {}->http://uzuzjmd.de:80][total kept alive: 1; route allocated: 1 of 2; total allocated: 1 of 20]
+2014-03-31 15:20:58,136 DEBUG [main] org.apache.http.client.protocol.RequestAddCookies: CookieSpec selected: best-match
+2014-03-31 15:20:58,137 DEBUG [main] org.apache.http.client.protocol.RequestAuthCache: Auth cache not set in the context
+2014-03-31 15:20:58,137 DEBUG [main] org.apache.http.impl.conn.PoolingHttpClientConnectionManager: Connection request: [route: {}->http://uzuzjmd.de:80][total kept alive: 0; route allocated: 0 of 2; total allocated: 0 of 20]
+2014-03-31 15:20:58,137 DEBUG [main] org.apache.http.impl.conn.PoolingHttpClientConnectionManager: Connection leased: [id: 1][route: {}->http://uzuzjmd.de:80][total kept alive: 0; route allocated: 1 of 2; total allocated: 1 of 20]
+2014-03-31 15:20:58,137 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Opening connection {}->http://uzuzjmd.de:80
+2014-03-31 15:20:58,138 DEBUG [main] org.apache.http.conn.HttpClientConnectionManager: Connecting to uzuzjmd.de/81.169.139.20:80
+2014-03-31 15:20:58,143 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Executing request HEAD /owncloud/remote.php/webdav/music/ HTTP/1.1
+2014-03-31 15:20:58,143 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Target auth state: UNCHALLENGED
+2014-03-31 15:20:58,143 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Proxy auth state: UNCHALLENGED
+2014-03-31 15:20:58,143 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> HEAD /owncloud/remote.php/webdav/music/ HTTP/1.1
+2014-03-31 15:20:58,144 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> Host: uzuzjmd.de
+2014-03-31 15:20:58,144 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> Connection: Keep-Alive
+2014-03-31 15:20:58,144 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> User-Agent: Sardine/5.1
+2014-03-31 15:20:58,144 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> Accept-Encoding: gzip,deflate
+2014-03-31 15:20:58,144 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "HEAD /owncloud/remote.php/webdav/music/ HTTP/1.1[\r][\n]"
+2014-03-31 15:20:58,144 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "Host: uzuzjmd.de[\r][\n]"
+2014-03-31 15:20:58,144 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "Connection: Keep-Alive[\r][\n]"
+2014-03-31 15:20:58,144 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "User-Agent: Sardine/5.1[\r][\n]"
+2014-03-31 15:20:58,144 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2014-03-31 15:20:58,144 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "[\r][\n]"
+2014-03-31 15:20:58,958 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "HTTP/1.1 401 Unauthorized[\r][\n]"
+2014-03-31 15:20:58,958 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Date: Mon, 31 Mar 2014 13:20:59 GMT[\r][\n]"
+2014-03-31 15:20:58,958 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Server: Apache[\r][\n]"
+2014-03-31 15:20:58,958 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Set-Cookie: oca745295bf2=6rlldmsj5r5rdi7vrt1qdkboe0; path=/owncloud; HttpOnly[\r][\n]"
+2014-03-31 15:20:58,958 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Expires: Thu, 19 Nov 1981 08:52:00 GMT[\r][\n]"
+2014-03-31 15:20:58,958 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0[\r][\n]"
+2014-03-31 15:20:58,958 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Pragma: no-cache[\r][\n]"
+2014-03-31 15:20:58,958 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "WWW-Authenticate: Basic realm="ownCloud"[\r][\n]"
+2014-03-31 15:20:58,958 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "X-Powered-By: PleskLin[\r][\n]"
+2014-03-31 15:20:58,958 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Keep-Alive: timeout=5, max=100[\r][\n]"
+2014-03-31 15:20:58,958 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Connection: Keep-Alive[\r][\n]"
+2014-03-31 15:20:58,958 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Content-Type: application/xml; charset=utf-8[\r][\n]"
+2014-03-31 15:20:58,959 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "[\r][\n]"
+2014-03-31 15:20:58,959 DEBUG [main] org.apache.http.headers: http-outgoing-1 << HTTP/1.1 401 Unauthorized
+2014-03-31 15:20:58,959 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Date: Mon, 31 Mar 2014 13:20:59 GMT
+2014-03-31 15:20:58,959 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Server: Apache
+2014-03-31 15:20:58,959 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Set-Cookie: oca745295bf2=6rlldmsj5r5rdi7vrt1qdkboe0; path=/owncloud; HttpOnly
+2014-03-31 15:20:58,959 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Expires: Thu, 19 Nov 1981 08:52:00 GMT
+2014-03-31 15:20:58,959 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+2014-03-31 15:20:58,959 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Pragma: no-cache
+2014-03-31 15:20:58,959 DEBUG [main] org.apache.http.headers: http-outgoing-1 << WWW-Authenticate: Basic realm="ownCloud"
+2014-03-31 15:20:58,959 DEBUG [main] org.apache.http.headers: http-outgoing-1 << X-Powered-By: PleskLin
+2014-03-31 15:20:58,959 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Keep-Alive: timeout=5, max=100
+2014-03-31 15:20:58,959 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Connection: Keep-Alive
+2014-03-31 15:20:58,959 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Content-Type: application/xml; charset=utf-8
+2014-03-31 15:20:58,960 DEBUG [main] org.apache.http.impl.auth.HttpAuthenticator: Authentication required
+2014-03-31 15:20:58,960 DEBUG [main] org.apache.http.impl.auth.HttpAuthenticator: uzuzjmd.de:80 requested authentication
+2014-03-31 15:20:58,960 DEBUG [main] org.apache.http.impl.client.TargetAuthenticationStrategy: Authentication schemes in the order of preference: [negotiate, Kerberos, NTLM, Digest, Basic]
+2014-03-31 15:20:58,960 DEBUG [main] org.apache.http.impl.client.TargetAuthenticationStrategy: Challenge for negotiate authentication scheme not available
+2014-03-31 15:20:58,960 DEBUG [main] org.apache.http.impl.client.TargetAuthenticationStrategy: Challenge for Kerberos authentication scheme not available
+2014-03-31 15:20:58,960 DEBUG [main] org.apache.http.impl.client.TargetAuthenticationStrategy: Challenge for NTLM authentication scheme not available
+2014-03-31 15:20:58,960 DEBUG [main] org.apache.http.impl.client.TargetAuthenticationStrategy: Challenge for Digest authentication scheme not available
+2014-03-31 15:20:58,960 DEBUG [main] org.apache.http.impl.auth.HttpAuthenticator: Selected authentication options: [BASIC]
+2014-03-31 15:20:58,960 DEBUG [main] org.apache.http.impl.conn.DefaultManagedHttpClientConnection: http-outgoing-1: Close connection
+2014-03-31 15:20:58,961 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Opening connection {}->http://uzuzjmd.de:80
+2014-03-31 15:20:58,961 DEBUG [main] org.apache.http.conn.HttpClientConnectionManager: Connecting to uzuzjmd.de/81.169.139.20:80
+2014-03-31 15:20:58,966 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Executing request HEAD /owncloud/remote.php/webdav/music/ HTTP/1.1
+2014-03-31 15:20:58,966 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Target auth state: CHALLENGED
+2014-03-31 15:20:58,966 DEBUG [main] org.apache.http.impl.auth.HttpAuthenticator: Generating response to an authentication challenge using basic scheme
+2014-03-31 15:20:58,966 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Proxy auth state: UNCHALLENGED
+2014-03-31 15:20:58,967 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> HEAD /owncloud/remote.php/webdav/music/ HTTP/1.1
+2014-03-31 15:20:58,967 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> Host: uzuzjmd.de
+2014-03-31 15:20:58,967 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> Connection: Keep-Alive
+2014-03-31 15:20:58,967 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> User-Agent: Sardine/5.1
+2014-03-31 15:20:58,967 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> Accept-Encoding: gzip,deflate
+2014-03-31 15:20:58,967 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> Authorization: Basic cm9vdDp2b3lhZ2Vy
+2014-03-31 15:20:58,967 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "HEAD /owncloud/remote.php/webdav/music/ HTTP/1.1[\r][\n]"
+2014-03-31 15:20:58,967 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "Host: uzuzjmd.de[\r][\n]"
+2014-03-31 15:20:58,967 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "Connection: Keep-Alive[\r][\n]"
+2014-03-31 15:20:58,967 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "User-Agent: Sardine/5.1[\r][\n]"
+2014-03-31 15:20:58,968 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2014-03-31 15:20:58,968 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "Authorization: Basic cm9vdDp2b3lhZ2Vy[\r][\n]"
+2014-03-31 15:20:58,968 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "[\r][\n]"
+2014-03-31 15:20:59,758 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "HTTP/1.1 200 OK[\r][\n]"
+2014-03-31 15:20:59,758 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Date: Mon, 31 Mar 2014 13:21:00 GMT[\r][\n]"
+2014-03-31 15:20:59,758 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Server: Apache[\r][\n]"
+2014-03-31 15:20:59,758 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Set-Cookie: oca745295bf2=p8lohgfggn3tlen0duo3tsb841; path=/owncloud; HttpOnly[\r][\n]"
+2014-03-31 15:20:59,758 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Expires: Thu, 19 Nov 1981 08:52:00 GMT[\r][\n]"
+2014-03-31 15:20:59,758 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0[\r][\n]"
+2014-03-31 15:20:59,758 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Pragma: no-cache[\r][\n]"
+2014-03-31 15:20:59,758 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "X-Powered-By: PleskLin[\r][\n]"
+2014-03-31 15:20:59,758 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Vary: Accept-Encoding[\r][\n]"
+2014-03-31 15:20:59,758 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Content-Encoding: gzip[\r][\n]"
+2014-03-31 15:20:59,758 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Content-Length: 20[\r][\n]"
+2014-03-31 15:20:59,758 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Keep-Alive: timeout=5, max=100[\r][\n]"
+2014-03-31 15:20:59,759 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Connection: Keep-Alive[\r][\n]"
+2014-03-31 15:20:59,759 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Content-Type: text/html; charset=utf-8[\r][\n]"
+2014-03-31 15:20:59,759 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "[\r][\n]"
+2014-03-31 15:20:59,759 DEBUG [main] org.apache.http.headers: http-outgoing-1 << HTTP/1.1 200 OK
+2014-03-31 15:20:59,759 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Date: Mon, 31 Mar 2014 13:21:00 GMT
+2014-03-31 15:20:59,759 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Server: Apache
+2014-03-31 15:20:59,759 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Set-Cookie: oca745295bf2=p8lohgfggn3tlen0duo3tsb841; path=/owncloud; HttpOnly
+2014-03-31 15:20:59,759 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Expires: Thu, 19 Nov 1981 08:52:00 GMT
+2014-03-31 15:20:59,759 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+2014-03-31 15:20:59,759 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Pragma: no-cache
+2014-03-31 15:20:59,759 DEBUG [main] org.apache.http.headers: http-outgoing-1 << X-Powered-By: PleskLin
+2014-03-31 15:20:59,759 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Vary: Accept-Encoding
+2014-03-31 15:20:59,759 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Content-Encoding: gzip
+2014-03-31 15:20:59,760 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Content-Length: 20
+2014-03-31 15:20:59,760 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Keep-Alive: timeout=5, max=100
+2014-03-31 15:20:59,760 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Connection: Keep-Alive
+2014-03-31 15:20:59,760 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Content-Type: text/html; charset=utf-8
+2014-03-31 15:20:59,760 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Connection can be kept alive for 5000 MILLISECONDS
+2014-03-31 15:20:59,760 DEBUG [main] org.apache.http.impl.auth.HttpAuthenticator: Authentication succeeded
+2014-03-31 15:20:59,760 DEBUG [main] org.apache.http.impl.client.TargetAuthenticationStrategy: Caching 'basic' auth scheme for http://uzuzjmd.de:80
+2014-03-31 15:20:59,760 DEBUG [main] org.apache.http.impl.conn.PoolingHttpClientConnectionManager: Connection [id: 1][route: {}->http://uzuzjmd.de:80] can be kept alive for 5.0 seconds
+2014-03-31 15:20:59,760 DEBUG [main] org.apache.http.impl.conn.PoolingHttpClientConnectionManager: Connection released: [id: 1][route: {}->http://uzuzjmd.de:80][total kept alive: 1; route allocated: 1 of 2; total allocated: 1 of 20]
+2014-03-31 15:20:59,761 DEBUG [main] org.apache.http.client.protocol.ResponseProcessCookies: Cookie accepted [oca745295bf2="p8lohgfggn3tlen0duo3tsb841", version:0, domain:uzuzjmd.de, path:/owncloud, expiry:null]
+2014-03-31 15:20:59,761 DEBUG [main] org.apache.http.client.protocol.RequestAddCookies: CookieSpec selected: best-match
+2014-03-31 15:20:59,762 DEBUG [main] org.apache.http.client.protocol.RequestAddCookies: Cookie [version: 0][name: oca745295bf2][value: p8lohgfggn3tlen0duo3tsb841][domain: uzuzjmd.de][path: /owncloud][expiry: null] match [uzuzjmd.de:80/owncloud/remote.php/webdav/music/projekteva-letitrain.mp3]
+2014-03-31 15:20:59,763 DEBUG [main] org.apache.http.impl.conn.PoolingHttpClientConnectionManager: Connection request: [route: {}->http://uzuzjmd.de:80][total kept alive: 1; route allocated: 1 of 2; total allocated: 1 of 20]
+2014-03-31 15:20:59,763 DEBUG [main] org.apache.http.impl.conn.PoolingHttpClientConnectionManager: Connection leased: [id: 1][route: {}->http://uzuzjmd.de:80][total kept alive: 0; route allocated: 1 of 2; total allocated: 1 of 20]
+2014-03-31 15:20:59,763 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Stale connection check
+2014-03-31 15:20:59,765 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Executing request HEAD /owncloud/remote.php/webdav/music/projekteva-letitrain.mp3 HTTP/1.1
+2014-03-31 15:20:59,765 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Target auth state: SUCCESS
+2014-03-31 15:20:59,765 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Proxy auth state: UNCHALLENGED
+2014-03-31 15:20:59,765 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> HEAD /owncloud/remote.php/webdav/music/projekteva-letitrain.mp3 HTTP/1.1
+2014-03-31 15:20:59,765 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> Host: uzuzjmd.de
+2014-03-31 15:20:59,766 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> Connection: Keep-Alive
+2014-03-31 15:20:59,766 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> User-Agent: Sardine/5.1
+2014-03-31 15:20:59,766 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> Cookie: oca745295bf2=p8lohgfggn3tlen0duo3tsb841
+2014-03-31 15:20:59,766 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> Cookie2: $Version=1
+2014-03-31 15:20:59,766 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> Accept-Encoding: gzip,deflate
+2014-03-31 15:20:59,766 DEBUG [main] org.apache.http.headers: http-outgoing-1 >> Authorization: Basic cm9vdDp2b3lhZ2Vy
+2014-03-31 15:20:59,766 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "HEAD /owncloud/remote.php/webdav/music/projekteva-letitrain.mp3 HTTP/1.1[\r][\n]"
+2014-03-31 15:20:59,766 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "Host: uzuzjmd.de[\r][\n]"
+2014-03-31 15:20:59,766 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "Connection: Keep-Alive[\r][\n]"
+2014-03-31 15:20:59,767 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "User-Agent: Sardine/5.1[\r][\n]"
+2014-03-31 15:20:59,767 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "Cookie: oca745295bf2=p8lohgfggn3tlen0duo3tsb841[\r][\n]"
+2014-03-31 15:20:59,767 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "Cookie2: $Version=1[\r][\n]"
+2014-03-31 15:20:59,767 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "Accept-Encoding: gzip,deflate[\r][\n]"
+2014-03-31 15:20:59,767 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "Authorization: Basic cm9vdDp2b3lhZ2Vy[\r][\n]"
+2014-03-31 15:20:59,767 DEBUG [main] org.apache.http.wire: http-outgoing-1 >> "[\r][\n]"
+2014-03-31 15:21:00,497 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "HTTP/1.1 200 OK[\r][\n]"
+2014-03-31 15:21:00,497 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Date: Mon, 31 Mar 2014 13:21:01 GMT[\r][\n]"
+2014-03-31 15:21:00,497 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Server: Apache[\r][\n]"
+2014-03-31 15:21:00,497 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Expires: Thu, 19 Nov 1981 08:52:00 GMT[\r][\n]"
+2014-03-31 15:21:00,497 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0[\r][\n]"
+2014-03-31 15:21:00,497 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Pragma: no-cache[\r][\n]"
+2014-03-31 15:21:00,497 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Content-Length: 3764804[\r][\n]"
+2014-03-31 15:21:00,497 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Last-Modified: Thu, 27 Feb 2014 21:14:46 GMT[\r][\n]"
+2014-03-31 15:21:00,497 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "ETag: "530faad9e9008"[\r][\n]"
+2014-03-31 15:21:00,497 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "X-Powered-By: PleskLin[\r][\n]"
+2014-03-31 15:21:00,497 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Keep-Alive: timeout=5, max=99[\r][\n]"
+2014-03-31 15:21:00,497 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Connection: Keep-Alive[\r][\n]"
+2014-03-31 15:21:00,498 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "Content-Type: audio/mpeg[\r][\n]"
+2014-03-31 15:21:00,498 DEBUG [main] org.apache.http.wire: http-outgoing-1 << "[\r][\n]"
+2014-03-31 15:21:00,498 DEBUG [main] org.apache.http.headers: http-outgoing-1 << HTTP/1.1 200 OK
+2014-03-31 15:21:00,498 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Date: Mon, 31 Mar 2014 13:21:01 GMT
+2014-03-31 15:21:00,498 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Server: Apache
+2014-03-31 15:21:00,498 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Expires: Thu, 19 Nov 1981 08:52:00 GMT
+2014-03-31 15:21:00,498 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+2014-03-31 15:21:00,498 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Pragma: no-cache
+2014-03-31 15:21:00,498 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Content-Length: 3764804
+2014-03-31 15:21:00,498 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Last-Modified: Thu, 27 Feb 2014 21:14:46 GMT
+2014-03-31 15:21:00,498 DEBUG [main] org.apache.http.headers: http-outgoing-1 << ETag: "530faad9e9008"
+2014-03-31 15:21:00,498 DEBUG [main] org.apache.http.headers: http-outgoing-1 << X-Powered-By: PleskLin
+2014-03-31 15:21:00,498 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Keep-Alive: timeout=5, max=99
+2014-03-31 15:21:00,498 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Connection: Keep-Alive
+2014-03-31 15:21:00,499 DEBUG [main] org.apache.http.headers: http-outgoing-1 << Content-Type: audio/mpeg
+2014-03-31 15:21:00,499 DEBUG [main] org.apache.http.impl.execchain.MainClientExec: Connection can be kept alive for 5000 MILLISECONDS
+2014-03-31 15:21:00,499 DEBUG [main] org.apache.http.impl.conn.PoolingHttpClientConnectionManager: Connection [id: 1][route: {}->http://uzuzjmd.de:80] can be kept alive for 5.0 seconds
+2014-03-31 15:21:00,499 DEBUG [main] org.apache.http.impl.conn.PoolingHttpClientConnectionManager: Connection released: [id: 1][route: {}->http://uzuzjmd.de:80][total kept alive: 1; route allocated: 1 of 2; total allocated: 1 of 20]
