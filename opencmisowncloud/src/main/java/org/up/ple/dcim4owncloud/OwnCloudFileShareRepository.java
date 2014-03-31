@@ -1586,7 +1586,7 @@ public class OwnCloudFileShareRepository {
 		String typeId = null;
 
 		if (file.isDirectory()) {
-			debug("file" + file.getName() + "ist dir");
+			debug("file" + file.getName() + " is dir");
 			typeId = BaseTypeId.CMIS_FOLDER.value();
 			objectInfo.setBaseType(BaseTypeId.CMIS_FOLDER);
 			objectInfo.setTypeId(typeId);
@@ -1606,7 +1606,7 @@ public class OwnCloudFileShareRepository {
 			objectInfo.setWorkingCopyId(null);
 			objectInfo.setWorkingCopyOriginalId(null);
 		} else {
-			debug("file" + file.getName() + "ist file");
+			debug("file" + file.getName() + " is file");
 			typeId = BaseTypeId.CMIS_DOCUMENT.value();
 			objectInfo.setBaseType(BaseTypeId.CMIS_DOCUMENT);
 			objectInfo.setTypeId(typeId);
@@ -2335,8 +2335,7 @@ public class OwnCloudFileShareRepository {
 			return root;
 		} else {
 			String relativPath = new String(Base64.decode(id
-					.getBytes("US-ASCII")), "UTF-8").replace('/',
-					File.separatorChar);
+					.getBytes("US-ASCII")), "UTF-8");
 			return new OwncloudWebDavFile(relativPath, userManager);
 		}
 	}
@@ -2371,9 +2370,8 @@ public class OwnCloudFileShareRepository {
 	}
 
 	private String getRepositoryPath(File file) {
-		String path = file.getAbsolutePath()
-				.substring(root.getAbsolutePath().length())
-				.replace(File.separatorChar, '/');
+		String path = file.getAbsolutePath().substring(
+				root.getAbsolutePath().length());
 		if (path.length() == 0) {
 			path = "/";
 		} else if (path.charAt(0) != '/') {
