@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.fileshare.FileShareUserManager;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.up.ple.dcim4owncloud.configuration.OwnCloudConfigurationLoader;
@@ -69,13 +70,13 @@ public class OwncloudWebDavFile extends File {
 		}
 	}
 
-	public OwncloudWebDavFile(String pathname, FileShareUserManager userManager) {
-		super(pathname);
+	public OwncloudWebDavFile(String path, FileShareUserManager userManager) {
+		super(path);
 		this.userManager = userManager;
 		sardine = getSardineEndpoint(userManager);
 		loader = new OwnCloudConfigurationLoader();
 
-		initWebdavPath(pathname);
+		initWebdavPath(path);
 
 		isDir = webdavPath.endsWith("/");
 		if (isDir) {
@@ -84,11 +85,18 @@ public class OwncloudWebDavFile extends File {
 	}
 
 	private void initWebdavPath(String pathname) {
-		if (pathname.startsWith("http:")) {
-			webdavPath = pathname;
-		} else {
-			webdavPath = loader.getOwnCloudAddress() + pathname;
+		Boolean isFullPath = pathname.startsWith(loader.getOwnCloudAddress());
+
+		if (!pathname.startsWith("/") && !isFullPath) {
+			throw new NotImplementedException(
+					"local path should always start with / for " + pathname);
 		}
+		while (pathname.contains("webdav")) {
+			pathname = pathname.replaceAll("^.*webdav", "");
+		}
+		webdavPath = loader.getOwnCloudAddress() + pathname;
+		webdavPath = webdavPath.replace("//", "/");
+		webdavPath = webdavPath.replace("http:/", "http://");
 	}
 
 	// private void initParent() {
@@ -101,9 +109,19 @@ public class OwncloudWebDavFile extends File {
 	// }
 
 	private String getParentString() {
-		String parentString = webdavPath.substring(0,
-				webdavPath.lastIndexOf('/'));
+		if (isFile()) {
+			String parentString = webdavPath.substring(0,
+					webdavPath.lastIndexOf('/'));
+			return parentString;
+		}
+		String tmp1 = webdavPath.substring(0, webdavPath.length() - 1);
+		String parentString = tmp1.substring(0, webdavPath.lastIndexOf('/'));
+		parentString.replaceAll(loader.getOwnCloudAddress(), "");
+		if (!parentString.endsWith("/")) {
+			parentString += "/";
+		}
 		return parentString;
+
 	}
 
 	private DavResource getResource() {
@@ -168,12 +186,13 @@ public class OwncloudWebDavFile extends File {
 	@Deprecated
 	@Override
 	public boolean canWrite() {
-		try {
-			throw new Exception("Not implemented");
-		} catch (Exception e) {
-			e.printStackTrace();
-			LOG.error(e.getMessage());
-		}
+		// try {
+		// throw new Exception("Not implemented");
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// LOG.error(e.getMessage());
+		// }
+		LOG.debug("can write is not implemented");
 		return true;
 	}
 
@@ -256,7 +275,7 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public String getAbsolutePath() {
-		return this.webdavPath;
+		return this.getPath();
 	}
 
 	@Override
@@ -266,7 +285,7 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public String getCanonicalPath() throws IOException {
-		return this.webdavPath;
+		return this.getPath();
 	}
 
 	/**
@@ -312,7 +331,7 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public String getPath() {
-		return this.webdavPath;
+		return this.webdavPath.replace(loader.getOwnCloudAddress(), "");
 	}
 
 	private Sardine getSardineEndpoint(final FileShareUserManager userManager) {
@@ -358,7 +377,8 @@ public class OwncloudWebDavFile extends File {
 			sardine = getSardineEndpoint(userManager);
 			resources = sardine.list(webdavPath);
 		} catch (com.github.sardine.impl.SardineException e) {
-			LOG.error(e.getMessage());
+			LOG.error("could not get resources for " + webdavPath
+					+ e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
 			LOG.error("could not get resources for " + webdavPath
@@ -418,6 +438,7 @@ public class OwncloudWebDavFile extends File {
 	@Deprecated
 	@Override
 	public String[] list(FilenameFilter filter) {
+
 		try {
 			throw new Exception("Not implemented");
 		} catch (Exception e) {
@@ -436,7 +457,8 @@ public class OwncloudWebDavFile extends File {
 			if (davResource.isDirectory() && !childResource.endsWith("/")) {
 				childResource += "/";
 			}
-			files.add(new OwncloudWebDavFile(childResource, userManager));
+			files.add(new OwncloudWebDavFile(getPath() + childResource,
+					userManager));
 		}
 		return files.toArray(new OwncloudWebDavFile[resources.size()]);
 	}
@@ -488,8 +510,10 @@ public class OwncloudWebDavFile extends File {
 				webdavPath = loader.getOwnCloudAddress() + dest.getName();
 				sardine.put(webdavPath, IOUtils.toByteArray(inputstream));
 			} catch (IOException e) {
-				LOG.error("error while renaming");
+				LOG.error("error while renaming: " + getPath() + ":"
+						+ dest.getPath());
 				e.printStackTrace();
+				return false;
 			}
 		}
 		return true;
@@ -586,13 +610,13 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public String toString() {
-		return webdavPath;
+		return getPath();
 	}
 
 	@Override
 	public URI toURI() {
 		try {
-			return new URI(webdavPath);
+			return new URI(getPath());
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -603,7 +627,7 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public URL toURL() throws MalformedURLException {
-		return new URL(webdavPath);
+		return new URL(getPath());
 	}
 
 	public void put(InputStream in) {

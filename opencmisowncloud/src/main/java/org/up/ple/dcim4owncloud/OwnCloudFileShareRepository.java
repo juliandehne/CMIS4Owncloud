@@ -151,7 +151,7 @@ public class OwnCloudFileShareRepository {
 	/** Repository id. */
 	private final String repositoryId;
 	/** Root directory. */
-	private File root = null;
+	private OwncloudWebDavFile root = null;
 	/** Types. */
 	private final FileShareTypeManager typeManager;
 	/** Users. */
@@ -521,7 +521,7 @@ public class OwnCloudFileShareRepository {
 		}
 
 		// check the file
-		OwncloudWebDavFile newFile = new OwncloudWebDavFile(parent.getName()
+		OwncloudWebDavFile newFile = new OwncloudWebDavFile(parent.getPath()
 				+ name, userManager);
 		if (newFile.exists()) {
 			throw new CmisNameConstraintViolationException(
@@ -775,11 +775,12 @@ public class OwnCloudFileShareRepository {
 		}
 
 		// get the file and parent
-		File file = getFile(objectId.getValue());
-		File parent = getFile(targetFolderId);
+		OwncloudWebDavFile file = getFile(objectId.getValue());
+		OwncloudWebDavFile parent = getFile(targetFolderId);
 
 		// build new path
-		File newFile = new File(parent, file.getName());
+		OwncloudWebDavFile newFile = new OwncloudWebDavFile(parent.getPath()
+				+ file.getName(), userManager);
 		if (newFile.exists()) {
 			throw new CmisStorageException("Object already exists!");
 		}
@@ -947,7 +948,7 @@ public class OwnCloudFileShareRepository {
 		}
 
 		// get the file or folder
-		File file = getFile(objectId.getValue());
+		OwncloudWebDavFile file = getFile(objectId.getValue());
 
 		// get and check the new name
 		String newName = FileShareUtils.getStringProperty(properties,
@@ -992,11 +993,13 @@ public class OwnCloudFileShareRepository {
 		writePropertiesFile(file, props);
 
 		// rename file or folder if necessary
-		File newFile = file;
+		OwncloudWebDavFile newFile = file;
 		if (isRename) {
-			File parent = file.getParentFile();
+			OwncloudWebDavFile parent = (OwncloudWebDavFile) file
+					.getParentFile();
 			File propFile = getPropertiesFile(file);
-			newFile = new File(parent, newName);
+			newFile = new OwncloudWebDavFile(parent.getPath() + newName,
+					userManager);
 			if (!file.renameTo(newFile)) {
 				// if something went wrong, throw an exception
 				throw new CmisUpdateConflictException(
@@ -1155,7 +1158,7 @@ public class OwnCloudFileShareRepository {
 		}
 
 		// get the file or folder
-		File file = getFile(objectId);
+		OwncloudWebDavFile file = getFile(objectId);
 
 		// set defaults if values not set
 		boolean iaa = FileShareUtils.getBooleanParameter(
@@ -1278,7 +1281,7 @@ public class OwnCloudFileShareRepository {
 		}
 
 		// get the folder
-		File folder = getFile(folderId);
+		OwncloudWebDavFile folder = getFile(folderId);
 		if (!folder.isDirectory()) {
 			throw new CmisObjectNotFoundException("Not a folder!");
 		}
@@ -1317,8 +1320,9 @@ public class OwnCloudFileShareRepository {
 
 			// build and add child object
 			ObjectInFolderDataImpl objectInFolder = new ObjectInFolderDataImpl();
-			objectInFolder.setObject(compileObjectData(context, child,
-					filterCollection, iaa, false, userReadOnly, objectInfos));
+			objectInFolder.setObject(compileObjectData(context,
+					(OwncloudWebDavFile) child, filterCollection, iaa, false,
+					userReadOnly, objectInfos));
 			if (ips) {
 				objectInFolder.setPathSegment(child.getName());
 			}
@@ -1360,7 +1364,7 @@ public class OwnCloudFileShareRepository {
 				false);
 
 		// get the folder
-		File folder = getFile(folderId);
+		OwncloudWebDavFile folder = getFile(folderId);
 		if (!folder.isDirectory()) {
 			throw new CmisObjectNotFoundException("Not a folder!");
 		}
@@ -1405,7 +1409,8 @@ public class OwnCloudFileShareRepository {
 
 			// add to list
 			ObjectInFolderDataImpl objectInFolder = new ObjectInFolderDataImpl();
-			objectInFolder.setObject(compileObjectData(context, child, filter,
+			objectInFolder.setObject(compileObjectData(context,
+					(OwncloudWebDavFile) child, filter,
 					includeAllowableActions, false, userReadOnly, objectInfos));
 			if (includePathSegments) {
 				objectInFolder.setPathSegment(child.getName());
@@ -1462,7 +1467,7 @@ public class OwnCloudFileShareRepository {
 				includeRelativePathSegment, false);
 
 		// get the file or folder
-		File file = getFile(objectId);
+		OwncloudWebDavFile file = getFile(objectId);
 
 		// don't climb above the root folder
 		if (root.equals(file)) {
@@ -1476,7 +1481,7 @@ public class OwnCloudFileShareRepository {
 		}
 
 		// get parent folder
-		File parent = file.getParentFile();
+		OwncloudWebDavFile parent = (OwncloudWebDavFile) file.getParentFile();
 		ObjectData object = compileObjectData(context, parent,
 				filterCollection, iaa, false, userReadOnly, objectInfos);
 
@@ -1508,13 +1513,13 @@ public class OwnCloudFileShareRepository {
 		}
 
 		// get the file or folder
-		File file = null;
+		OwncloudWebDavFile file = null;
 		if (folderPath.length() == 1) {
 			file = root;
 		} else {
 			String path = folderPath.replace('/', File.separatorChar)
 					.substring(1);
-			file = new File(root, path);
+			file = new OwncloudWebDavFile(root + path, userManager);
 		}
 
 		if (!file.exists()) {
@@ -1530,14 +1535,14 @@ public class OwnCloudFileShareRepository {
 	/**
 	 * Compiles an object type object from a file or folder.
 	 */
-	private ObjectData compileObjectData(CallContext context, File file,
-			Set<String> filter, Boolean includeAllowableActions,
-			Boolean includeAcl, Boolean userReadOnly,
-			ObjectInfoHandler objectInfos) {
+	private ObjectData compileObjectData(CallContext context,
+			OwncloudWebDavFile file, Set<String> filter,
+			Boolean includeAllowableActions, Boolean includeAcl,
+			Boolean userReadOnly, ObjectInfoHandler objectInfos) {
 		ObjectDataImpl result = new ObjectDataImpl();
 		ObjectInfoImpl objectInfo = new ObjectInfoImpl();
 		debug("compileObjectData");
-		debug(file.getName());
+		debug(file.getPath());
 
 		result.setProperties(compileProperties(context, file, filter,
 				objectInfo));
@@ -1563,15 +1568,16 @@ public class OwnCloudFileShareRepository {
 	/**
 	 * Gathers all base properties of a file or folder.
 	 */
-	private Properties compileProperties(CallContext context, File file,
-			Set<String> orgfilter, ObjectInfoImpl objectInfo) {
+	private Properties compileProperties(CallContext context,
+			OwncloudWebDavFile file, Set<String> orgfilter,
+			ObjectInfoImpl objectInfo) {
 
 		if (file == null) {
 			throw new IllegalArgumentException("File must not be null!");
 		}
-		file = new OwncloudWebDavFile(file.getName(), userManager);
+		file = new OwncloudWebDavFile(file.getPath(), userManager);
 
-		debug("compileProperties: " + file.getName());
+		debug("compileProperties: " + file.getPath());
 
 		// we can't gather properties if the file or folder doesn't exist
 		if (!file.exists()) {
@@ -1586,7 +1592,7 @@ public class OwnCloudFileShareRepository {
 		String typeId = null;
 
 		if (file.isDirectory()) {
-			debug("file" + file.getName() + " is dir");
+			debug("file" + file.getPath() + " is dir");
 			typeId = BaseTypeId.CMIS_FOLDER.value();
 			objectInfo.setBaseType(BaseTypeId.CMIS_FOLDER);
 			objectInfo.setTypeId(typeId);
@@ -1606,7 +1612,7 @@ public class OwnCloudFileShareRepository {
 			objectInfo.setWorkingCopyId(null);
 			objectInfo.setWorkingCopyOriginalId(null);
 		} else {
-			debug("file" + file.getName() + " is file");
+			debug("file" + file.getPath() + " is file");
 			typeId = BaseTypeId.CMIS_DOCUMENT.value();
 			objectInfo.setBaseType(BaseTypeId.CMIS_DOCUMENT);
 			objectInfo.setTypeId(typeId);
@@ -2313,7 +2319,7 @@ public class OwnCloudFileShareRepository {
 	/**
 	 * Returns the File object by id or throws an appropriate exception.
 	 */
-	private File getFile(String id) {
+	private OwncloudWebDavFile getFile(String id) {
 		try {
 			return idToFile(id);
 		} catch (Exception e) {
@@ -2325,7 +2331,7 @@ public class OwnCloudFileShareRepository {
 	 * Converts an id to a File object. A simple and insecure implementation,
 	 * but good enough for now.
 	 */
-	private File idToFile(String id) throws IOException {
+	private OwncloudWebDavFile idToFile(String id) throws IOException {
 		if (id == null || id.length() == 0) {
 			throw new CmisInvalidArgumentException("Id is not valid!");
 		}
