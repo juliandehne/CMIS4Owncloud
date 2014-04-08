@@ -97,6 +97,7 @@ public class OwncloudWebDavFile extends File {
 		webdavPath = loader.getOwnCloudAddress() + pathname;
 		webdavPath = webdavPath.replace("//", "/");
 		webdavPath = webdavPath.replace("http:/", "http://");
+
 	}
 
 	// private void initParent() {
@@ -220,7 +221,7 @@ public class OwncloudWebDavFile extends File {
 	public boolean delete() {
 		try {
 			sardine = getSardineEndpoint(userManager);
-			sardine.delete(webdavPath);
+			sardine.delete(encode(webdavPath).toString());
 		} catch (IOException e) {
 			LOG.error(e.getMessage());
 			e.printStackTrace();
@@ -251,7 +252,7 @@ public class OwncloudWebDavFile extends File {
 	public boolean exists() {
 		try {
 			sardine = getSardineEndpoint(userManager);
-			return (boolean) sardine.exists(webdavPath);
+			return (boolean) sardine.exists(encode(webdavPath).toString());
 		} catch (IOException e) {
 			LOG.error("error while checking if exists: " + webdavPath);
 		}
@@ -298,19 +299,23 @@ public class OwncloudWebDavFile extends File {
 
 	@Override
 	public String getName() {
+		String result = null;
 		if (isFile()) {
 			int lastDirIndex = webdavPath.lastIndexOf("/");
 			int lastIndex = webdavPath.length();
-			return webdavPath.substring(lastDirIndex, lastIndex);
+			result = webdavPath.substring(lastDirIndex, lastIndex);
 		} else {
 			Boolean isRoot = isRoot();
 			if (isRoot) {
 				return "/";
 			} else {
 				String[] dirs = webdavPath.split("/");
-				return "/" + dirs[dirs.length - 1] + "/";
+				result = "/" + dirs[dirs.length - 1] + "/";
 			}
 		}
+		return result;
+		// return encode(result);
+
 	}
 
 	private Boolean isRoot() {
@@ -375,7 +380,7 @@ public class OwncloudWebDavFile extends File {
 	private void initResources() {
 		try {
 			sardine = getSardineEndpoint(userManager);
-			resources = sardine.list(webdavPath);
+			resources = sardine.list(encode(webdavPath));
 		} catch (com.github.sardine.impl.SardineException e) {
 			LOG.error("could not get resources for " + webdavPath
 					+ e.getMessage());
@@ -505,10 +510,12 @@ public class OwncloudWebDavFile extends File {
 		if (!isDir) {
 			try {
 				sardine = getSardineEndpoint(userManager);
-				InputStream inputstream = sardine.get(webdavPath);
+				InputStream inputstream = sardine.get(encode(webdavPath)
+						.toString());
 				sardine.delete(webdavPath);
 				webdavPath = loader.getOwnCloudAddress() + dest.getName();
-				sardine.put(webdavPath, IOUtils.toByteArray(inputstream));
+				sardine.put(encode(webdavPath).toString(),
+						IOUtils.toByteArray(inputstream));
 			} catch (IOException e) {
 				LOG.error("error while renaming: " + getPath() + ":"
 						+ dest.getPath());
@@ -632,11 +639,15 @@ public class OwncloudWebDavFile extends File {
 
 	public void put(InputStream in) {
 		try {
-			sardine.put(webdavPath, in);
+			sardine.put(encode(webdavPath).toString(), in);
 		} catch (IOException e) {
 			LOG.error("could not create file on server" + webdavPath);
 		}
 
+	}
+
+	private String encode(String webdavPath2) {
+		return webdavPath2.replace(" ", "%20");
 	}
 
 	/**
