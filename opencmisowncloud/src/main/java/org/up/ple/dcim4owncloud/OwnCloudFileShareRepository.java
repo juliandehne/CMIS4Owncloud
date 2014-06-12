@@ -6,12 +6,9 @@ package org.up.ple.dcim4owncloud;
  * licensed under apache license 
  */
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -119,14 +116,15 @@ import org.apache.chemistry.opencmis.commons.impl.server.ObjectInfoImpl;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.server.ObjectInfoHandler;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
-import org.apache.chemistry.opencmis.fileshare.ContentRangeInputStream;
 import org.apache.chemistry.opencmis.fileshare.FileShareTypeManager;
 import org.apache.chemistry.opencmis.fileshare.FileShareUserManager;
 import org.apache.chemistry.opencmis.fileshare.FileShareUtils;
 import org.apache.chemistry.opencmis.server.impl.ServerVersion;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.up.ple.dcim4owncloud.configuration.OwnCloudConfigurationLoader;
+import org.up.ple.dcim4owncloud.util.MemFileSystemImpl;
 import org.up.ple.dcim4owncloud.webdav.OwncloudWebDavFile;
 
 import com.github.sardine.Sardine;
@@ -163,6 +161,8 @@ public class OwnCloudFileShareRepository {
 	private final RepositoryInfo repositoryInfo11;
 
 	private FileShareUserManager userManager;
+
+	private static MemFileSystemImpl memFileSystemImpl = new MemFileSystemImpl();
 
 	public OwnCloudFileShareRepository(final String repositoryId,
 			final FileShareTypeManager typeManager2,
@@ -675,7 +675,9 @@ public class OwnCloudFileShareRepository {
 
 		// copy content
 		try {
-			writeContent(newFile, new FileInputStream(source));
+			// writeContent(newFile, new FileInputStream(source));
+			memFileSystemImpl.writeFile(newFile.getPath(),
+					memFileSystemImpl.readFile(source.getPath()));
 		} catch (IOException e) {
 			throw new CmisStorageException("Could not roead or write content: "
 					+ e.getMessage(), e);
@@ -693,8 +695,10 @@ public class OwnCloudFileShareRepository {
 	private void writeContent(File newFile, InputStream stream) {
 		OutputStream out = null;
 		try {
-			out = new FileOutputStream(newFile);
-			IOUtils.copy(stream, out, BUFFER_SIZE);
+			// out = new FileOutputStream(newFile);
+			// IOUtils.copy(stream, out, BUFFER_SIZE);
+			memFileSystemImpl.writeFile(newFile.getPath(), IOUtils
+					.readAllLines(stream).getBytes());
 		} catch (IOException e) {
 			throw new CmisStorageException("Could not write content: "
 					+ e.getMessage(), e);
@@ -1225,11 +1229,13 @@ public class OwnCloudFileShareRepository {
 
 		InputStream stream = null;
 		try {
-			stream = new BufferedInputStream(new FileInputStream(file),
-					4 * 1024);
-			if (offset != null || length != null) {
-				stream = new ContentRangeInputStream(stream, offset, length);
-			}
+			// stream = new BufferedInputStream(new FileInputStream(file),
+			// 4 * 1024);
+			stream = new ByteArrayInputStream(memFileSystemImpl.readFile(file
+					.getPath()));
+			// if (offset != null || length != null) {
+			// stream = new ContentRangeInputStream(stream, offset, length);
+			// }
 		} catch (FileNotFoundException e) {
 			throw new CmisObjectNotFoundException(e.getMessage(), e);
 		}
@@ -1802,7 +1808,9 @@ public class OwnCloudFileShareRepository {
 		ObjectData obj = null;
 		InputStream stream = null;
 		try {
-			stream = new BufferedInputStream(new FileInputStream(propFile));
+			// stream = new BufferedInputStream(new FileInputStream(propFile));
+			stream = new ByteArrayInputStream(
+					memFileSystemImpl.readFile(propFile.getPath()));
 			XMLStreamReader parser = XMLUtils.createParser(stream);
 			XMLUtils.findNextStartElemenet(parser);
 			obj = XMLConverter.convertObject(parser);
@@ -1965,13 +1973,19 @@ public class OwnCloudFileShareRepository {
 
 		OutputStream stream = null;
 		try {
-			stream = new BufferedOutputStream(new FileOutputStream(propFile));
+			// stream = new BufferedOutputStream(new
+			// FileOutputStream(propFile));
+			stream = new ByteArrayOutputStream();
+
 			XMLStreamWriter writer = XMLUtils.createWriter(stream);
 			XMLUtils.startXmlDocument(writer);
 			XMLConverter.writeObject(writer, CmisVersion.CMIS_1_1, true,
 					"object", XMLConstants.NAMESPACE_CMIS, object);
 			XMLUtils.endXmlDocument(writer);
 			writer.close();
+
+			memFileSystemImpl.writeFile(file.getPath(),
+					((ByteArrayOutputStream) stream).toByteArray());
 		} catch (Exception e) {
 			throw new CmisStorageException("Couldn't store properties!", e);
 		} finally {
