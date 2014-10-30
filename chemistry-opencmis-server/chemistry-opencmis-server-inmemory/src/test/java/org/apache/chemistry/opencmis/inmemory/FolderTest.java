@@ -30,6 +30,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.impl.FolderImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ObjectStoreImpl;
 import org.junit.Before;
 import org.junit.Test;
+import org.up.liferay.owncloud.WebdavObjectStore;
 
 /**
  * Some test directly against the in-memory folder object.
@@ -49,7 +50,7 @@ public class FolderTest extends TestCase {
     @Override
     @Before
     protected void setUp() throws Exception {
-        fStore = new ObjectStoreImpl(TEST_REPOSITORY_ID);
+        fStore = new WebdavObjectStore(TEST_REPOSITORY_ID);
         createFolders();
     }
 

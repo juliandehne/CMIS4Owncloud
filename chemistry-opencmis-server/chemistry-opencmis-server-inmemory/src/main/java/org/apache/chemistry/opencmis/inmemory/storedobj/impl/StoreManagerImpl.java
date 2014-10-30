@@ -72,6 +72,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.server.support.TypeDefinitionFactory;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
+import org.up.liferay.owncloud.WebdavObjectStore;
 
 /**
  * Factory to create objects that are stored in the InMemory store.
@@ -129,7 +130,7 @@ public class StoreManagerImpl implements StoreManager {
 
     @Override
     public void initRepository(String repositoryId) {
-        fMapRepositoryToObjectStore.put(repositoryId, new ObjectStoreImpl(repositoryId));
+        fMapRepositoryToObjectStore.put(repositoryId, new WebdavObjectStore(repositoryId));
         fMapRepositoryToTypeManager.put(repositoryId, new TypeManagerImpl());
     }
 
@@ -141,7 +142,9 @@ public class StoreManagerImpl implements StoreManager {
                     + " already exists.");
         }
 
-        fMapRepositoryToObjectStore.put(repositoryId, new ObjectStoreImpl(repositoryId));
+        System.out.println("hello world");
+        
+        fMapRepositoryToObjectStore.put(repositoryId, new WebdavObjectStore(repositoryId));
         fMapRepositoryToTypeManager.put(repositoryId, new TypeManagerImpl());
 
         // initialize the type system:

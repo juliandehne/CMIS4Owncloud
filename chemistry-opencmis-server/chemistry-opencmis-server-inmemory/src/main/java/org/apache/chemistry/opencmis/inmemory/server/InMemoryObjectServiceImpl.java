@@ -94,6 +94,7 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
     public InMemoryObjectServiceImpl(StoreManager storeManager) {
         super(storeManager);
+        System.out.println("hello inmemory");
     }
 
     public String createDocument(CallContext context, String repositoryId, Properties properties, String folderId,

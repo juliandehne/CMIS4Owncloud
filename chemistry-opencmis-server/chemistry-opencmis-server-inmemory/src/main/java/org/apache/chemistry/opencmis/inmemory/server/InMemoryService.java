@@ -288,6 +288,7 @@ public class InMemoryService extends AbstractCmisService {
     public ObjectData getObjectByPath(String repositoryId, String path, String filter, Boolean includeAllowableActions,
             IncludeRelationships includeRelationships, String renditionFilter, Boolean includePolicyIds,
             Boolean includeAcl, ExtensionsData extension) {
+    	System.out.println("get ObjectByPAth");
         return fObjSvc.getObjectByPath(getCallContext(), repositoryId, path, filter, includeAllowableActions,
                 includeRelationships, renditionFilter, includePolicyIds, includeAcl, extension, this);
     }

@@ -1036,7 +1036,7 @@ public class ObjectStoreImpl implements ObjectStore {
         so.removeParentId(parent.getId());
     }
 
-    private static void sortFolderList(List<? extends StoredObject> list) {
+    protected static void sortFolderList(List<? extends StoredObject> list) {
         // TODO evaluate orderBy, for now sort by path segment
         class FolderComparator implements Comparator<StoredObject> {
 
