@@ -21,6 +21,6 @@ public class WebdavDocumentImpl extends DocumentImpl {
 //		String parentID = StringConverter.decodedIdToParent(StringConverter.decode(id));
 		this.setName(name);
 		this.setId(id);
-		this.setTypeId("cmis:baseTypeId");		
+		this.setTypeId("cmis:document");		
 	}
 }
