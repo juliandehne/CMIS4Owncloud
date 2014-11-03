@@ -2,6 +2,8 @@ package org.up.liferay.owncloud;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -25,5 +27,14 @@ public class OwnCloudConfigurationLoader {
 			LOG.error(e.getMessage());
 		}
 		return (String) prop.getProperty("owncloudaddress");
+	}
+	
+	
+	public static final String getEndpointPath() {
+		try {
+			return new URL(getOwnCloudAddress()).getPath();
+		} catch (MalformedURLException e) {
+			throw new Error(e);
+		}
 	}
 }

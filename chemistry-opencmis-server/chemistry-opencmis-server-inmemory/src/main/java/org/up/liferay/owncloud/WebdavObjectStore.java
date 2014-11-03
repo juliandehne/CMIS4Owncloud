@@ -1,12 +1,15 @@
 package org.up.liferay.owncloud;
 
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceContext;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Fileable;
@@ -21,12 +24,71 @@ import org.slf4j.LoggerFactory;
 import com.github.sardine.DavResource;
 
 public class WebdavObjectStore extends ObjectStoreImpl {
-	
-	private static final Logger log = LoggerFactory.getLogger(WebdavObjectStore.class.getName());
+
+	private static final Logger log = LoggerFactory
+			.getLogger(WebdavObjectStore.class.getName());
+	private WebdavEndpoint endpoint;
 
 	public WebdavObjectStore(String repositoryId) {
 		super(repositoryId);
-		// TODO Auto-generated constructor stub
+		// get Endpoint
+	}
+	
+	@Override
+	public String getFolderPath(String folderId) {
+		return StringConverter.decode(folderId);
+	}
+
+	@Override
+	public ChildrenResult getChildren(Folder folder, int maxItems,
+			int skipCount, String user, boolean usePwc) {
+		// singletonpattern methods are called independent of constructor
+		if (endpoint == null) {
+			endpoint = getSardineEndpoint();
+		}
+
+		// hack root folder
+		String name = folder.getName();
+		String path = folder.getPathSegment();
+		if (name.equals("RootFolder")) {
+			path = "/";
+		}
+
+		// resultSet contains folders and files
+		List<Fileable> folderChildren = new ArrayList<Fileable>();
+
+		// converts webdav result to CMIS type of files
+		try {
+			List<DavResource> resources = getResourcesForID(path);
+			Iterator<DavResource> it = resources.iterator();
+
+			while (it.hasNext()) {
+				DavResource davResource = it.next();
+				if (davResource.isDirectory()) {
+					FolderImpl folderResult = new WebdavFolderImpl(davResource);
+					folderChildren.add(folderResult);
+				} else {
+					DocumentImpl documentImpl = new WebdavDocumentImpl(
+							davResource);
+					folderChildren.add(documentImpl);
+				}
+			}
+
+		} catch (IOException e) {
+			handleStartUpErrors(e);
+			return new ChildrenResult(folderChildren, 0);
+		}
+		ChildrenResult result = sortChildrenResult(maxItems, skipCount,
+				folderChildren);
+		return result;
+	}
+
+	private void handleStartUpErrors(IOException e) {
+		if (endpoint.isValidCredentialinDebug()) {
+			log.error("problems with webdav authentication at owncloud", e);
+		} else {
+			log.debug("the user credentials are not valid");
+		}
 	}
 
 	@Override
@@ -35,86 +97,57 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		return getChildren(folder, maxItems, skipCount, user, false);
 	}
 
+	/**
+	 * we assume that objectId is the URLEncoded path after the
+	 * owncloud-server-path or 100 for root
+	 */
 	@Override
-	public ChildrenResult getChildren(Folder folder, int maxItems,
-			int skipCount, String user, boolean usePwc) {
-		String path = folder.getName();
-		path = hackRootId(path);
-
-		// resultSet contains folders and files
-		List<Fileable> folderChildren = new ArrayList<Fileable>();
-		// get Endpoint
-		WebdavEndpoint endpoint = getSardineEndpoint();		
-		// converts webdav result to CMIS type of files
-		try {
-			List<DavResource> resources = getResourcesForUrl(path, endpoint);
-			String endpointPath= endpoint.getEndpointPath();			
-			Iterator<DavResource> it = resources.iterator();
-			
-			while (it.hasNext()) {
-				DavResource davResource = it.next();
-				String encodedPath = encodePath(endpointPath, davResource);
-				
-				if (davResource.isDirectory()) {
-					//TODO: folder.getId() ??
-					FolderImpl folderResult = new FolderImpl(encodedPath, folder.getId());
-					folderResult.setTypeId("cmis:folder");
-					folderChildren.add(folderResult);
-				}
-				else {
-					DocumentImpl doc= new DocumentImpl();					
-					fillDocumentWithMetadata(davResource, encodedPath, doc);
-					folderChildren.add(doc);					
-				}
-			}
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block	
-			if (endpoint.isValidCredentialinDebug()) {				
-				log.error("problems with webdav authentication at owncloud", e);
-			}
-			else {
-				log.debug("the user credentials are not valid");
-			}
-			
-			return new ChildrenResult(folderChildren, 0);
+	public StoredObject getObjectById(String objectId) {
+		if (endpoint == null) {
+			endpoint = getSardineEndpoint();
 		}
+		if (objectId == null || objectId.equals("100")) {
+			// objectId = "/" ??
+			FolderImpl result = new FolderImpl("RootFolder", null);
+			result.setName("RootFolder");
+			result.setRepositoryId("A1");			
+			result.setTypeId("cmis:folder");
+			result.setId("100");
+			return result;
+		} else {
+			try {				
+				DavResource davresource = getResourcesForID(objectId).get(0); // we expect exactly one resource
+				if (StringConverter.decode(objectId).endsWith("/")) {
+					return new WebdavFolderImpl(davresource);
+				} else {
+					return new WebdavDocumentImpl(davresource);
+				}
+			} catch (IOException e) {
+				log.error("error occurred whilst getting the resource for: "+ objectId);
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-		ChildrenResult result = sortChildrenResult(maxItems, skipCount,
-				folderChildren);
-		
-		return result;
-	}
-
-	private String encodePath(String endpointPath, DavResource davResource) {
-		String itemPath= davResource.getPath();
-		itemPath= itemPath.replace(endpointPath, "");
-		String encodedPath = URLEncoder.encode(itemPath);
-		return encodedPath;
-	}
-
-	private void fillDocumentWithMetadata(DavResource davResource,
-			String itemPath, DocumentImpl doc) {
-//		GregorianCalendar cal= new GregorianCalendar();
-//		cal.setTime(davResource.getCreation());
-		// TODO find out why null!!
-		GregorianCalendar cal = new GregorianCalendar();
-		cal.setTimeInMillis(System.currentTimeMillis());
-		doc.setCreatedAt(cal);
-		cal.setTime(davResource.getModified());
-		doc.setModifiedAt(cal);
-		doc.setName(davResource.getName());
-		doc.setId(itemPath);
-		doc.setTypeId("cmis:baseTypeId");
-		
-		//doc.set
-	}
-
-	private String hackRootId(String path) {
-		if (path.equals("RootFolder")) {
-			path = "/";
 		}
-		return path;
+		return null;
+	}
+
+	private List<DavResource> getResourcesForID(String encodedId) throws IOException {
+		String listedPath = StringConverter.encodedIdToWebdav(encodedId);
+		log.debug("showing resources for: " + listedPath);
+		List<DavResource> resources = endpoint.getSardine().list(listedPath);
+		// the first element is always the directory itself
+		if (resources.get(0).isDirectory()) {
+			resources.remove(0);
+		}
+		return resources;
+	}
+
+	private WebdavEndpoint getSardineEndpoint() {
+		// creates Sardine Endpoint
+		CallContext callContext = InMemoryServiceContext.getCallContext();
+		WebdavEndpoint endpoint = new WebdavEndpoint(callContext);
+		return endpoint;
 	}
 
 	private ChildrenResult sortChildrenResult(int maxItems, int skipCount,
@@ -126,27 +159,6 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		folderChildren = folderChildren.subList(from, to);
 		ChildrenResult result = new ChildrenResult(folderChildren, noItems);
 		return result;
-	}
-
-	private List<DavResource> getResourcesForUrl(String path,
-			WebdavEndpoint endpoint) throws IOException {
-		String listedPath = endpoint.getEndpoint() + path;		
-		log.debug("showing directory for: " + listedPath);
-		List<DavResource> resources = endpoint.getSardine().list(listedPath);
-		return resources;
-	}
-
-	private WebdavEndpoint getSardineEndpoint() {
-		// creates Sardine Endpoint
-		CallContext callContext = InMemoryServiceContext.getCallContext();
-		WebdavEndpoint endpoint = new WebdavEndpoint(callContext);
-		return endpoint;
-	}
-	
-	@Override
-	public StoredObject getObjectById(String objectId) {
-		// TODO implement this with document metadata ( or real data)
-		return super.getObjectById(objectId);
 	}
 
 }

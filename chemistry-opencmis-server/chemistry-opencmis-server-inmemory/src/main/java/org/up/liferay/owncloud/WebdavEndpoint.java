@@ -30,13 +30,7 @@ public class WebdavEndpoint {
 		return endpoint;
 	}
 	
-	public String getEndpointPath() {
-		try {
-			return new URL(endpoint).getPath();
-		} catch (MalformedURLException e) {
-			throw new Error(e);
-		}
-	}
+
 	
 	public Boolean isValidCredentialinDebug() {
 		if (user == null || password == null) {

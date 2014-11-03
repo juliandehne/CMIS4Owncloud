@@ -67,7 +67,7 @@ public class StoredObjectImpl implements StoredObject {
     protected List<String> secondaryTypeIds; // CMIS 1.1
     protected List<String> policyIds;
 
-    StoredObjectImpl() { // visibility should be package
+    protected StoredObjectImpl() { // visibility should be package
         GregorianCalendar now = getNow();
         now.setTime(new Date());
         fCreatedAt = now;
