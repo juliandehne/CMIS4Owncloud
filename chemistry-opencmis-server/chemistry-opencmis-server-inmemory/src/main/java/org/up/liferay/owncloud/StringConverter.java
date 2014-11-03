@@ -45,16 +45,20 @@ public class StringConverter {
 		String unencodedId = decode(id);
 		if (unencodedId.endsWith("/")) {
 			String idWithoutSlash =  unencodedId.substring(0, unencodedId.lastIndexOf("/"));
-			return idWithoutSlash.substring(idWithoutSlash.lastIndexOf("/"));
+			return idWithoutSlash.substring(idWithoutSlash.lastIndexOf("/")+1);
 		} else {
-			return unencodedId.substring(unencodedId.lastIndexOf("/"));
+			return unencodedId.substring(unencodedId.lastIndexOf("/")+1);
 		}
 	}
 	
 	public static String decodedIdToParent(String id)  {
 		File file = new File(id);
-		String result = file.getParentFile().getName();		
+		String result = "/"+file.getParentFile().getName();		
 		return result;
+	}
+	
+	public static String decodedIdToParentEncoded(String id)  {
+		return StringConverter.encode(decodedIdToParent(id));
 	}
 
 	public static String encode(String s) {

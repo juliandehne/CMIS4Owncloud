@@ -59,7 +59,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 
 		// converts webdav result to CMIS type of files
 		try {
-			List<DavResource> resources = getResourcesForID(path);
+			List<DavResource> resources = getResourcesForID(path, false);
 			Iterator<DavResource> it = resources.iterator();
 
 			while (it.hasNext()) {
@@ -69,7 +69,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 					folderChildren.add(folderResult);
 				} else {
 					DocumentImpl documentImpl = new WebdavDocumentImpl(
-							davResource);
+							davResource);					
 					folderChildren.add(documentImpl);
 				}
 			}
@@ -115,12 +115,16 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 			result.setId("100");
 			return result;
 		} else {
-			try {				
-				DavResource davresource = getResourcesForID(objectId).get(0); // we expect exactly one resource
-				if (StringConverter.decode(objectId).endsWith("/")) {
-					return new WebdavFolderImpl(davresource);
+			try {								
+				String decodedPath = StringConverter.decode(objectId);
+				if (decodedPath.endsWith("/")) {
+					DavResource davresource = getResourcesForID(objectId, true).get(0); // we expect exactly one resource
+					WebdavFolderImpl result = new WebdavFolderImpl(davresource);
+					return result;
 				} else {
-					return new WebdavDocumentImpl(davresource);
+					DavResource davresource = getResourcesForID(objectId, false).get(0); // we expect exactly one resource
+					WebdavDocumentImpl result = new WebdavDocumentImpl(davresource);
+					return result;
 				}
 			} catch (IOException e) {
 				log.error("error occurred whilst getting the resource for: "+ objectId);
@@ -132,12 +136,12 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		return null;
 	}
 
-	private List<DavResource> getResourcesForID(String encodedId) throws IOException {
+	private List<DavResource> getResourcesForID(String encodedId, Boolean getDirectory) throws IOException {
 		String listedPath = StringConverter.encodedIdToWebdav(encodedId);
 		log.debug("showing resources for: " + listedPath);
 		List<DavResource> resources = endpoint.getSardine().list(listedPath);
 		// the first element is always the directory itself
-		if (resources.get(0).isDirectory()) {
+		if (resources.get(0).isDirectory() && !getDirectory) {
 			resources.remove(0);
 		}
 		return resources;
