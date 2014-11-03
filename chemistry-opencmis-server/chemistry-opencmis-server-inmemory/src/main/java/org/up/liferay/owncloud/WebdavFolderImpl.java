@@ -21,6 +21,19 @@ public class WebdavFolderImpl extends FolderImpl {
 		this.setId(id);
 		setParentId(parentID);
 	}
+	
+	public WebdavFolderImpl(String encodedId) {
+		this.setTypeId("cmis:folder");
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTimeInMillis(System.currentTimeMillis());
+		this.setCreatedAt(cal);		
+		this.setModifiedAt(cal);		
+		String name = StringConverter.encodedIdToName(encodedId);
+		String parentID = StringConverter.decodedIdToParent(StringConverter.decode(encodedId));
+		this.setName(name);
+		this.setId(encodedId);
+		setParentId(parentID);
+	}
 
 
 }

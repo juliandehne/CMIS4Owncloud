@@ -118,15 +118,17 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 			try {								
 				String decodedPath = StringConverter.decode(objectId);
 				if (decodedPath.endsWith("/")) {
-					DavResource davresource = getResourcesForID(objectId, true).get(0); // we expect exactly one resource
-					WebdavFolderImpl result = new WebdavFolderImpl(davresource);
+					//DavResource davresource = getResourcesForID(objectId, true).get(0); // we expect exactly one resource
+					//WebdavFolderImpl result = new WebdavFolderImpl(davresource);
+					WebdavFolderImpl result = new WebdavFolderImpl(objectId);
 					return result;
 				} else {
-					DavResource davresource = getResourcesForID(objectId, false).get(0); // we expect exactly one resource
-					WebdavDocumentImpl result = new WebdavDocumentImpl(davresource);
+					//DavResource davresource = getResourcesForID(objectId, false).get(0); // we expect exactly one resource
+					//WebdavDocumentImpl result = new WebdavDocumentImpl(davresource);
+					WebdavDocumentImpl result = new WebdavDocumentImpl(objectId);					
 					return result;
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
 				log.error("error occurred whilst getting the resource for: "+ objectId);
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -139,7 +141,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	private List<DavResource> getResourcesForID(String encodedId, Boolean getDirectory) throws IOException {
 		String listedPath = StringConverter.encodedIdToWebdav(encodedId);
 		log.debug("showing resources for: " + listedPath);
-		List<DavResource> resources = endpoint.getSardine().list(listedPath);
+		List<DavResource> resources = endpoint.getSardine().list(listedPath);		
 		// the first element is always the directory itself
 		if (resources.get(0).isDirectory() && !getDirectory) {
 			resources.remove(0);
