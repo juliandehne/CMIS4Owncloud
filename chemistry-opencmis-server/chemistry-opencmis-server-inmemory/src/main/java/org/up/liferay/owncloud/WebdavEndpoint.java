@@ -19,7 +19,7 @@ public class WebdavEndpoint {
 		user = context.getUsername();
 		password =   context.getPassword();
 		this.sardine.setCredentials(user,password);
-		this.endpoint = OwnCloudConfigurationLoader.getOwnCloudAddress();
+		this.endpoint = OwnCloudConfigurationLoader.getOwnCloudAddress();		
 	}
 	
 	public Sardine getSardine() {
@@ -37,6 +37,10 @@ public class WebdavEndpoint {
 			return false;
 		}
 		return (user.equals("test") && password.equals("test"));
+	}
+	
+	public Boolean isUserContextSet() {
+		return user != null && password != null && !password.equals("false");
 	}
 	
 }

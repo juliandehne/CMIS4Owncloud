@@ -11,7 +11,7 @@ import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
 import org.junit.Test;
-import org.up.liferay.owncloud.StringConverter;
+import org.up.liferay.owncloud.WebdavIdDecoderAndEncoder;
 import org.up.liferay.owncloud.WebdavEndpoint;
 
 import com.github.sardine.DavResource;
@@ -104,14 +104,14 @@ public class WebdavTests {
 	};
 
 	@Test
-	public void test() {
+	public void testEndpointConnection() {
 
 		WebdavEndpoint endpoint = new WebdavEndpoint(context);
 		try {
 			List<DavResource> result = endpoint.getSardine().list(
 					endpoint.getEndpoint() + "/");
-			assert result != null;
-			assert !result.isEmpty();
+			assertTrue(result != null);
+			assertTrue(!result.isEmpty());
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -120,20 +120,20 @@ public class WebdavTests {
 	}
 
 	@Test
-	public void stringConverterTests() {
+	public void testWebdavToIdNotEncoded() {
 
 		WebdavEndpoint endpoint = new WebdavEndpoint(context);
 		try {
 			List<DavResource> result = endpoint.getSardine().list(
 					endpoint.getEndpoint() + "/documents/stuff/");
-			assert result != null;
-			assert !result.isEmpty();
+			assertTrue(result != null);
+			assertTrue(!result.isEmpty());
 
 			for (DavResource davResource : result) {
-				String convertResult = StringConverter.webdavToIdNotEncoded(davResource);
+				String convertResult = WebdavIdDecoderAndEncoder.webdavToIdNotEncoded(davResource);
 				convertResult.equals(
-						"/documents/stuff/");
-				assert (!davResource.getPath().contains("webdav"));				
+						"/documents/stuff/");				
+				assertFalse((convertResult.contains("webdav")));				
 			}
 
 		} catch (IOException e) {
@@ -143,27 +143,28 @@ public class WebdavTests {
 	}
 	
 	@Test
-	public void idtoName() {
-		String id = StringConverter.encode("/documents/hello/");
-		assert StringConverter.encodedIdToName(id).equals("hello");
+	public void testIdtoName() {
+		String id = WebdavIdDecoderAndEncoder.encode("/documents/hello/");
+		assertTrue(WebdavIdDecoderAndEncoder.encodedIdToName(id).equals("hello"));
 		
-		String id2 = StringConverter.encode("/documents/greatexpextations/hello.pdf");
-		assert StringConverter.encodedIdToName(id2).equals("hello.pdf");		
+		String id2 = WebdavIdDecoderAndEncoder.encode("/documents/greatexpextations/hello.pdf");
+		assertTrue(WebdavIdDecoderAndEncoder.encodedIdToName(id2).equals("hello.pdf"));		
 	}
 	
 	@Test
 	public void idToParent() {
 		String id = "/documents/hello/stuff/youno/undso/";
-		assert StringConverter.decodedIdToParent(id).equals("/documents/hello/stuff/youno/");
+		String toTest = WebdavIdDecoderAndEncoder.decodedIdToParent(id);
+		assertTrue(toTest.equals("/documents/hello/stuff/youno/"));
 		
-		String id2 = "/documents/hello/stuff/youno/undso/masterofdesaster.odf";
-		assert StringConverter.decodedIdToParent(id2).equals("/documents/hello/stuff/youno/");
+		String id2 = "/documents/hello/stuff/youno/undso/masterofdesaster.odf";		
+		assertTrue(WebdavIdDecoderAndEncoder.decodedIdToParent(id2).equals("/documents/hello/stuff/youno/undso/"));
 		
 		String id3 = "/documents";
-		assert StringConverter.decodedIdToParent(id3).equals("/");
+		assertTrue(WebdavIdDecoderAndEncoder.decodedIdToParent(id3).equals("/"));
 		
 		String id4 = "/";
-		assert StringConverter.decodedIdToParent(id4).equals(null);
+		assertNull(WebdavIdDecoderAndEncoder.decodedIdToParent(id4));
 		
 	}
 

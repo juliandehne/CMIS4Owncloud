@@ -427,6 +427,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
 
         String user = context.getUsername();
         ObjectStore objStore = fStoreManager.getObjectStore(repositoryId);
+        
+        
 
         TypeManager tm = fStoreManager.getTypeManager(repositoryId);
         ObjectData od = PropertyCreationHelper.getObjectData(tm, objStore, so, filter, user, includeAllowableActions,

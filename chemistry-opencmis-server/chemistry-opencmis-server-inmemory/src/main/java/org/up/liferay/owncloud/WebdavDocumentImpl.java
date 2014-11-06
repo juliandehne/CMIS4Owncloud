@@ -16,8 +16,8 @@ public class WebdavDocumentImpl extends DocumentImpl {
 		this.setCreatedAt(cal);
 		cal.setTime(davResource.getModified());
 		this.setModifiedAt(cal);
-		String id = StringConverter.webdavToIdEncoded(davResource);
-		String name = StringConverter.encodedIdToName(id);
+		String id = WebdavIdDecoderAndEncoder.webdavToIdEncoded(davResource);
+		String name = WebdavIdDecoderAndEncoder.encodedIdToName(id);
 		// String parentID =
 		// StringConverter.decodedIdToParent(StringConverter.decode(id));
 		this.setName(name);
@@ -33,7 +33,7 @@ public class WebdavDocumentImpl extends DocumentImpl {
 		cal.setTimeInMillis(System.currentTimeMillis());
 		this.setCreatedAt(cal);
 		this.setModifiedAt(cal);
-		String name = StringConverter.encodedIdToName(encodedId);
+		String name = WebdavIdDecoderAndEncoder.encodedIdToName(encodedId);
 		// String parentID =
 		// StringConverter.decodedIdToParent(StringConverter.decode(id));
 		this.setName(name);

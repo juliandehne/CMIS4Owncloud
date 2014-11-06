@@ -6,7 +6,7 @@ import java.net.URLEncoder;
 
 import com.github.sardine.DavResource;
 
-public class StringConverter {
+public class WebdavIdDecoderAndEncoder {
 	public static String createNotEncodedRootId() {
 		return "/";
 	}
@@ -52,13 +52,22 @@ public class StringConverter {
 	}
 	
 	public static String decodedIdToParent(String id)  {
-		File file = new File(id);
-		String result = "/"+file.getParentFile().getName();		
-		return result;
+//		File file = new File(id);
+//		String result = "/"+file.getParentFile().getName();
+		if (id.equals("/")) {
+			return null;
+		} 
+		
+		if (id.endsWith("/")) {
+			String tmp = id.substring(0, id.lastIndexOf("/"));
+			return id.substring(0, tmp.lastIndexOf("/")+1);
+		} else {
+			return id.substring(0, id.lastIndexOf("/")+1);
+		}		
 	}
 	
 	public static String decodedIdToParentEncoded(String id)  {
-		return StringConverter.encode(decodedIdToParent(id));
+		return WebdavIdDecoderAndEncoder.encode(decodedIdToParent(id));
 	}
 
 	public static String encode(String s) {

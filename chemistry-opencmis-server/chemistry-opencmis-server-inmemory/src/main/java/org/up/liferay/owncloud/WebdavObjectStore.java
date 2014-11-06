@@ -31,25 +31,24 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 
 	public WebdavObjectStore(String repositoryId) {
 		super(repositoryId);
-		// get Endpoint
+		//getOrRefreshSardineEndpoint();
 	}
-	
+
 	@Override
 	public String getFolderPath(String folderId) {
-		return StringConverter.decode(folderId);
+		return WebdavIdDecoderAndEncoder.decode(folderId);
 	}
 
 	@Override
 	public ChildrenResult getChildren(Folder folder, int maxItems,
 			int skipCount, String user, boolean usePwc) {
 		// singletonpattern methods are called independent of constructor
-		if (endpoint == null) {
-			endpoint = getSardineEndpoint();
-		}
+		getOrRefreshSardineEndpoint();
 
 		// hack root folder
 		String name = folder.getName();
-		String path = folder.getPathSegment();
+		//String path = folder.getPathSegment();
+		String path = WebdavIdDecoderAndEncoder.decode(folder.getId());
 		if (name.equals("RootFolder")) {
 			path = "/";
 		}
@@ -69,7 +68,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 					folderChildren.add(folderResult);
 				} else {
 					DocumentImpl documentImpl = new WebdavDocumentImpl(
-							davResource);					
+							davResource);
 					folderChildren.add(documentImpl);
 				}
 			}
@@ -84,7 +83,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	}
 
 	private void handleStartUpErrors(IOException e) {
-		if (endpoint.isValidCredentialinDebug()) {
+		if (endpoint.isValidCredentialinDebug()) {			
 			log.error("problems with webdav authentication at owncloud", e);
 		} else {
 			log.debug("the user credentials are not valid");
@@ -103,34 +102,37 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	 */
 	@Override
 	public StoredObject getObjectById(String objectId) {
-		if (endpoint == null) {
-			endpoint = getSardineEndpoint();
-		}
+		getOrRefreshSardineEndpoint();
 		if (objectId == null || objectId.equals("100")) {
 			// objectId = "/" ??
 			FolderImpl result = new FolderImpl("RootFolder", null);
 			result.setName("RootFolder");
-			result.setRepositoryId("A1");			
+			result.setRepositoryId("A1");
 			result.setTypeId("cmis:folder");
 			result.setId("100");
 			return result;
 		} else {
-			try {								
-				String decodedPath = StringConverter.decode(objectId);
+			try {
+				String decodedPath = WebdavIdDecoderAndEncoder
+						.decode(objectId);
 				if (decodedPath.endsWith("/")) {
-					//DavResource davresource = getResourcesForID(objectId, true).get(0); // we expect exactly one resource
-					//WebdavFolderImpl result = new WebdavFolderImpl(davresource);
+					// DavResource davresource = getResourcesForID(objectId,
+					// true).get(0); // we expect exactly one resource
+					// WebdavFolderImpl result = new
+					// WebdavFolderImpl(davresource);
 					WebdavFolderImpl result = new WebdavFolderImpl(objectId);
 					return result;
 				} else {
-					//DavResource davresource = getResourcesForID(objectId, false).get(0); // we expect exactly one resource
-					//WebdavDocumentImpl result = new WebdavDocumentImpl(davresource);
-					WebdavDocumentImpl result = new WebdavDocumentImpl(objectId);					
+					// DavResource davresource = getResourcesForID(objectId,
+					// false).get(0); // we expect exactly one resource
+					// WebdavDocumentImpl result = new
+					// WebdavDocumentImpl(davresource);
+					WebdavDocumentImpl result = new WebdavDocumentImpl(objectId);
 					return result;
 				}
 			} catch (Exception e) {
-				log.error("error occurred whilst getting the resource for: "+ objectId);
-				// TODO Auto-generated catch block
+				log.error("error occurred whilst getting the resource for: "
+						+ objectId);	
 				e.printStackTrace();
 			}
 
@@ -138,10 +140,12 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		return null;
 	}
 
-	private List<DavResource> getResourcesForID(String encodedId, Boolean getDirectory) throws IOException {
-		String listedPath = StringConverter.encodedIdToWebdav(encodedId);
+	private List<DavResource> getResourcesForID(String encodedId,
+			Boolean getDirectory) throws IOException {
+		String listedPath = WebdavIdDecoderAndEncoder
+				.encodedIdToWebdav(encodedId);
 		log.debug("showing resources for: " + listedPath);
-		List<DavResource> resources = endpoint.getSardine().list(listedPath);		
+		List<DavResource> resources = endpoint.getSardine().list(listedPath);
 		// the first element is always the directory itself
 		if (resources.get(0).isDirectory() && !getDirectory) {
 			resources.remove(0);
@@ -149,10 +153,13 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		return resources;
 	}
 
-	private WebdavEndpoint getSardineEndpoint() {
+	private WebdavEndpoint getOrRefreshSardineEndpoint() {
 		// creates Sardine Endpoint
+		if (endpoint != null && endpoint.isUserContextSet()) {
+			return endpoint;
+		}
 		CallContext callContext = InMemoryServiceContext.getCallContext();
-		WebdavEndpoint endpoint = new WebdavEndpoint(callContext);
+		endpoint = new WebdavEndpoint(callContext);
 		return endpoint;
 	}
 
