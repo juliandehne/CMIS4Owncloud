@@ -410,6 +410,8 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
                 "exampleExtension", null, extElements)));
 
         LOG.debug("stop getObject()");
+        
+        
 
         return od;
     }
