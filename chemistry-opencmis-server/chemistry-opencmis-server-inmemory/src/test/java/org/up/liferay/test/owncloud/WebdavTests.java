@@ -4,13 +4,18 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.up.liferay.owncloud.WebdavDocumentImpl;
 import org.up.liferay.owncloud.WebdavIdDecoderAndEncoder;
 import org.up.liferay.owncloud.WebdavEndpoint;
 
@@ -166,6 +171,15 @@ public class WebdavTests {
 		String id4 = "/";
 		assertNull(WebdavIdDecoderAndEncoder.decodedIdToParent(id4));
 		
+	}
+	
+	@Test
+	public void testPDFStream() throws IOException {
+		WebdavEndpoint endpoint = new WebdavEndpoint(context);
+		WebdavDocumentImpl documentImpl = new WebdavDocumentImpl("/ownCloudUserManual.pdf", endpoint);
+		InputStream input = documentImpl.getContent().getStream();
+		OutputStream outputStream = (OutputStream) System.out;
+		IOUtils.copy(input, outputStream);	
 	}
 
 }

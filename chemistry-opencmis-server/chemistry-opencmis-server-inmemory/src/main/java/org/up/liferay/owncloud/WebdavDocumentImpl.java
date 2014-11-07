@@ -1,43 +1,86 @@
 package org.up.liferay.owncloud;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.GregorianCalendar;
 
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.DocumentImpl;
+import org.apache.commons.io.IOUtils;
 
 import com.github.sardine.DavResource;
 
 public class WebdavDocumentImpl extends DocumentImpl {
-	public WebdavDocumentImpl(DavResource davResource) {
-		// GregorianCalendar cal= new GregorianCalendar();
-		// cal.setTime(davResource.getCreation());
-		// TODO find out why null!!
+	private String decodedId;
+	private WebdavEndpoint endpoint;
+
+	public WebdavDocumentImpl(DavResource davResource, WebdavEndpoint endpoint) {	
+		this.endpoint = endpoint;
+		String id = WebdavIdDecoderAndEncoder.webdavToIdEncoded(davResource);			
+		setDefaults(id);
+		setWebdavContentDefaults();		
+		setDebugProperties();			
+		setWebdavContentProperties(davResource);		
+		
+	}
+
+	public WebdavDocumentImpl(String encodedId,  WebdavEndpoint endpoint) {	
+		this.endpoint = endpoint;
+		setDefaults(encodedId);
+		setWebdavContentDefaults();		
+		setDebugProperties();			
+	}
+
+	private void setDebugProperties() {
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTimeInMillis(System.currentTimeMillis());
 		this.setCreatedAt(cal);
-		cal.setTime(davResource.getModified());
 		this.setModifiedAt(cal);
-		String id = WebdavIdDecoderAndEncoder.webdavToIdEncoded(davResource);
-		String name = WebdavIdDecoderAndEncoder.encodedIdToName(id);
-		setNameDefaults(id, name);
 	}
 
-	public WebdavDocumentImpl(String encodedId) {
-		// GregorianCalendar cal= new GregorianCalendar();
-		// cal.setTime(davResource.getCreation());
-		// TODO find out why null!!
-		GregorianCalendar cal = new GregorianCalendar();
-		cal.setTimeInMillis(System.currentTimeMillis());
-		this.setCreatedAt(cal);
-		this.setModifiedAt(cal);
-		String name = WebdavIdDecoderAndEncoder.encodedIdToName(encodedId);		
-		setNameDefaults(encodedId, name);
-	}
-
-	private void setNameDefaults(String encodedId, String name) {		
-		this.setName(name);
+	private void setDefaults(String encodedId) {
+		this.setContent(new ContentStreamImpl());
 		this.setId(encodedId);
 		this.setTypeId("cmis:document");
-		String parentID =	WebdavIdDecoderAndEncoder.decodedIdToParent(WebdavIdDecoderAndEncoder.decode(encodedId));
-		this.addParentId(parentID);
+		this.decodedId = WebdavIdDecoderAndEncoder.decode(encodedId);
+		String name = WebdavIdDecoderAndEncoder.encodedIdToName(encodedId);
+		this.setName(name);
+		String parentID =	WebdavIdDecoderAndEncoder.decodedIdToParent(decodedId);		
+		this.addParentId(parentID);									
 	}
+
+	private void setWebdavContentDefaults() {
+		ContentStreamImpl steam = (ContentStreamImpl) getContent();		
+		steam.setFileName(this.getName());			
+		steam.setLength(new BigInteger("-1"));				
+		steam.setMimeType("application/octet-stream");	
+		setInputStream(steam);
+		this.setContent(steam);
+	}
+	
+	public void setWebdavContentProperties(DavResource davResource) {		
+		String mimeTyp = davResource.getContentType();
+		Long fileLength = davResource.getContentLength();
+		ContentStreamImpl steam = (ContentStreamImpl) getContent();
+		steam.setFileName(this.getName());
+		steam.setLength(BigInteger.valueOf(fileLength));		
+		steam.setMimeType(mimeTyp);				
+		setInputStream(steam);	
+		setContent(steam);
+	}
+
+	private void setInputStream(ContentStreamImpl steam) {
+		try {
+			InputStream webdavBytes = endpoint.getSardine().get(endpoint.getEndpoint()+decodedId);
+			ByteArrayInputStream tmpFile = new ByteArrayInputStream(IOUtils.toByteArray(webdavBytes));					
+			steam.setStream(IOUtils.toBufferedInputStream(tmpFile));			
+		} catch (IOException e) {		
+			e.printStackTrace();
+		}
+	}
+				
 }

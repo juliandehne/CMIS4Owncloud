@@ -68,7 +68,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 					folderChildren.add(folderResult);
 				} else {
 					DocumentImpl documentImpl = new WebdavDocumentImpl(
-							davResource);
+							davResource, endpoint);
 					folderChildren.add(documentImpl);
 				}
 			}
@@ -127,7 +127,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 					// false).get(0); // we expect exactly one resource
 					// WebdavDocumentImpl result = new
 					// WebdavDocumentImpl(davresource);
-					WebdavDocumentImpl result = new WebdavDocumentImpl(objectId);
+					WebdavDocumentImpl result = new WebdavDocumentImpl(objectId, endpoint);
 					return result;
 				}
 			} catch (Exception e) {

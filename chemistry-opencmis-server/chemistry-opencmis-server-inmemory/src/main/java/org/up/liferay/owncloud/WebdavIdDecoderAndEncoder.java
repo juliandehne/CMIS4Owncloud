@@ -71,6 +71,7 @@ public class WebdavIdDecoderAndEncoder {
 	}
 
 	public static String encode(String s) {
+		s = s.replaceAll(" ", "%20");
 		return URLEncoder.encode(s);
 	}
 
