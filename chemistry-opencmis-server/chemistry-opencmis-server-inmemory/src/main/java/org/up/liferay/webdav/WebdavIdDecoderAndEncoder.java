@@ -1,4 +1,4 @@
-package org.up.liferay.owncloud;
+package org.up.liferay.webdav;
 
 import java.io.File;
 import java.net.URLDecoder;
@@ -7,6 +7,9 @@ import java.net.URLEncoder;
 import com.github.sardine.DavResource;
 
 public class WebdavIdDecoderAndEncoder {
+	
+	public static final String LIFERAYROOTID = "100";
+	
 	public static String createNotEncodedRootId() {
 		return "/";
 	}
@@ -16,7 +19,7 @@ public class WebdavIdDecoderAndEncoder {
 	}
 
 	public static String encodedIdToWebdav(String id) {
-		return OwnCloudConfigurationLoader.getOwnCloudAddress() + decode(id);
+		return WebdavConfigurationLoader.getOwnCloudAddress() + decode(id);
 	}
 
 	/**
@@ -27,11 +30,11 @@ public class WebdavIdDecoderAndEncoder {
 	 */
 	public static String webdavToIdNotEncoded(DavResource resource) {
 		if (resource.isDirectory()) {
-			String path = resource.toString().replace(OwnCloudConfigurationLoader.getEndpointPath(), "");			
+			String path = resource.toString().replace(WebdavConfigurationLoader.getEndpointPath(), "");			
 			return path;
 		} else {
 			String path = resource.getPath().replace(
-					OwnCloudConfigurationLoader.getEndpointPath(), "");
+					WebdavConfigurationLoader.getEndpointPath(), "");
 			return path;
 		}
 	}
@@ -76,6 +79,9 @@ public class WebdavIdDecoderAndEncoder {
 	}
 
 	public static String decode(String s) {
+		if (s.equals("100")) {
+			return "/";
+		}
 		return URLDecoder.decode(s);
 	}
 }

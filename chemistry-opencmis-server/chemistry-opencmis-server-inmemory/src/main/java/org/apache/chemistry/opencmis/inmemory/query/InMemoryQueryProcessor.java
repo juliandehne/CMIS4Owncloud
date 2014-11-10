@@ -67,6 +67,9 @@ import org.apache.chemistry.opencmis.server.support.query.QueryUtilStrict;
 import org.apache.chemistry.opencmis.server.support.query.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.up.liferay.webdav.WebdavEndpoint;
+import org.up.liferay.webdav.WebdavIdDecoderAndEncoder;
+import org.up.liferay.webdav.WebdavObjectStore;
 
 /**
  * A processor for a CMIS query for the In-Memory server. During tree traversal
@@ -79,9 +82,9 @@ public class InMemoryQueryProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryQueryProcessor.class);
 
-    private List<StoredObject> matches = new ArrayList<StoredObject>();
-    private QueryObject queryObj;
-    private Tree whereTree;
+    protected List<StoredObject> matches = new ArrayList<StoredObject>();
+    protected QueryObject queryObj;
+    protected Tree whereTree;
     private ObjectStoreImpl objStore;
     private List<TypeDefinition> secondaryTypeIds;
 
@@ -127,7 +130,7 @@ public class InMemoryQueryProcessor {
         for (String objectId : ((ObjectStoreImpl) objectStore).getIds()) {
             StoredObject so = objectStore.getObjectById(objectId);
             match(so, user, searchAllVersions == null ? true : searchAllVersions.booleanValue());
-        }
+        }                       
 
         ObjectList objList = buildResultList(tm, user, includeAllowableActions, includeRelationships, renditionFilter,
                 maxItems, skipCount);
@@ -205,6 +208,7 @@ public class InMemoryQueryProcessor {
         Map<String, String> props = queryObj.getRequestedPropertiesByAlias();
         Map<String, String> funcs = queryObj.getRequestedFuncsByAlias();
 
+        
         for (StoredObject so : matches) {
             String queryName = queryObj.getTypes().values().iterator().next();
             TypeDefinition td = queryObj.getTypeDefinitionFromQueryName(queryName);

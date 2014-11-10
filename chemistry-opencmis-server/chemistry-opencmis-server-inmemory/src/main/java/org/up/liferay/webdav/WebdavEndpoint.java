@@ -1,4 +1,4 @@
-package org.up.liferay.owncloud;
+package org.up.liferay.webdav;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -19,7 +19,7 @@ public class WebdavEndpoint {
 		user = context.getUsername();
 		password =   context.getPassword();
 		this.sardine.setCredentials(user,password);
-		this.endpoint = OwnCloudConfigurationLoader.getOwnCloudAddress();		
+		this.endpoint = WebdavConfigurationLoader.getOwnCloudAddress();		
 	}
 	
 	public Sardine getSardine() {

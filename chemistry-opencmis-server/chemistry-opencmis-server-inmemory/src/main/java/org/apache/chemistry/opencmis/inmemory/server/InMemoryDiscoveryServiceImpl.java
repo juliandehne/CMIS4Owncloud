@@ -45,6 +45,7 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.up.liferay.webdav.WebdavQueryManager;
 
 public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl {
 
@@ -150,6 +151,9 @@ public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl {
 
         res = fStoreManager.query(user, repositoryId, statement, searchAllVersions, includeAllowableActions,
                 includeRelationships, renditionFilter, maxItems, skipCount);
+//        LOG.warn("queries are not implemented in the webdav repository");
+//        WebdavQueryManager queryManager = new WebdavQueryManager(context, statement);
+//        res = queryManager.computeObjectList();
         LOG.debug("stop query()");
         return res;
     }

@@ -30,7 +30,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.impl.FolderImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ObjectStoreImpl;
 import org.junit.Before;
 import org.junit.Test;
-import org.up.liferay.owncloud.WebdavObjectStore;
+import org.up.liferay.webdav.WebdavObjectStore;
 
 /**
  * Some test directly against the in-memory folder object.

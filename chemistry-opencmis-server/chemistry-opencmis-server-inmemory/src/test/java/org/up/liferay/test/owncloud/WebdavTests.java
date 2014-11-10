@@ -15,9 +15,9 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.server.impl.CallContextImpl;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import org.up.liferay.owncloud.WebdavDocumentImpl;
-import org.up.liferay.owncloud.WebdavIdDecoderAndEncoder;
-import org.up.liferay.owncloud.WebdavEndpoint;
+import org.up.liferay.webdav.WebdavDocumentImpl;
+import org.up.liferay.webdav.WebdavEndpoint;
+import org.up.liferay.webdav.WebdavIdDecoderAndEncoder;
 
 import com.github.sardine.DavResource;
 

@@ -72,7 +72,8 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.server.support.TypeDefinitionFactory;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
-import org.up.liferay.owncloud.WebdavObjectStore;
+import org.up.liferay.webdav.WebdavObjectStore;
+import org.up.liferay.webdav.WebdavQueryProcessor;
 
 /**
  * Factory to create objects that are stored in the InMemory store.
@@ -569,7 +570,8 @@ public class StoreManagerImpl implements StoreManager {
         TypeManager tm = getTypeManager(repositoryId);
         ObjectStore objectStore = getObjectStore(repositoryId);
 
-        InMemoryQueryProcessor queryProcessor = new InMemoryQueryProcessor(getStore(repositoryId));
+        //InMemoryQueryProcessor queryProcessor = new InMemoryQueryProcessor(getStore(repositoryId));
+        WebdavQueryProcessor queryProcessor = new WebdavQueryProcessor((ObjectStoreImpl) objectStore);
         ObjectList objList = queryProcessor.query(tm, objectStore, user, repositoryId, statement, searchAllVersions,
                 includeAllowableActions, includeRelationships, renditionFilter, maxItems, skipCount);
 

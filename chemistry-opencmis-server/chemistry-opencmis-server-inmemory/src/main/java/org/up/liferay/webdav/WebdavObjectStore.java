@@ -1,4 +1,4 @@
-package org.up.liferay.owncloud;
+package org.up.liferay.webdav;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,6 +33,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		super(repositoryId);
 		//getOrRefreshSardineEndpoint();
 	}
+		
 
 	@Override
 	public String getFolderPath(String folderId) {
@@ -95,6 +96,11 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 			int skipCount, String user) {
 		return getChildren(folder, maxItems, skipCount, user, false);
 	}
+	
+	
+	public StoredObject getObjectById(String objectNameDecoded, String parentNameDecoded) {
+		return getObjectById(WebdavIdDecoderAndEncoder.encode(parentNameDecoded) + WebdavIdDecoderAndEncoder.encode(objectNameDecoded));
+	}
 
 	/**
 	 * we assume that objectId is the URLEncoded path after the
@@ -103,30 +109,26 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	@Override
 	public StoredObject getObjectById(String objectId) {
 		getOrRefreshSardineEndpoint();
-		if (objectId == null || objectId.equals("100")) {
+		if (objectId == null || objectId.equals(WebdavIdDecoderAndEncoder.LIFERAYROOTID)) {
 			// objectId = "/" ??
 			FolderImpl result = new FolderImpl("RootFolder", null);
 			result.setName("RootFolder");
 			result.setRepositoryId("A1");
 			result.setTypeId("cmis:folder");
-			result.setId("100");
+			result.setId(WebdavIdDecoderAndEncoder.LIFERAYROOTID);
 			return result;
 		} else {
 			try {
 				String decodedPath = WebdavIdDecoderAndEncoder
 						.decode(objectId);
-				if (decodedPath.endsWith("/")) {
-					// DavResource davresource = getResourcesForID(objectId,
-					// true).get(0); // we expect exactly one resource
-					// WebdavFolderImpl result = new
-					// WebdavFolderImpl(davresource);
+//				if (!decodedPath.startsWith("/")) {
+//					return null;
+//				}
+				// entweder ist es ein folder oder ein document
+				if (decodedPath.endsWith("/")) {			
 					WebdavFolderImpl result = new WebdavFolderImpl(objectId);
 					return result;
-				} else {
-					// DavResource davresource = getResourcesForID(objectId,
-					// false).get(0); // we expect exactly one resource
-					// WebdavDocumentImpl result = new
-					// WebdavDocumentImpl(davresource);
+				} else {					
 					WebdavDocumentImpl result = new WebdavDocumentImpl(objectId, endpoint);
 					return result;
 				}
@@ -144,12 +146,15 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 			Boolean getDirectory) throws IOException {
 		String listedPath = WebdavIdDecoderAndEncoder
 				.encodedIdToWebdav(encodedId);
+		long before = System.currentTimeMillis();
 		log.debug("showing resources for: " + listedPath);
 		List<DavResource> resources = endpoint.getSardine().list(listedPath);
 		// the first element is always the directory itself
 		if (resources.get(0).isDirectory() && !getDirectory) {
 			resources.remove(0);
 		}
+		long now = System.currentTimeMillis();
+		log.warn("getting resource listing took: " + (now-before));
 		return resources;
 	}
 
@@ -174,4 +179,32 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		return result;
 	}
 
+
+	
+	public String createFolder(String folderName, String parentIdEncoded) {
+		getOrRefreshSardineEndpoint();
+		
+		String parentIdDecoded = WebdavIdDecoderAndEncoder.decode(parentIdEncoded);		
+		String path = parentIdDecoded + folderName;
+		try {
+			endpoint.getSardine().createDirectory(endpoint.getEndpoint()+path);
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}				
+		return WebdavIdDecoderAndEncoder.encode(path);
+	}
+
+
+	public Boolean exists(String parentNameDecoded, String folderName) {
+		getOrRefreshSardineEndpoint(); //should be in constructor but is not called!!
+		
+		String path = parentNameDecoded + folderName;
+		try {
+			return endpoint.getSardine().exists(endpoint.getEndpoint() + path);
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}
+		return false;					
+	}
+	
 }

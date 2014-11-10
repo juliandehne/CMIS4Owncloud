@@ -1,4 +1,4 @@
-package org.up.liferay.owncloud;
+package org.up.liferay.webdav;
 
 import java.util.ArrayList;
 import java.util.List;

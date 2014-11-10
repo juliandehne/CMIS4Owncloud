@@ -21,6 +21,7 @@ package org.apache.chemistry.opencmis.inmemory.server;
 import java.math.BigInteger;
 import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.BulkUpdateObjectIdAndChangeToken;
@@ -33,6 +34,7 @@ import org.apache.chemistry.opencmis.commons.data.ObjectInFolderList;
 import org.apache.chemistry.opencmis.commons.data.ObjectList;
 import org.apache.chemistry.opencmis.commons.data.ObjectParentData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.data.RenditionData;
 import org.apache.chemistry.opencmis.commons.data.RepositoryInfo;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinition;
@@ -47,6 +49,7 @@ import org.apache.chemistry.opencmis.commons.impl.server.AbstractCmisService;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
+import org.up.liferay.webdav.WebdavObjectStore;
 
 public class InMemoryService extends AbstractCmisService {
 
@@ -216,8 +219,17 @@ public class InMemoryService extends AbstractCmisService {
     @Override
     public String createFolder(String repositoryId, Properties properties, String folderId, List<String> policies,
             Acl addAces, Acl removeAces, ExtensionsData extension) {
-        return fObjSvc.createFolder(getCallContext(), repositoryId, properties, folderId, policies, addAces,
-                removeAces, extension);
+        
+    	// datenbank platt machen und hier hin debuggen
+    	PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
+        String folderName = (String) pd.getFirstValue();
+    	String parentIdEncoded = folderId;        
+    	WebdavObjectStore objectStore = new WebdavObjectStore(repositoryId);
+    	String folderNameDecoded = "/" + folderName + "/";
+    	return objectStore.createFolder(folderNameDecoded, parentIdEncoded);
+    	
+//    	return fObjSvc.createFolder(getCallContext(), repositoryId, properties, folderId, policies, addAces,
+//                removeAces, extension);
     }
 
     @Override

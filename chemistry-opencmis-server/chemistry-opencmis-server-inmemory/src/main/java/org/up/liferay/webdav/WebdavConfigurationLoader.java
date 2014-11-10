@@ -1,4 +1,4 @@
-package org.up.liferay.owncloud;
+package org.up.liferay.webdav;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,10 +9,10 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OwnCloudConfigurationLoader {
+public class WebdavConfigurationLoader {
 
 	private static final Logger LOG = LoggerFactory
-			.getLogger(OwnCloudConfigurationLoader.class);
+			.getLogger(WebdavConfigurationLoader.class);
 
 	public static final String getOwnCloudAddress() {
 		Properties prop = new Properties();
