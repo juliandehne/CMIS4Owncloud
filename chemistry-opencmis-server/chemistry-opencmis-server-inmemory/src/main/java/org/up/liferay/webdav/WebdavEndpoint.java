@@ -22,6 +22,14 @@ public class WebdavEndpoint {
 		this.endpoint = WebdavConfigurationLoader.getOwnCloudAddress();		
 	}
 	
+	public WebdavEndpoint(String user, String password, String endpoint) {
+		this.sardine = SardineFactory.begin();
+		this.user = user;
+		this.password = password;
+		this.sardine.setCredentials(user,password);		
+		this.endpoint = endpoint;
+	}
+	
 	public Sardine getSardine() {
 		return sardine;
 	}

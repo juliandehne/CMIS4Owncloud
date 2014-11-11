@@ -45,7 +45,6 @@ import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.up.liferay.webdav.WebdavQueryManager;
 
 public class InMemoryDiscoveryServiceImpl extends InMemoryAbstractServiceImpl {
 

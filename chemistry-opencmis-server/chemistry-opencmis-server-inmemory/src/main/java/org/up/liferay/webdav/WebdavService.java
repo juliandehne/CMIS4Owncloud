@@ -52,14 +52,16 @@ public class WebdavService extends InMemoryService {
 		}
 
 		BaseTypeId typeBaseId = typeDefC.getTypeDefinition().getBaseTypeId();
-		
+
 		if (typeBaseId.equals(DocumentTypeCreationHelper.getCmisDocumentType()
 				.getBaseTypeId())) {
-			throw new NotImplementedException(this.getClass());
+			return createDocument(repositoryId, properties, folderId,
+					contentStream, versioningState, policies, null, null,
+					extension);
 		} else if (typeBaseId.equals(DocumentTypeCreationHelper
 				.getCmisFolderType().getBaseTypeId())) {
-			return createFolder(repositoryId, properties, folderId, policies, null,
-					null, extension);
+			return createFolder(repositoryId, properties, folderId, policies,
+					null, null, extension);
 		} else if (typeBaseId.equals(DocumentTypeCreationHelper
 				.getCmisPolicyType().getBaseTypeId())) {
 			throw new NotImplementedException(this.getClass());
@@ -80,12 +82,29 @@ public class WebdavService extends InMemoryService {
 	public String createFolder(String repositoryId, Properties properties,
 			String folderId, List<String> policies, Acl addAces,
 			Acl removeAces, ExtensionsData extension) {
-		PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
-		String folderName = (String) pd.getFirstValue();
+		String folderName = extractName(properties);
 		String parentIdEncoded = folderId;
 		WebdavObjectStore objectStore = new WebdavObjectStore(repositoryId);
 		String folderNameDecoded = "/" + folderName + "/";
 		return objectStore.createFolder(folderNameDecoded, parentIdEncoded);
+	}
+
+	private String extractName(Properties properties) {
+		PropertyData<?> pd = properties.getProperties().get(PropertyIds.NAME);
+		String folderName = (String) pd.getFirstValue();
+		return folderName;
+	}
+
+	@Override
+	public String createDocument(String repositoryId, Properties properties,
+			String folderId, ContentStream contentStream,
+			VersioningState versioningState, List<String> policies,
+			Acl addAces, Acl removeAces, ExtensionsData extension) {
+		String documentName = extractName(properties);
+		String parentIdEncoded = folderId;
+		WebdavObjectStore objectStore = new WebdavObjectStore(repositoryId);
+		//String documentNameDecoded = "/" + documentName;
+		return objectStore.createFile(documentName, parentIdEncoded, contentStream);
 	}
 
 }

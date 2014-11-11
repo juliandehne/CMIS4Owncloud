@@ -1,6 +1,8 @@
 package org.up.liferay.webdav;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -9,6 +11,7 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceContext;
@@ -18,6 +21,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.DocumentImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.FolderImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ObjectStoreImpl;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +37,8 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		super(repositoryId);
 		//getOrRefreshSardineEndpoint();
 	}
-		
+	
+	
 
 	@Override
 	public String getFolderPath(String folderId) {
@@ -167,6 +172,10 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		endpoint = new WebdavEndpoint(callContext);
 		return endpoint;
 	}
+	
+	public void setEndpoint(WebdavEndpoint endpoint) {
+		this.endpoint = endpoint;
+	}
 
 	private ChildrenResult sortChildrenResult(int maxItems, int skipCount,
 			List<Fileable> folderChildren) {
@@ -205,6 +214,34 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 			e.printStackTrace();
 		}
 		return false;					
+	}
+
+
+	public String createFile(String documentNameDecoded, String parentIdEncoded, ContentStream contentStream) {
+		getOrRefreshSardineEndpoint(); //should be in constructor but is not called!!
+		
+		ByteArrayInputStream buffer = null;
+		try {
+			InputStream inputStream = contentStream.getStream();
+			buffer = new ByteArrayInputStream(IOUtils.toByteArray(inputStream));
+		} catch (IOException e1) {		
+			e1.printStackTrace();
+		}
+		
+		String parentIdDecoded = WebdavIdDecoderAndEncoder.decode(parentIdEncoded);		
+		String path = (parentIdDecoded+documentNameDecoded);
+		String completePath= endpoint.getEndpoint()+path;
+		try {
+			if (endpoint.getSardine().exists(completePath)) {
+				endpoint.getSardine().delete(completePath);
+			} else { 
+				endpoint.getSardine().put(completePath, (InputStream) buffer, contentStream.getMimeType(), false, contentStream.getLength());
+			}
+		} catch (IOException e) {		
+			e.printStackTrace();
+		}
+			
+		return WebdavIdDecoderAndEncoder.encode(path);
 	}
 	
 }
