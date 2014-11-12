@@ -1,5 +1,6 @@
 package org.up.liferay.webdav;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -156,6 +157,15 @@ public class WebdavService extends InMemoryService {
 		WebdavObjectStore objectStore = new WebdavObjectStore(repositoryId);
 		//String documentNameDecoded = "/" + documentName;
 		return objectStore.createFile(documentName, parentIdEncoded, contentStream);
+	}
+	
+	@Override
+	public ContentStream getContentStream(String repositoryId, String objectId,
+			String streamId, BigInteger offset, BigInteger length,
+			ExtensionsData extension) {		
+		WebdavObjectStore objectStore = new WebdavObjectStore(repositoryId);
+		WebdavDocumentImpl resultObject = (WebdavDocumentImpl) objectStore.getObjectById(objectId);
+		return resultObject.getContent();
 	}
 
 }
