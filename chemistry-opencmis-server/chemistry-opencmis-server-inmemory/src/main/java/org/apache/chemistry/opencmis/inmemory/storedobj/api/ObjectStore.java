@@ -29,6 +29,7 @@ import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.RelationshipDirection;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
 
 /**
  * This is the interface an implementation must provide to store any kind of
@@ -262,8 +263,9 @@ public interface ObjectStore {
      *            version;
      * 
      * @return list of children objects
+     * @throws CmisException 
      */
-    ChildrenResult getChildren(Folder folder, int maxItems, int skipCount, String user, boolean usePwc);
+    ChildrenResult getChildren(Folder folder, int maxItems, int skipCount, String user, boolean usePwc) ;
 
     /**
      * get all the children of this folder which are folders. To support paging

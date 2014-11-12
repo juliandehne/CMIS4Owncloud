@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Acl;
+import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
@@ -43,8 +44,31 @@ public class WebdavService extends InMemoryService {
 			Boolean allVersions, UnfileObject unfileObjects,
 			Boolean continueOnFailure, ExtensionsData extension) {
 		// TODO Auto-generated method stub
-		return super.deleteTree(repositoryId, folderId, allVersions, unfileObjects,
-				continueOnFailure, extension);
+		
+		WebdavObjectStore objectStore = new WebdavObjectStore(repositoryId);
+		objectStore.deleteDirectory(folderId);
+		
+		FailedToDeleteData result = new FailedToDeleteData() {
+			
+			@Override
+			public void setExtensions(List<CmisExtensionElement> extensions) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public List<CmisExtensionElement> getExtensions() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public List<String> getIds() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		};
+		return result;
 	}
 	
 	@Override

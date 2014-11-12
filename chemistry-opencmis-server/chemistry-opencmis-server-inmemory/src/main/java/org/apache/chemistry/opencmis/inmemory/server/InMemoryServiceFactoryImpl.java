@@ -66,6 +66,7 @@ import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.up.liferay.webdav.InMemoryServiceContext;
 import org.up.liferay.webdav.WebdavService;
 
 public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {

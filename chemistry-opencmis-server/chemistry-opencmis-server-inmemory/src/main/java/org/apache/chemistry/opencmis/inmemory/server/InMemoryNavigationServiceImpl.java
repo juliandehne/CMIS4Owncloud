@@ -60,6 +60,7 @@ import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.up.liferay.webdav.InMemoryServiceContext;
 
 public class InMemoryNavigationServiceImpl extends InMemoryAbstractServiceImpl {
 

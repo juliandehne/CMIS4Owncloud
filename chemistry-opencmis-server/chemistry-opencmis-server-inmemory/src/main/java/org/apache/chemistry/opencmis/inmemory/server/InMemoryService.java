@@ -49,6 +49,7 @@ import org.apache.chemistry.opencmis.commons.impl.server.AbstractCmisService;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
+import org.up.liferay.webdav.InMemoryServiceContext;
 import org.up.liferay.webdav.WebdavObjectStore;
 
 public class InMemoryService extends AbstractCmisService {

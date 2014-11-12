@@ -15,6 +15,17 @@ public class WebdavConfigurationLoader {
 			.getLogger(WebdavConfigurationLoader.class);
 
 	public static final String getOwnCloudAddress() {
+		Properties prop = getProperties();
+		return (String) prop.getProperty("owncloudaddress");
+	}
+	
+	public static final Long getCacheTimeout() {
+		Properties prop = getProperties();
+		return Long.parseLong(prop.getProperty("cacheInvalidateTimeInSeconds")); 
+	}
+
+
+	private static Properties getProperties() {
 		Properties prop = new Properties();
 		InputStream in = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("owncloud.properties");
@@ -26,7 +37,7 @@ public class WebdavConfigurationLoader {
 			e.printStackTrace();
 			LOG.error(e.getMessage());
 		}
-		return (String) prop.getProperty("owncloudaddress");
+		return prop;
 	}
 	
 	

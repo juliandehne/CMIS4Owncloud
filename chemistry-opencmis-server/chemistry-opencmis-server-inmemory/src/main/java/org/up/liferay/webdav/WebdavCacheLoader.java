@@ -26,7 +26,7 @@ public class WebdavCacheLoader extends CacheLoader<WebdavResourceKey, List<DavRe
 
 
 	@Override
-	public List<DavResource> call() throws Exception {
+	public List<DavResource> call() throws Exception {		
 		return objectStore.getResourcesForIDintern(key.getEncodedId(), key.getGetDirectory());	
 	}
 

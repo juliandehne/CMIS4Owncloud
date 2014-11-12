@@ -66,12 +66,12 @@ import org.apache.chemistry.opencmis.commons.spi.BindingsObjectFactory;
 import org.apache.chemistry.opencmis.inmemory.TypeCreator;
 import org.apache.chemistry.opencmis.inmemory.TypeManagerImpl;
 import org.apache.chemistry.opencmis.inmemory.query.InMemoryQueryProcessor;
-import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceContext;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.CmisServiceValidator;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.ObjectStore;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.apache.chemistry.opencmis.server.support.TypeDefinitionFactory;
 import org.apache.chemistry.opencmis.server.support.TypeManager;
+import org.up.liferay.webdav.InMemoryServiceContext;
 import org.up.liferay.webdav.WebdavObjectStore;
 import org.up.liferay.webdav.WebdavQueryProcessor;
 

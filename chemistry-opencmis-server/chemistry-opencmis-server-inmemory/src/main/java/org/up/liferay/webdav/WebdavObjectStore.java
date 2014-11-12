@@ -22,8 +22,9 @@ import javax.xml.namespace.QName;
 
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.impl.UrlBuilder;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisException;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.CmisFaultType;
 import org.apache.chemistry.opencmis.commons.server.CallContext;
-import org.apache.chemistry.opencmis.inmemory.server.InMemoryServiceContext;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Fileable;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
@@ -139,7 +140,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 			}
 
 		} catch (IOException e) {
-			handleStartUpErrors(e);
+			handleStartUpErrors(e);			
 			return new ChildrenResult(folderChildren, 0);
 		} catch (ExecutionException e) {
 			// TODO Auto-generated catch block
@@ -149,6 +150,48 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 				folderChildren);
 		return result;
 	}
+
+	/**
+		 * we assume that objectId is the URLEncoded path after the
+		 * owncloud-server-path or 100 for root
+		 */
+		@Override
+		public StoredObject getObjectById(String objectId) {
+			getOrRefreshSardineEndpoint();
+			if (objectId == null || objectId.equals(WebdavIdDecoderAndEncoder.LIFERAYROOTID)) {
+				// objectId = "/" ??
+				FolderImpl result = new FolderImpl("RootFolder", null);
+				result.setName("RootFolder");
+				result.setRepositoryId("A1");
+				result.setTypeId("cmis:folder");
+				result.setId(WebdavIdDecoderAndEncoder.LIFERAYROOTID);
+				return result;
+			} else {
+				try {
+					String decodedPath = WebdavIdDecoderAndEncoder
+							.decode(objectId);
+	//				if (!decodedPath.startsWith("/")) {
+	//					return null;
+	//				}
+					// entweder ist es ein folder oder ein document
+					if (decodedPath.endsWith("/")) {			
+						WebdavFolderImpl result = new WebdavFolderImpl(objectId);
+						return result;
+					} else {					
+						WebdavDocumentImpl result = new WebdavDocumentImpl(objectId, endpoint);
+						return result;
+					}
+				} catch (Exception e) {
+					log.error("error occurred whilst getting the resource for: "
+							+ objectId);	
+					e.printStackTrace();
+				}
+	
+			}
+			return null;
+		}
+
+
 
 	@Override
 	public ChildrenResult getFolderChildren(Folder folder, int maxItems,
@@ -160,46 +203,6 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	@Override
 	public String getFolderPath(String folderId) {
 		return WebdavIdDecoderAndEncoder.decode(folderId);
-	}
-
-	/**
-	 * we assume that objectId is the URLEncoded path after the
-	 * owncloud-server-path or 100 for root
-	 */
-	@Override
-	public StoredObject getObjectById(String objectId) {
-		getOrRefreshSardineEndpoint();
-		if (objectId == null || objectId.equals(WebdavIdDecoderAndEncoder.LIFERAYROOTID)) {
-			// objectId = "/" ??
-			FolderImpl result = new FolderImpl("RootFolder", null);
-			result.setName("RootFolder");
-			result.setRepositoryId("A1");
-			result.setTypeId("cmis:folder");
-			result.setId(WebdavIdDecoderAndEncoder.LIFERAYROOTID);
-			return result;
-		} else {
-			try {
-				String decodedPath = WebdavIdDecoderAndEncoder
-						.decode(objectId);
-//				if (!decodedPath.startsWith("/")) {
-//					return null;
-//				}
-				// entweder ist es ein folder oder ein document
-				if (decodedPath.endsWith("/")) {			
-					WebdavFolderImpl result = new WebdavFolderImpl(objectId);
-					return result;
-				} else {					
-					WebdavDocumentImpl result = new WebdavDocumentImpl(objectId, endpoint);
-					return result;
-				}
-			} catch (Exception e) {
-				log.error("error occurred whilst getting the resource for: "
-						+ objectId);	
-				e.printStackTrace();
-			}
-
-		}
-		return null;
 	}
 
 	public StoredObject getObjectById(String objectNameDecoded, String parentNameDecoded) {
@@ -219,6 +222,9 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	private List<DavResource> getResourcesForID(String path, boolean getDirectory) throws IOException, ExecutionException {
 		WebdavResourceKey key = new WebdavResourceKey(path, getDirectory);
 		List<DavResource> result =  InMemoryServiceContext.CACHE.get(key, new WebdavCacheLoader(this,key));
+		if (!key.getGetDirectory()) {
+			InMemoryServiceContext.CACHE.invalidate(key);
+		}
 		for (DavResource davResource : result) {			
 			final String encodedId = WebdavIdDecoderAndEncoder.webdavToIdEncoded(davResource);
 			final WebdavResourceKey webdavResourceKey = new WebdavResourceKey(encodedId, davResource.isDirectory());
@@ -260,7 +266,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	
 	private void handleStartUpErrors(IOException e) {
 		if (endpoint.isValidCredentialinDebug()) {			
-			log.error("problems with webdav authentication at owncloud", e);
+			log.error("problems with webdav authentication at owncloud", e);			
 		} else {
 			log.debug("the user credentials are not valid");
 		}
@@ -282,5 +288,23 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		ChildrenResult result = new ChildrenResult(folderChildren, noItems);
 		return result;
 	}
+
+
+
+	public void deleteDirectory(String objectIdEncoded) {		
+		getOrRefreshSardineEndpoint();
+		
+		String objectIdDecoded = WebdavIdDecoderAndEncoder.decode(objectIdEncoded);				
+		try {
+			String finalPath = endpoint.getEndpoint()+objectIdDecoded;
+			//endpoint.getSardine().exists(finalPath);
+			endpoint.getSardine().delete(finalPath);
+			InMemoryServiceContext.CACHE.invalidate(new WebdavResourceKey(objectIdEncoded, true));
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}										
+	}
+	
+	
 	
 }
