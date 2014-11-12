@@ -18,14 +18,27 @@
  */
 package org.apache.chemistry.opencmis.inmemory.server;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.chemistry.opencmis.commons.server.CallContext;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.server.support.CmisServiceWrapper;
+import org.up.liferay.webdav.WebdavCacheLoader;
+import org.up.liferay.webdav.WebdavResourceKey;
+
+import com.github.sardine.DavResource;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 
 /**
  * Helper class to associate context information with each incoming call.
  * 
  */
 public final class InMemoryServiceContext {
+	
+	public static Cache<WebdavResourceKey, List<DavResource>> CACHE = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).maximumSize(1000).build();
 
     private static final class ContextHolder {
         private CmisServiceWrapper<InMemoryService> wrapper;
