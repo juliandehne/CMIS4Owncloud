@@ -49,7 +49,7 @@ public class WebdavService extends InMemoryService {
 		
 	}
 	
-	
+		
 	
 	
 	@Override
@@ -177,6 +177,17 @@ public class WebdavService extends InMemoryService {
 		WebdavObjectStore objectStore = new WebdavObjectStore(repositoryId);
 		WebdavDocumentImpl resultObject = (WebdavDocumentImpl) objectStore.getObjectById(objectId);
 		return resultObject.getContent();
+	}
+	
+	@Override
+	public void updateProperties(String repositoryId, Holder<String> objectId,
+			Holder<String> changeToken, Properties properties,
+			ExtensionsData extension) {
+		String newName = extractName(properties);
+		String oldName = objectId.getValue();
+		WebdavObjectStore objectStore = new WebdavObjectStore(repositoryId);
+		objectStore.rename(oldName, newName);
+		
 	}
 
 }

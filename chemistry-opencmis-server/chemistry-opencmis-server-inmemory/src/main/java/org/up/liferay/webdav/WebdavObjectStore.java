@@ -309,6 +309,24 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	public void deleteObject(String encodedObjectId, Boolean allVersions, String user) {
 		deleteDirectory(encodedObjectId);
 	}
+
+
+
+	public void rename(String oldName, String newName) {
+		getOrRefreshSardineEndpoint();
+		
+		String oldNameUrl = endpoint.getEndpoint()+WebdavIdDecoderAndEncoder.decode(oldName);
+		String newNameUrl = endpoint.getEndpoint()+"/"+newName;
+		try {
+			endpoint.getSardine().move(oldNameUrl, newNameUrl);
+			InMemoryServiceContext.CACHE.invalidate(new WebdavResourceKey(oldName, true));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
 	
 	
 }
