@@ -115,7 +115,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		String name = folder.getName();
 		//String path = folder.getPathSegment();
 		String path = WebdavIdDecoderAndEncoder.decode(folder.getId());
-		if (name.equals("RootFolder")) {
+		if (name.equals("RootFolder") || name.equals("Liferay%20Home")) {
 			path = "/";
 		}
 
@@ -298,13 +298,17 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		try {
 			String finalPath = endpoint.getEndpoint()+objectIdDecoded;
 			//endpoint.getSardine().exists(finalPath);
-			endpoint.getSardine().delete(finalPath);
+			endpoint.getSardine().delete(finalPath);			
 			InMemoryServiceContext.CACHE.invalidate(new WebdavResourceKey(objectIdEncoded, true));
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}										
 	}
 	
+	@Override
+	public void deleteObject(String encodedObjectId, Boolean allVersions, String user) {
+		deleteDirectory(encodedObjectId);
+	}
 	
 	
 }

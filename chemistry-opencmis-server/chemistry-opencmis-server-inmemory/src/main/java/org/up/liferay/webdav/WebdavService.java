@@ -16,6 +16,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.impl.jaxb.DeleteContentStream;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryService;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
@@ -41,10 +42,20 @@ public class WebdavService extends InMemoryService {
 	}
 	
 	@Override
+	public void deleteObjectOrCancelCheckOut(String repositoryId,
+			String objectId, Boolean allVersions, ExtensionsData extension) {				
+		WebdavObjectStore objectStore = new WebdavObjectStore(repositoryId);
+		objectStore.deleteObject(objectId, allVersions, null);
+		
+	}
+	
+	
+	
+	
+	@Override
 	public FailedToDeleteData deleteTree(String repositoryId, String folderId,
 			Boolean allVersions, UnfileObject unfileObjects,
-			Boolean continueOnFailure, ExtensionsData extension) {
-		// TODO Auto-generated method stub
+			Boolean continueOnFailure, ExtensionsData extension) {		
 		
 		WebdavObjectStore objectStore = new WebdavObjectStore(repositoryId);
 		objectStore.deleteDirectory(folderId);
