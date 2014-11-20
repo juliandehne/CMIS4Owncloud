@@ -220,14 +220,14 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	}
 	
 	private List<DavResource> getResourcesForID(String path, boolean getDirectory) throws IOException, ExecutionException {
-		WebdavResourceKey key = new WebdavResourceKey(path, getDirectory);
+		WebdavResourceKey key = new WebdavResourceKey(path, getDirectory,this.endpoint.getUser());
 		List<DavResource> result =  InMemoryServiceContext.CACHE.get(key, new WebdavCacheLoader(this,key));
 		if (!key.getGetDirectory()) {
 			InMemoryServiceContext.CACHE.invalidate(key);
 		}
 		for (DavResource davResource : result) {			
 			final String encodedId = WebdavIdDecoderAndEncoder.webdavToIdEncoded(davResource);
-			final WebdavResourceKey webdavResourceKey = new WebdavResourceKey(encodedId, davResource.isDirectory());
+			final WebdavResourceKey webdavResourceKey = new WebdavResourceKey(encodedId, davResource.isDirectory(),this.endpoint.getUser());
 			final WebdavObjectStore webdavObjectStore = this;
 			Thread t = new Thread(new Runnable() {				
 				@Override
@@ -299,7 +299,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 			String finalPath = endpoint.getEndpoint()+objectIdDecoded;
 			//endpoint.getSardine().exists(finalPath);
 			endpoint.getSardine().delete(finalPath);			
-			InMemoryServiceContext.CACHE.invalidate(new WebdavResourceKey(objectIdEncoded, true));
+			InMemoryServiceContext.CACHE.invalidate(new WebdavResourceKey(objectIdEncoded, true, this.endpoint.getUser()));
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}										
@@ -319,7 +319,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		String newNameUrl = endpoint.getEndpoint()+"/"+newName;
 		try {
 			endpoint.getSardine().move(oldNameUrl, newNameUrl);
-			InMemoryServiceContext.CACHE.invalidate(new WebdavResourceKey(oldName, true));
+			InMemoryServiceContext.CACHE.invalidate(new WebdavResourceKey(oldName, true,this.endpoint.getUser()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

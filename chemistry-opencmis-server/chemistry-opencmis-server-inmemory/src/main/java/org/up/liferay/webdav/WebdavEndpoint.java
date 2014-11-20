@@ -38,7 +38,9 @@ public class WebdavEndpoint {
 		return endpoint;
 	}
 	
-
+	public String getUser() {
+		return user;
+	}	
 	
 	public Boolean isValidCredentialinDebug() {
 		if (user == null || password == null) {
