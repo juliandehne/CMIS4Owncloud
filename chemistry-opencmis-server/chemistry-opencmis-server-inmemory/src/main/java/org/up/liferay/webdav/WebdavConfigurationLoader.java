@@ -23,6 +23,11 @@ public class WebdavConfigurationLoader {
 		Properties prop = getProperties();
 		return Long.parseLong(prop.getProperty("cacheInvalidateTimeInSeconds")); 
 	}
+	
+	public static final String getOwncloudShareAddress() {
+		Properties prop = getProperties();
+		return (String) prop.getProperty("owncloudshareaddress");	
+	}
 
 
 	private static Properties getProperties() {

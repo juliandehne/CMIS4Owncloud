@@ -66,6 +66,7 @@ import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.chemistry.opencmis.util.repository.ObjectGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.up.liferay.owncloud.OwncloudService;
 import org.up.liferay.webdav.InMemoryServiceContext;
 import org.up.liferay.webdav.WebdavService;
 
@@ -161,7 +162,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
         if (inMemoryService == null) {
             LOG.debug("Creating new InMemoryService instance!");
             CmisServiceWrapper<InMemoryService> wrapperService;
-            inMemoryService = new WebdavService(storeManager);
+            inMemoryService = new OwncloudService(storeManager);
             wrapperService = new CmisServiceWrapper<InMemoryService>(inMemoryService, DEFAULT_MAX_ITEMS_TYPES,
                     DEFAULT_DEPTH_TYPES, DEFAULT_MAX_ITEMS_OBJECTS, DEFAULT_DEPTH_OBJECTS);
             InMemoryServiceContext.setWrapperService(wrapperService);
@@ -410,7 +411,7 @@ public class InMemoryServiceFactoryImpl extends AbstractServiceFactory {
             // create an initial temporary service instance to fill the
             // repository
 
-            InMemoryService svc = new WebdavService(storeManager);
+            InMemoryService svc = new OwncloudService(storeManager);
 
             BindingsObjectFactory objectFactory = new BindingsObjectFactoryImpl();
 

@@ -201,7 +201,6 @@ public class WebdavService extends InMemoryService {
 		objectStore.createRootFolder(liferayRootName);
 		objectStore.createFolder(siteFoldeName, liferayRootName);		
 		
-		
 		return aces;
 	}
 	

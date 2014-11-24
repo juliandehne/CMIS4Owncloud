@@ -346,7 +346,6 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 			InMemoryServiceContext.CACHE.invalidate(new WebdavResourceKey(
 					oldName, true, this.endpoint.getUser()));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
