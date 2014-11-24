@@ -9,6 +9,7 @@ import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
 import org.up.liferay.webdav.InMemoryServiceContext;
+import org.up.liferay.webdav.WebdavObjectStore;
 import org.up.liferay.webdav.WebdavService;
 
 public class OwncloudService extends WebdavService {
@@ -27,7 +28,8 @@ public class OwncloudService extends WebdavService {
 			users.add(ace.getPrincipalId());
 		}
 		OwncloudShareCreator creator = new OwncloudShareCreator();
-		creator.createShare(users, InMemoryServiceContext.getCallContext().getUsername(), InMemoryServiceContext.getCallContext().getPassword(), objectId);
+		WebdavObjectStore objectStore = new WebdavObjectStore(repositoryId);
+		creator.createShare(users, InMemoryServiceContext.getCallContext().getUsername(), InMemoryServiceContext.getCallContext().getPassword(), objectId, objectStore);
 		return result;				
 	}
 	

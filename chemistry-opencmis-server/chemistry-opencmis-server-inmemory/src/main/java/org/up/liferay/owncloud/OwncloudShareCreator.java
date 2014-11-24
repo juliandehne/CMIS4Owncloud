@@ -5,16 +5,23 @@ import java.io.InputStreamReader;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.up.liferay.webdav.WebdavConfigurationLoader;
+import org.up.liferay.webdav.WebdavObjectStore;
 
 
 public class OwncloudShareCreator {
-	public void createShare(Set<String> users, String authorName, String authorpasswd, String sharepath) {
+	public void createShare(Set<String> users, String authorName, String authorpasswd, String sharepath, WebdavObjectStore store) {
 		users.remove(authorName);
+		users.remove("anyone");
+		users.remove("test");
 		for (String user : users) {
+//			store.rename(sharepath, sharepath+"backup"+new Date(System.currentTimeMillis()));
 			createShare(user, authorName, authorpasswd, sharepath);
 		}
 	}
@@ -23,10 +30,14 @@ public class OwncloudShareCreator {
 		HttpClient client = new HttpClient();
 		String auth = authorName+":"+authorpasswd;
 		String encoding = Base64.encodeBase64String(auth.getBytes());
+				
 		BufferedReader br = null;
 		
 		PostMethod method = new PostMethod(WebdavConfigurationLoader.getOwncloudShareAddress());
+
+	    method.setRequestHeader("Authorization", "Basic " + encoding);
 		
+
 		method.addParameter("path", sharepath);
 		method.addParameter("shareType", "0"); // share to a user
 		method.addParameter("shareWith",  user);

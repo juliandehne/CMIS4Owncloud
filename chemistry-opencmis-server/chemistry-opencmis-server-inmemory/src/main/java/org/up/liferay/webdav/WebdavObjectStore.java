@@ -88,7 +88,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 				.decode(parentIdEncoded);
 		String path = parentIdDecoded + folderName;
 		String webdavpath = endpoint.getEndpoint() + path;
-		try {			
+		try {
 			if (!endpoint.getSardine().exists(webdavpath)) {
 				endpoint.getSardine().createDirectory(webdavpath);
 			}
@@ -342,9 +342,11 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 				+ WebdavIdDecoderAndEncoder.decode(oldName);
 		String newNameUrl = endpoint.getEndpoint() + "/" + newName;
 		try {
-			endpoint.getSardine().move(oldNameUrl, newNameUrl);
-			InMemoryServiceContext.CACHE.invalidate(new WebdavResourceKey(
-					oldName, true, this.endpoint.getUser()));
+			if (endpoint.getSardine().exists(oldNameUrl)) {
+				endpoint.getSardine().move(oldNameUrl, newNameUrl);
+				InMemoryServiceContext.CACHE.invalidate(new WebdavResourceKey(
+						oldName, true, this.endpoint.getUser()));
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
