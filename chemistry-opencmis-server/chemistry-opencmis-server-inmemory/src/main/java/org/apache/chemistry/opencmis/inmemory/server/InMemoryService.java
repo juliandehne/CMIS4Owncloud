@@ -481,7 +481,8 @@ public class InMemoryService extends AbstractCmisService {
 
 	@Override
 	public List<RepositoryInfo> getRepositoryInfos(ExtensionsData extension) {
-		return fRepSvc.getRepositoryInfos(getCallContext(), extension);
+		List<RepositoryInfo> result = fRepSvc.getRepositoryInfos(getCallContext(), extension);
+		return result;
 	}
 
 	public StoreManager getStoreManager() {
