@@ -41,17 +41,15 @@ import com.github.sardine.DavResource;
 public class WebdavObjectStore extends ObjectStoreImpl {
 
 	private static final Logger log = LoggerFactory
-			.getLogger(WebdavObjectStore.class.getName());
-	private WebdavEndpoint endpoint;
+			.getLogger(WebdavObjectStore.class.getName());	
 
 	public WebdavObjectStore(String repositoryId) {
-		super(repositoryId);
-		// getOrRefreshSardineEndpoint();
+		super(repositoryId);		
 	}
 
 	public String createFile(String documentNameDecoded,
 			String parentIdEncoded, ContentStream contentStream) {
-		getOrRefreshSardineEndpoint(); // should be in constructor but is not
+		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint(); // should be in constructor but is not
 										// called!!
 
 		ByteArrayInputStream buffer = null;
@@ -82,7 +80,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	}
 
 	public String createFolder(String folderName, String parentIdEncoded) {
-		getOrRefreshSardineEndpoint();
+		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint();
 
 		String parentIdDecoded = WebdavIdDecoderAndEncoder
 				.decode(parentIdEncoded);
@@ -99,7 +97,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	}
 
 	public String createRootFolder(String folderName) {
-		getOrRefreshSardineEndpoint();
+		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint();
 		String liferayRootPath = endpoint.getEndpoint() + folderName;
 		try {
 			if (!endpoint.getSardine().exists(liferayRootPath)) {
@@ -112,7 +110,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	}
 
 	public Boolean exists(String parentNameDecoded, String folderName) {
-		getOrRefreshSardineEndpoint(); // should be in constructor but is not
+		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint(); // should be in constructor but is not
 										// called!!
 
 		String path = parentNameDecoded + folderName;
@@ -128,7 +126,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	public ChildrenResult getChildren(Folder folder, int maxItems,
 			int skipCount, String user, boolean usePwc) {
 		// singletonpattern methods are called independent of constructor
-		getOrRefreshSardineEndpoint();
+		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint();
 
 		// hack root folder
 		String name = folder.getName();
@@ -143,7 +141,8 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 
 		// converts webdav result to CMIS type of files
 		try {
-			List<DavResource> resources = getResourcesForID(path, false);
+			//List<DavResource> resources = getResourcesForID(path, false);
+			List<DavResource> resources = getResourcesForIDintern(path, false);
 			Iterator<DavResource> it = resources.iterator();
 
 			while (it.hasNext()) {
@@ -153,20 +152,21 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 					folderChildren.add(folderResult);
 				} else {
 					DocumentImpl documentImpl = new WebdavDocumentImpl(
-							davResource, endpoint);
+							davResource, endpoint, this);
 					folderChildren.add(documentImpl);
 				}
 			}
 
 		} catch (IOException e) {
-			handleStartUpErrors(e);
+			handleStartUpErrors(endpoint, e);			
 			return new ChildrenResult(folderChildren, 0);
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+//		} catch (ExecutionException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
 		}
 		ChildrenResult result = sortChildrenResult(maxItems, skipCount,
 				folderChildren);
+	
 		return result;
 	}
 
@@ -176,7 +176,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	 */
 	@Override
 	public StoredObject getObjectById(String objectId) {
-		getOrRefreshSardineEndpoint();
+		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint();
 		if (objectId == null
 				|| objectId.equals(WebdavIdDecoderAndEncoder.LIFERAYROOTID)) {
 			// objectId = "/" ??
@@ -198,7 +198,8 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 					return result;
 				} else {
 					WebdavDocumentImpl result = new WebdavDocumentImpl(
-							objectId, endpoint);
+							objectId, endpoint, this);
+					//endpoint.getSardine().shutdown();
 					return result;
 				}
 			} catch (Exception e) {
@@ -229,20 +230,18 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 				+ WebdavIdDecoderAndEncoder.encode(objectNameDecoded));
 	}
 
-	private WebdavEndpoint getOrRefreshSardineEndpoint() {
-		// creates Sardine Endpoint
-		if (endpoint != null && endpoint.isUserContextSet()) {
-			return endpoint;
-		}
+	public WebdavEndpoint getOrRefreshSardineEndpoint() {
 		CallContext callContext = InMemoryServiceContext.getCallContext();
-		endpoint = new WebdavEndpoint(callContext);
-		return endpoint;
+		return new WebdavEndpoint(callContext);		
 	}
 
-	private List<DavResource> getResourcesForID(String path,
+	private synchronized List<DavResource> getResourcesForID(String path,
 			boolean getDirectory) throws IOException, ExecutionException {
+		
+		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint();
+		
 		WebdavResourceKey key = new WebdavResourceKey(path, getDirectory,
-				this.endpoint.getUser());
+				endpoint.getUser());
 		List<DavResource> result = InMemoryServiceContext.CACHE.get(key,
 				new WebdavCacheLoader(this, key));
 		if (!key.getGetDirectory()) {
@@ -253,7 +252,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 					.webdavToIdEncoded(davResource);
 			final WebdavResourceKey webdavResourceKey = new WebdavResourceKey(
 					encodedId, davResource.isDirectory(),
-					this.endpoint.getUser());
+					endpoint.getUser());
 			final WebdavObjectStore webdavObjectStore = this;
 			Thread t = new Thread(new Runnable() {
 				@Override
@@ -275,6 +274,8 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 
 	public List<DavResource> getResourcesForIDintern(String encodedId,
 			Boolean getDirectory) throws IOException {
+		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint();
+		
 		String listedPath = WebdavIdDecoderAndEncoder
 				.encodedIdToWebdav(encodedId);
 		long before = System.currentTimeMillis();
@@ -287,10 +288,11 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		}
 		long now = System.currentTimeMillis();
 		log.warn("getting resource listing took: " + (now - before));
+		//endpoint.getSardine().shutdown();
 		return resources;
 	}
 
-	private void handleStartUpErrors(IOException e) {
+	private void handleStartUpErrors(WebdavEndpoint endpoint, IOException e) {
 		if (endpoint.isValidCredentialinDebug()) {
 			log.error("problems with webdav authentication at owncloud", e);
 		} else {
@@ -298,9 +300,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		}
 	}
 
-	public void setEndpoint(WebdavEndpoint endpoint) {
-		this.endpoint = endpoint;
-	}
+
 
 	private ChildrenResult sortChildrenResult(int maxItems, int skipCount,
 			List<Fileable> folderChildren) {
@@ -314,7 +314,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	}
 
 	public void deleteDirectory(String objectIdEncoded) {
-		getOrRefreshSardineEndpoint();
+		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint();
 
 		String objectIdDecoded = WebdavIdDecoderAndEncoder
 				.decode(objectIdEncoded);
@@ -323,7 +323,8 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 			// endpoint.getSardine().exists(finalPath);
 			endpoint.getSardine().delete(finalPath);
 			InMemoryServiceContext.CACHE.invalidate(new WebdavResourceKey(
-					objectIdEncoded, true, this.endpoint.getUser()));
+					objectIdEncoded, true, endpoint.getUser()));
+			//endpoint.getSardine().shutdown();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -336,7 +337,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	}
 
 	public void rename(String oldName, String newName) {
-		getOrRefreshSardineEndpoint();
+		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint();
 
 		String oldNameUrl = endpoint.getEndpoint()
 				+ WebdavIdDecoderAndEncoder.decode(oldName);
@@ -345,7 +346,8 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 			if (endpoint.getSardine().exists(oldNameUrl)) {
 				endpoint.getSardine().move(oldNameUrl, newNameUrl);
 				InMemoryServiceContext.CACHE.invalidate(new WebdavResourceKey(
-						oldName, true, this.endpoint.getUser()));
+						oldName, true, endpoint.getUser()));
+				//endpoint.getSardine().shutdown();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

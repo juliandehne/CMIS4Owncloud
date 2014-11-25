@@ -1,25 +1,24 @@
 package org.up.liferay.webdav;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.GregorianCalendar;
 
-import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.DocumentImpl;
 import org.apache.commons.io.IOUtils;
 
 import com.github.sardine.DavResource;
+import com.github.sardine.Sardine;
 
 public class WebdavDocumentImpl extends DocumentImpl {
 	private String decodedId;
-	private WebdavEndpoint endpoint;
+	private WebdavObjectStore objectStore;	
 
-	public WebdavDocumentImpl(DavResource davResource, WebdavEndpoint endpoint) {	
-		this.endpoint = endpoint;
+	public WebdavDocumentImpl(DavResource davResource, WebdavEndpoint endpoint, WebdavObjectStore objectStore) {			
+		this.objectStore = objectStore;
 		String id = WebdavIdDecoderAndEncoder.webdavToIdEncoded(davResource);			
 		setDefaults(id);
 		setWebdavContentDefaults();		
@@ -28,8 +27,8 @@ public class WebdavDocumentImpl extends DocumentImpl {
 		
 	}
 
-	public WebdavDocumentImpl(String encodedId,  WebdavEndpoint endpoint) {	
-		this.endpoint = endpoint;
+	public WebdavDocumentImpl(String encodedId,  WebdavEndpoint endpoint, WebdavObjectStore objectStore) {			
+		this.objectStore = objectStore;
 		setDefaults(encodedId);
 		setWebdavContentDefaults();		
 		setDebugProperties();			
@@ -74,7 +73,8 @@ public class WebdavDocumentImpl extends DocumentImpl {
 	}
 
 	private void setInputStream(ContentStreamImpl steam) {
-		try {
+		try {			
+			WebdavEndpoint endpoint = objectStore.getOrRefreshSardineEndpoint();
 			InputStream webdavBytes = endpoint.getSardine().get(endpoint.getEndpoint()+decodedId);
 			ByteArrayInputStream tmpFile = new ByteArrayInputStream(IOUtils.toByteArray(webdavBytes));					
 			steam.setStream(IOUtils.toBufferedInputStream(tmpFile));			
