@@ -67,11 +67,10 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		try {
 			if (endpoint.getSardine().exists(completePath)) {
 				endpoint.getSardine().delete(completePath);
-			} else {
-				endpoint.getSardine().put(completePath, (InputStream) buffer,
-						contentStream.getMimeType(), false,
-						contentStream.getLength());
 			}
+			endpoint.getSardine().put(completePath, (InputStream) buffer,
+					contentStream.getMimeType(), false,
+					contentStream.getLength());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

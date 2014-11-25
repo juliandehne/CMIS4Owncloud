@@ -27,9 +27,9 @@ public class OwncloudService extends WebdavService {
 		for (Ace ace : aces.getAces()) {
 			users.add(ace.getPrincipalId());
 		}
-//		OwncloudShareCreator creator = new OwncloudShareCreator();
-//		WebdavObjectStore objectStore = new WebdavObjectStore(repositoryId);
-//		creator.createShare(users, InMemoryServiceContext.getCallContext().getUsername(), InMemoryServiceContext.getCallContext().getPassword(), objectId, objectStore);
+		OwncloudShareCreator creator = new OwncloudShareCreator();
+		WebdavObjectStore objectStore = new WebdavObjectStore(repositoryId);
+		creator.createShare(users, InMemoryServiceContext.getCallContext().getUsername(), InMemoryServiceContext.getCallContext().getPassword(), objectId, objectStore);
 		return result;				
 	}
 	
