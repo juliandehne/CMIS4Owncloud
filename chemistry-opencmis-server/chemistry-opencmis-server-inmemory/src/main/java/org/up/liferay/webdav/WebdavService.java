@@ -12,6 +12,7 @@ import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
+import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
@@ -188,6 +189,35 @@ public class WebdavService extends InMemoryService {
 		WebdavObjectStore objectStore = new WebdavObjectStore(repositoryId);
 		objectStore.rename(oldName, newName);
 		
+	}
+	
+	@Override
+	public Acl applyAcl(String repositoryId, String objectId, Acl aces,
+			AclPropagation aclPropagation) {
+		
+		WebdavObjectStore objectStore = new WebdavObjectStore(repositoryId);
+		String siteFoldeName = WebdavIdDecoderAndEncoder.encodedIdToName(WebdavIdDecoderAndEncoder.encode(objectId));
+		String liferayRootName = WebdavIdDecoderAndEncoder.decodedIdToParent(objectId);
+		objectStore.createRootFolder(liferayRootName);
+		objectStore.createFolder(siteFoldeName, liferayRootName);		
+		
+		return aces;
+	}
+	
+	@Override
+	public Acl applyAcl(String repositoryId, String objectId, Acl addAces,
+			Acl removeAces, AclPropagation aclPropagation,
+			ExtensionsData extension) {
+		// TODO Auto-generated method stub
+		return super.applyAcl(repositoryId, objectId, addAces, removeAces,
+				aclPropagation, extension);
+	}
+	
+	@Override
+	public void applyPolicy(String repositoryId, String policyId,
+			String objectId, ExtensionsData extension) {
+		// TODO Auto-generated method stub
+		super.applyPolicy(repositoryId, policyId, objectId, extension);
 	}
 
 }

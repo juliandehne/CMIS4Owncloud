@@ -1,12 +1,15 @@
 package org.up.liferay.webdav;
 
+// TODO add user to key
 public class WebdavResourceKey {
 	private String encodedId;
 	private Boolean getDirectory;
+	private String userName;
 	
-	public WebdavResourceKey(String encodedId, Boolean getDirectory) {		
+	public WebdavResourceKey(String encodedId, Boolean getDirectory, String username) {		
 		this.encodedId = encodedId;
 		this.getDirectory = getDirectory;
+		this.userName = username;
 	}
 	
 	public String getEncodedId() {
@@ -22,15 +25,19 @@ public class WebdavResourceKey {
 		this.getDirectory = getDirectory;
 	}
 	
+	public String getUserName() {
+		return userName;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		WebdavResourceKey toCompare = (WebdavResourceKey) obj;
-		return toCompare.getGetDirectory().equals(this.getDirectory) && toCompare.encodedId.equals(this.encodedId);
+		return toCompare.getGetDirectory().equals(this.getDirectory) && toCompare.getEncodedId().equals(this.encodedId) && this.userName.equals(toCompare.getUserName());
 	}
 	
 	@Override
 	public int hashCode() {
-		return (this.encodedId+this.getDirectory.toString()).hashCode();
+		return (this.encodedId+this.getDirectory.toString()+this.getUserName()).hashCode();
 	}
 	
 	

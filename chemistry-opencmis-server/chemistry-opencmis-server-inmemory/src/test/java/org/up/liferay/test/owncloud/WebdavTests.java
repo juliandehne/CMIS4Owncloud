@@ -189,14 +189,14 @@ public class WebdavTests {
 	}
 
 	// @Test
-	public void testPDFStream() throws IOException {
-		WebdavEndpoint endpoint = new WebdavEndpoint(context);
-		WebdavDocumentImpl documentImpl = new WebdavDocumentImpl(
-				"/ownCloudUserManual.pdf", endpoint);
-		InputStream input = documentImpl.getContent().getStream();
-		OutputStream outputStream = (OutputStream) System.out;
-		IOUtils.copy(input, outputStream);
-	}
+//	public void testPDFStream() throws IOException {
+//		WebdavEndpoint endpoint = new WebdavEndpoint(context);
+//		WebdavDocumentImpl documentImpl = new WebdavDocumentImpl(
+//				"/ownCloudUserManual.pdf", endpoint);
+//		InputStream input = documentImpl.getContent().getStream();
+//		OutputStream outputStream = (OutputStream) System.out;
+//		IOUtils.copy(input, outputStream);
+//	}
 
 	@Test
 	public void testPutPDFStream() throws IOException {
