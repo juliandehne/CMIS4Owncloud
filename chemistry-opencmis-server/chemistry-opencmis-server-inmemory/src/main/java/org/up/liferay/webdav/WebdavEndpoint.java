@@ -15,6 +15,9 @@ public class WebdavEndpoint {
 	private String password;
 
 	public WebdavEndpoint(CallContext context) {
+		if (context == null) {
+			context = InMemoryServiceContext.getCallContext();
+		}
 		this.sardine = SardineFactory.begin();
 		user = context.getUsername();
 		password =   context.getPassword();

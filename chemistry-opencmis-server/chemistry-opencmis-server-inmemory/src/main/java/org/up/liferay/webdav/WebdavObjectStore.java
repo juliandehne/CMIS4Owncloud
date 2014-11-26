@@ -161,8 +161,8 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 
 		// converts webdav result to CMIS type of files
 		try {
-			//List<DavResource> resources = getResourcesForID(path, false);
-			List<DavResource> resources = getResourcesForIDintern(path, false);
+			List<DavResource> resources = getResourcesForID(path, false);
+//			List<DavResource> resources = getResourcesForIDintern(path, false);
 			Iterator<DavResource> it = resources.iterator();
 
 			while (it.hasNext()) {
@@ -183,6 +183,10 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 //		} catch (ExecutionException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new ChildrenResult(folderChildren, 0);
 		}
 		ChildrenResult result = sortChildrenResult(maxItems, skipCount,
 				folderChildren);
@@ -257,22 +261,21 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 
 	private synchronized List<DavResource> getResourcesForID(String path,
 			boolean getDirectory) throws IOException, ExecutionException {
-		
-		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint();
+		final CallContext callContext = InMemoryServiceContext.getCallContext();		
 		
 		WebdavResourceKey key = new WebdavResourceKey(path, getDirectory,
-				endpoint.getUser());
+				callContext.getUsername());
 		List<DavResource> result = InMemoryServiceContext.CACHE.get(key,
-				new WebdavCacheLoader(this, key));
-		if (!key.getGetDirectory()) {
-			InMemoryServiceContext.CACHE.invalidate(key);
-		}
+				new WebdavCacheLoader(this, key, callContext));
+//		if (!key.getGetDirectory()) {
+//			InMemoryServiceContext.CACHE.invalidate(key);
+//		}
 		for (DavResource davResource : result) {
 			final String encodedId = WebdavIdDecoderAndEncoder
 					.webdavToIdEncoded(davResource);
 			final WebdavResourceKey webdavResourceKey = new WebdavResourceKey(
 					encodedId, davResource.isDirectory(),
-					endpoint.getUser());
+					callContext.getUsername());
 			final WebdavObjectStore webdavObjectStore = this;
 			Thread t = new Thread(new Runnable() {
 				@Override
@@ -280,7 +283,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 					try {
 						InMemoryServiceContext.CACHE.get(webdavResourceKey,
 								new WebdavCacheLoader(webdavObjectStore,
-										webdavResourceKey));
+										webdavResourceKey, callContext));
 					} catch (ExecutionException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -293,8 +296,8 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	}
 
 	public List<DavResource> getResourcesForIDintern(String encodedId,
-			Boolean getDirectory) throws IOException {
-		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint();
+			Boolean getDirectory, CallContext e) throws IOException {
+		WebdavEndpoint endpoint = new WebdavEndpoint(e);
 		
 		String listedPath = WebdavIdDecoderAndEncoder
 				.encodedIdToWebdav(encodedId);
