@@ -374,5 +374,12 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 			e.printStackTrace();
 		}
 	}
+	
+	@Deprecated
+	@Override
+	public void move(StoredObject so, Folder oldParent, Folder newParent,
+			String user) {		
+		super.move(so, oldParent, newParent, user);
+	}
 
 }
