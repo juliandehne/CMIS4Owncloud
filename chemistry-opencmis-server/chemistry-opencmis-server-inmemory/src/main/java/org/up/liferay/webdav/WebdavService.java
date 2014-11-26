@@ -50,8 +50,17 @@ public class WebdavService extends InMemoryService {
 		
 	}
 	
+	@Override
+	public void moveObject(String repositoryId, Holder<String> objectId,
+			String targetFolderId, String sourceFolderId,
+			ExtensionsData extension) {
+		String objectIdEncoded = objectId.getValue();		
 		
-	
+		
+		super.moveObject(repositoryId, objectId, targetFolderId, sourceFolderId,
+				extension);
+	}
+		
 	
 	@Override
 	public FailedToDeleteData deleteTree(String repositoryId, String folderId,

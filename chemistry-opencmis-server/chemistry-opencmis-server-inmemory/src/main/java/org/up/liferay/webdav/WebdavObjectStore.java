@@ -65,9 +65,10 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		String path = (parentIdDecoded + documentNameDecoded);
 		String completePath = endpoint.getEndpoint() + path;
 		try {
-			if (endpoint.getSardine().exists(completePath)) {
-				endpoint.getSardine().delete(completePath);
-			}
+			completePath = solveDuplicateFiles(endpoint, completePath);
+//			if (endpoint.getSardine().exists(completePath)) {
+//				endpoint.getSardine().delete(completePath);
+//			}
 			endpoint.getSardine().put(completePath, (InputStream) buffer,
 					contentStream.getMimeType(), false,
 					contentStream.getLength());
@@ -76,6 +77,16 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		}
 
 		return WebdavIdDecoderAndEncoder.encode(path);
+	}
+
+	private String solveDuplicateFiles(WebdavEndpoint endpoint,
+			String completePath) throws IOException {
+		int i = 1;
+		while (endpoint.getSardine().exists(completePath)) {
+			completePath+="("+i+")";
+			i++;
+		}
+		return completePath;
 	}
 
 	public String createFolder(String folderName, String parentIdEncoded) {
@@ -124,17 +135,27 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	@Override
 	public ChildrenResult getChildren(Folder folder, int maxItems,
 			int skipCount, String user, boolean usePwc) {
-		// singletonpattern methods are called independent of constructor
-		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint();
+
 
 		// hack root folder
 		String name = folder.getName();
 		// String path = folder.getPathSegment();
-		String path = WebdavIdDecoderAndEncoder.decode(folder.getId());
+		String path = folder.getId();
 		if (name.equals("RootFolder") || name.equals("Liferay%20Home")) {
 			path = "/";
 		}
+		
+		return getChildrenForName(maxItems, skipCount, path);
+	}
 
+	public ChildrenResult getChildrenForName(int maxItems, int skipCount,
+			String path) {
+		
+		path = WebdavIdDecoderAndEncoder.decode(path);
+		
+		// singletonpattern methods are called independent of constructor
+		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint();
+		
 		// resultSet contains folders and files
 		List<Fileable> folderChildren = new ArrayList<Fileable>();
 
@@ -298,6 +319,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 			log.debug("the user credentials are not valid");
 		}
 	}
+		
 
 
 

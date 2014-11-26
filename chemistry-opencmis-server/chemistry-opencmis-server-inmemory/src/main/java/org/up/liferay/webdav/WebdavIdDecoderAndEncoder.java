@@ -3,6 +3,11 @@ package org.up.liferay.webdav;
 import java.io.File;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
+
+import org.apache.commons.io.IOUtils;
+
+import antlr.ByteBuffer;
 
 import com.github.sardine.DavResource;
 
@@ -82,6 +87,7 @@ public class WebdavIdDecoderAndEncoder {
 		if (s.equals("100")) {
 			return "/";
 		}
+//		s  = Charset.forName("UTF-8").decode(new ByteBuffer(IOUtils.toInputStream()));
 		return URLDecoder.decode(s);
 	}
 }
