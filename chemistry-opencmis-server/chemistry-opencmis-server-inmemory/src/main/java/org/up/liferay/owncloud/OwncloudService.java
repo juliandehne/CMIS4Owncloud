@@ -33,20 +33,20 @@ public class OwncloudService extends WebdavService {
 		return result;				
 	}
 	
-	@Override
-	public Acl applyAcl(String repositoryId, String objectId, Acl addAces,
-			Acl removeAces, AclPropagation aclPropagation,
-			ExtensionsData extension) {
-		// TODO Auto-generated method stub
-		return super.applyAcl(repositoryId, objectId, addAces, removeAces,
-				aclPropagation, extension);
-	}
-	
-	@Override
-	public void applyPolicy(String repositoryId, String policyId,
-			String objectId, ExtensionsData extension) {
-		// TODO Auto-generated method stub
-		super.applyPolicy(repositoryId, policyId, objectId, extension);
-	}
+//	@Override
+//	public Acl applyAcl(String repositoryId, String objectId, Acl addAces,
+//			Acl removeAces, AclPropagation aclPropagation,
+//			ExtensionsData extension) {
+//		// TODO Auto-generated method stub
+//		return super.applyAcl(repositoryId, objectId, addAces, removeAces,
+//				aclPropagation, extension);
+//	}
+//	
+//	@Override
+//	public void applyPolicy(String repositoryId, String policyId,
+//			String objectId, ExtensionsData extension) {
+//		// TODO Auto-generated method stub
+//		super.applyPolicy(repositoryId, policyId, objectId, extension);
+//	}
 
 }

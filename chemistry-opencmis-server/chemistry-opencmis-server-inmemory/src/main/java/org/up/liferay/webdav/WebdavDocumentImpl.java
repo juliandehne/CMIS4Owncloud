@@ -9,13 +9,18 @@ import java.util.GregorianCalendar;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.DocumentImpl;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.sardine.DavResource;
-import com.github.sardine.Sardine;
 
 public class WebdavDocumentImpl extends DocumentImpl {
 	private String decodedId;
-	private WebdavObjectStore objectStore;	
+	private WebdavObjectStore objectStore;
+	
+
+	private static final Logger log = LoggerFactory
+			.getLogger(WebdavDocumentImpl.class.getName());	
 
 	public WebdavDocumentImpl(DavResource davResource, WebdavEndpoint endpoint, WebdavObjectStore objectStore) {			
 		this.objectStore = objectStore;
@@ -78,7 +83,8 @@ public class WebdavDocumentImpl extends DocumentImpl {
 			InputStream webdavBytes = endpoint.getSardine().get(endpoint.getEndpoint()+decodedId);
 			ByteArrayInputStream tmpFile = new ByteArrayInputStream(IOUtils.toByteArray(webdavBytes));					
 			steam.setStream(IOUtils.toBufferedInputStream(tmpFile));			
-		} catch (IOException e) {		
+		} catch (IOException e) {	
+			log.error("could not get inputstream for: " + this.decodedId);
 			e.printStackTrace();
 		}
 	}

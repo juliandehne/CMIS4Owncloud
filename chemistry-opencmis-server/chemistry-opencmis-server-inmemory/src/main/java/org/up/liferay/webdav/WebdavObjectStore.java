@@ -161,8 +161,8 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 
 		// converts webdav result to CMIS type of files
 		try {
-			List<DavResource> resources = getResourcesForID(path, false);
-//			List<DavResource> resources = getResourcesForIDintern(path, false);
+//			List<DavResource> resources = getResourcesForID(path, false);
+			List<DavResource> resources = getResourcesForIDintern(path, false, InMemoryServiceContext.getCallContext());
 			Iterator<DavResource> it = resources.iterator();
 
 			while (it.hasNext()) {
@@ -183,11 +183,12 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 //		} catch (ExecutionException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return new ChildrenResult(folderChildren, 0);
-		}
+		} 
+//		catch (ExecutionException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			return new ChildrenResult(folderChildren, 0);
+//		}
 		ChildrenResult result = sortChildrenResult(maxItems, skipCount,
 				folderChildren);
 	
@@ -259,11 +260,12 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		return new WebdavEndpoint(callContext);		
 	}
 
-	private synchronized List<DavResource> getResourcesForID(String path,
+	private List<DavResource> getResourcesForID(String path,
 			boolean getDirectory) throws IOException, ExecutionException {
 		final CallContext callContext = InMemoryServiceContext.getCallContext();		
 		
-		WebdavResourceKey key = new WebdavResourceKey(path, getDirectory,
+		String encodedPath = WebdavIdDecoderAndEncoder.encode(path);
+		WebdavResourceKey key = new WebdavResourceKey(encodedPath, getDirectory,
 				callContext.getUsername());
 		List<DavResource> result = InMemoryServiceContext.CACHE.get(key,
 				new WebdavCacheLoader(this, key, callContext));
