@@ -454,6 +454,7 @@ public final class PropertyCreationHelper {
             }
         }
         od.setProperties(props);
+        
 
         // Note: do not set change event info for this call
         return od;

@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +29,7 @@ import org.apache.chemistry.opencmis.commons.server.CallContext;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Fileable;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Folder;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.DocumentImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.FolderImpl;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.ObjectStoreImpl;
@@ -204,12 +206,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint();
 		if (objectId == null
 				|| objectId.equals(WebdavIdDecoderAndEncoder.LIFERAYROOTID)) {
-			// objectId = "/" ??
-			FolderImpl result = new FolderImpl("RootFolder", null);
-			result.setName("RootFolder");
-			result.setRepositoryId("A1");
-			result.setTypeId("cmis:folder");
-			result.setId(WebdavIdDecoderAndEncoder.LIFERAYROOTID);
+			WebdavFolderImpl result = createRootFolderResult();
 			return result;
 		} else {
 			try {
@@ -235,6 +232,16 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 
 		}
 		return null;
+	}
+
+	public static final WebdavFolderImpl createRootFolderResult() {
+		// objectId = "/" ??
+		WebdavFolderImpl result = new WebdavFolderImpl("RootFolder");
+		result.setName("RootFolder");
+		result.setRepositoryId("A1");
+		result.setTypeId("cmis:folder");
+		result.setId(WebdavIdDecoderAndEncoder.LIFERAYROOTID);
+		return result;
 	}
 
 	@Override
@@ -385,6 +392,11 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	public void move(StoredObject so, Folder oldParent, Folder newParent,
 			String user) {		
 		super.move(so, oldParent, newParent, user);
+	}
+	
+	@Override
+	public List<String> getParentIds(StoredObject so, String user) {
+		return Collections.singletonList(WebdavIdDecoderAndEncoder.decodedIdToParentEncoded(WebdavIdDecoderAndEncoder.decode(so.getId())));
 	}
 
 }

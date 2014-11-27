@@ -188,9 +188,7 @@ public class WebdavDocumentImpl extends DocumentImpl implements VersionedDocumen
 
 	@Override
 	public VersionedDocument getParentDocument() {
-		String parentIdEncoded = WebdavIdDecoderAndEncoder.decodedIdToParentEncoded(decodedId);
-		WebdavFolderImpl documentImpl = new WebdavFolderImpl(parentIdEncoded);
-		return documentImpl;
+		return WebdavFolderImpl.computerParentDocument(decodedId);
 	}
 				
 }

@@ -19,6 +19,7 @@
 package org.up.liferay.webdav;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +52,15 @@ public class WebdavVersionedDocumentImpl extends FilingImpl implements Versioned
         fIsCheckedOut = false;
     }
 
-    @Override
+    public WebdavVersionedDocumentImpl(String string, Object object) {
+    	super();
+		setId(string);
+		fVersions = new LinkedList<DocumentVersion>();
+		fIsCheckedOut = true;
+		fCheckedOutUser = InMemoryServiceContext.getCallContext().getUsername();
+	}
+
+	@Override
     public DocumentVersion addVersion(VersioningState verState, String user) {
 
         if (isCheckedOut()) {

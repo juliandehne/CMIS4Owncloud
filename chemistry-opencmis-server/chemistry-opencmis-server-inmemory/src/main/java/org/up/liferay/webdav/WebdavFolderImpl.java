@@ -13,11 +13,13 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.impl.FolderImpl;
 
 import com.github.sardine.DavResource;
 
-public class WebdavFolderImpl extends FolderImpl implements VersionedDocument, DocumentVersion {
+public class WebdavFolderImpl extends FolderImpl implements VersionedDocument,
+		DocumentVersion {
 	private String decodedId;
 
 	public WebdavFolderImpl(DavResource davResource) {
-		this.decodedId = WebdavIdDecoderAndEncoder.webdavToIdEncoded(davResource);
+		this.decodedId = WebdavIdDecoderAndEncoder
+				.webdavToIdEncoded(davResource);
 		setDefault();
 		setNameProperties();
 	}
@@ -34,7 +36,7 @@ public class WebdavFolderImpl extends FolderImpl implements VersionedDocument, D
 				.decodedIdToParent(WebdavIdDecoderAndEncoder.decode(decodedId));
 		this.setName(name);
 		setParentId(parentID);
-		this.setId(decodedId);		
+		this.setId(decodedId);
 		return parentID;
 	}
 
@@ -64,7 +66,7 @@ public class WebdavFolderImpl extends FolderImpl implements VersionedDocument, D
 	}
 
 	@Override
-	public void cancelCheckOut(String user) {	
+	public void cancelCheckOut(String user) {
 		// we don't have checkout
 	}
 
@@ -77,7 +79,7 @@ public class WebdavFolderImpl extends FolderImpl implements VersionedDocument, D
 	@Override
 	public void checkIn(boolean isMajor, Properties properties,
 			ContentStream content, String checkinComment,
-			List<String> policyIds, String user) {		
+			List<String> policyIds, String user) {
 		// we don't do anything
 	}
 
@@ -117,12 +119,12 @@ public class WebdavFolderImpl extends FolderImpl implements VersionedDocument, D
 	@Override
 	public void commit(boolean isMajor) {
 		// we don't do anything
-		
+
 	}
 
 	@Override
 	public void setCheckinComment(String comment) {
-		// we don't do anything		
+		// we don't do anything
 	}
 
 	@Override
@@ -137,9 +139,23 @@ public class WebdavFolderImpl extends FolderImpl implements VersionedDocument, D
 
 	@Override
 	public VersionedDocument getParentDocument() {
-		String parentIdEncoded = WebdavIdDecoderAndEncoder.decodedIdToParentEncoded(decodedId);
-		WebdavFolderImpl documentImpl = new WebdavFolderImpl(parentIdEncoded);
-		return documentImpl;
+		return computerParentDocument(decodedId);
+	}
+	
+	public static VersionedDocument computerParentDocument(String decodedId) {
+		if (decodedId == null || decodedId.equals("/")
+				|| WebdavIdDecoderAndEncoder.LIFERAYROOTID.equals(decodedId)) {
+			return WebdavObjectStore.createRootFolderResult();
+		}
+		try {
+			String parentIdEncoded = WebdavIdDecoderAndEncoder
+					.decodedIdToParentEncoded(decodedId);
+			WebdavFolderImpl documentImpl = new WebdavFolderImpl(
+					parentIdEncoded);
+			return documentImpl;
+		} catch (NullPointerException e) {
+			return null;
+		}		
 	}
 
 	@Override
@@ -157,8 +173,7 @@ public class WebdavFolderImpl extends FolderImpl implements VersionedDocument, D
 	@Override
 	public void setContent(ContentStream content) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
 
 }

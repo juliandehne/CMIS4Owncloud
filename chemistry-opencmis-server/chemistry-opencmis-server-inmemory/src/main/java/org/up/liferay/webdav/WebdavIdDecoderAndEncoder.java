@@ -14,6 +14,7 @@ import com.github.sardine.DavResource;
 public class WebdavIdDecoderAndEncoder {
 	
 	public static final String LIFERAYROOTID = "100";
+	public static final String LIFERAYROOTSYMBOL = "/";
 	
 	public static String createNotEncodedRootId() {
 		return "/";
