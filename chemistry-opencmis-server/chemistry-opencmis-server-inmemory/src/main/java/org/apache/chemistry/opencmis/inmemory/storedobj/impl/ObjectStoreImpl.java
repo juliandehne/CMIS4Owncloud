@@ -72,6 +72,7 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.chemistry.opencmis.inmemory.types.DefaultTypeSystemCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.up.liferay.webdav.WebdavVersionedDocumentImpl;
 
 /**
  * The object store is the central core of the in-memory repository. It is based
@@ -348,7 +349,7 @@ public class ObjectStoreImpl implements ObjectStore {
     public DocumentVersion createVersionedDocument(String name, Map<String, PropertyData<?>> propMap, String user,
             Folder folder, List<String> policies, Acl addACEs, Acl removeACEs, ContentStream contentStream,
             VersioningState versioningState) {
-        VersionedDocumentImpl doc = new VersionedDocumentImpl();
+        WebdavVersionedDocumentImpl doc = new WebdavVersionedDocumentImpl();
         doc.createSystemBasePropertiesWhenCreated(propMap, user);
         doc.setCustomProperties(propMap);
         doc.setRepositoryId(fRepositoryId);

@@ -65,9 +65,10 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		String path = (parentIdDecoded + documentNameDecoded);
 		String completePath = endpoint.getEndpoint() + path;
 		try {
-			if (endpoint.getSardine().exists(completePath)) {
-				endpoint.getSardine().delete(completePath);
-			}
+			completePath = solveDuplicateFiles(endpoint, completePath);
+//			if (endpoint.getSardine().exists(completePath)) {
+//				endpoint.getSardine().delete(completePath);
+//			}
 			endpoint.getSardine().put(completePath, (InputStream) buffer,
 					contentStream.getMimeType(), false,
 					contentStream.getLength());
@@ -76,6 +77,16 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		}
 
 		return WebdavIdDecoderAndEncoder.encode(path);
+	}
+
+	private String solveDuplicateFiles(WebdavEndpoint endpoint,
+			String completePath) throws IOException {
+		int i = 1;
+		while (endpoint.getSardine().exists(completePath)) {
+			completePath+="("+i+")";
+			i++;
+		}
+		return completePath;
 	}
 
 	public String createFolder(String folderName, String parentIdEncoded) {
@@ -124,24 +135,34 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	@Override
 	public ChildrenResult getChildren(Folder folder, int maxItems,
 			int skipCount, String user, boolean usePwc) {
-		// singletonpattern methods are called independent of constructor
-		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint();
+
 
 		// hack root folder
 		String name = folder.getName();
 		// String path = folder.getPathSegment();
-		String path = WebdavIdDecoderAndEncoder.decode(folder.getId());
+		String path = folder.getId();
 		if (name.equals("RootFolder") || name.equals("Liferay%20Home")) {
 			path = "/";
 		}
+		
+		return getChildrenForName(maxItems, skipCount, path);
+	}
 
+	public ChildrenResult getChildrenForName(int maxItems, int skipCount,
+			String path) {
+		
+		path = WebdavIdDecoderAndEncoder.decode(path);
+		
+		// singletonpattern methods are called independent of constructor
+		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint();
+		
 		// resultSet contains folders and files
 		List<Fileable> folderChildren = new ArrayList<Fileable>();
 
 		// converts webdav result to CMIS type of files
 		try {
-			//List<DavResource> resources = getResourcesForID(path, false);
-			List<DavResource> resources = getResourcesForIDintern(path, false);
+//			List<DavResource> resources = getResourcesForID(path, false);
+			List<DavResource> resources = getResourcesForIDintern(path, false, InMemoryServiceContext.getCallContext());
 			Iterator<DavResource> it = resources.iterator();
 
 			while (it.hasNext()) {
@@ -162,7 +183,12 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 //		} catch (ExecutionException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
-		}
+		} 
+//		catch (ExecutionException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			return new ChildrenResult(folderChildren, 0);
+//		}
 		ChildrenResult result = sortChildrenResult(maxItems, skipCount,
 				folderChildren);
 	
@@ -234,24 +260,24 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		return new WebdavEndpoint(callContext);		
 	}
 
-	private synchronized List<DavResource> getResourcesForID(String path,
+	private List<DavResource> getResourcesForID(String path,
 			boolean getDirectory) throws IOException, ExecutionException {
+		final CallContext callContext = InMemoryServiceContext.getCallContext();		
 		
-		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint();
-		
-		WebdavResourceKey key = new WebdavResourceKey(path, getDirectory,
-				endpoint.getUser());
+		String encodedPath = WebdavIdDecoderAndEncoder.encode(path);
+		WebdavResourceKey key = new WebdavResourceKey(encodedPath, getDirectory,
+				callContext.getUsername());
 		List<DavResource> result = InMemoryServiceContext.CACHE.get(key,
-				new WebdavCacheLoader(this, key));
-		if (!key.getGetDirectory()) {
-			InMemoryServiceContext.CACHE.invalidate(key);
-		}
+				new WebdavCacheLoader(this, key, callContext));
+//		if (!key.getGetDirectory()) {
+//			InMemoryServiceContext.CACHE.invalidate(key);
+//		}
 		for (DavResource davResource : result) {
 			final String encodedId = WebdavIdDecoderAndEncoder
 					.webdavToIdEncoded(davResource);
 			final WebdavResourceKey webdavResourceKey = new WebdavResourceKey(
 					encodedId, davResource.isDirectory(),
-					endpoint.getUser());
+					callContext.getUsername());
 			final WebdavObjectStore webdavObjectStore = this;
 			Thread t = new Thread(new Runnable() {
 				@Override
@@ -259,7 +285,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 					try {
 						InMemoryServiceContext.CACHE.get(webdavResourceKey,
 								new WebdavCacheLoader(webdavObjectStore,
-										webdavResourceKey));
+										webdavResourceKey, callContext));
 					} catch (ExecutionException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -272,8 +298,8 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 	}
 
 	public List<DavResource> getResourcesForIDintern(String encodedId,
-			Boolean getDirectory) throws IOException {
-		WebdavEndpoint endpoint = getOrRefreshSardineEndpoint();
+			Boolean getDirectory, CallContext e) throws IOException {
+		WebdavEndpoint endpoint = new WebdavEndpoint(e);
 		
 		String listedPath = WebdavIdDecoderAndEncoder
 				.encodedIdToWebdav(encodedId);
@@ -298,6 +324,7 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 			log.debug("the user credentials are not valid");
 		}
 	}
+		
 
 
 
@@ -351,6 +378,13 @@ public class WebdavObjectStore extends ObjectStoreImpl {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Deprecated
+	@Override
+	public void move(StoredObject so, Folder oldParent, Folder newParent,
+			String user) {		
+		super.move(so, oldParent, newParent, user);
 	}
 
 }

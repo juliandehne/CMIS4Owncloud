@@ -1,33 +1,40 @@
 package org.up.liferay.webdav;
 
+import java.util.Collections;
 import java.util.GregorianCalendar;
+import java.util.List;
 
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.chemistry.opencmis.commons.data.Properties;
+import org.apache.chemistry.opencmis.commons.enums.VersioningState;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
 import org.apache.chemistry.opencmis.inmemory.storedobj.impl.FolderImpl;
 
 import com.github.sardine.DavResource;
 
-public class WebdavFolderImpl extends FolderImpl {
-	private String id;
+public class WebdavFolderImpl extends FolderImpl implements VersionedDocument, DocumentVersion {
+	private String decodedId;
 
 	public WebdavFolderImpl(DavResource davResource) {
-		this.id = WebdavIdDecoderAndEncoder.webdavToIdEncoded(davResource);
+		this.decodedId = WebdavIdDecoderAndEncoder.webdavToIdEncoded(davResource);
 		setDefault();
 		setNameProperties();
 	}
 
 	public WebdavFolderImpl(String encodedId) {
-		this.id = encodedId;
+		this.decodedId = encodedId;
 		setDefault();
 		setNameProperties();
 	}
 
 	private String setNameProperties() {
-		String name = WebdavIdDecoderAndEncoder.encodedIdToName(id);
+		String name = WebdavIdDecoderAndEncoder.encodedIdToName(decodedId);
 		String parentID = WebdavIdDecoderAndEncoder
-				.decodedIdToParent(WebdavIdDecoderAndEncoder.decode(id));
+				.decodedIdToParent(WebdavIdDecoderAndEncoder.decode(decodedId));
 		this.setName(name);
 		setParentId(parentID);
-		this.setId(id);		
+		this.setId(decodedId);		
 		return parentID;
 	}
 
@@ -38,5 +45,120 @@ public class WebdavFolderImpl extends FolderImpl {
 		this.setCreatedAt(cal);
 		this.setModifiedAt(cal);
 	}
+
+	@Override
+	public DocumentVersion addVersion(VersioningState verState, String user) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean deleteVersion(DocumentVersion version) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isCheckedOut() {
+		return true; // liferay soll denken, editieren zu können
+	}
+
+	@Override
+	public void cancelCheckOut(String user) {	
+		// we don't have checkout
+	}
+
+	@Override
+	public DocumentVersion checkOut(String user) {
+		// we don't do anything and only have one Version
+		return this;
+	}
+
+	@Override
+	public void checkIn(boolean isMajor, Properties properties,
+			ContentStream content, String checkinComment,
+			List<String> policyIds, String user) {		
+		// we don't do anything
+	}
+
+	@Override
+	public List<DocumentVersion> getAllVersions() {
+		// we don't do anything and only have one Version
+		DocumentVersion documentVersionImpl = checkOut(null);
+		return Collections.singletonList(documentVersionImpl);
+	}
+
+	@Override
+	public DocumentVersion getLatestVersion(boolean major) {
+		// we don't do anything and only have one Version
+		return checkOut(null);
+	}
+
+	@Override
+	public String getCheckedOutBy() {
+		return InMemoryServiceContext.getCallContext().getUsername();
+	}
+
+	@Override
+	public DocumentVersion getPwc() {
+		return checkOut(null);
+	}
+
+	@Override
+	public boolean isMajor() {
+		return true;
+	}
+
+	@Override
+	public boolean isPwc() {
+		return true;
+	}
+
+	@Override
+	public void commit(boolean isMajor) {
+		// we don't do anything
+		
+	}
+
+	@Override
+	public void setCheckinComment(String comment) {
+		// we don't do anything		
+	}
+
+	@Override
+	public String getCheckinComment() {
+		return "we don't check in";
+	}
+
+	@Override
+	public String getVersionLabel() {
+		return "1.0";
+	}
+
+	@Override
+	public VersionedDocument getParentDocument() {
+		String parentIdEncoded = WebdavIdDecoderAndEncoder.decodedIdToParentEncoded(decodedId);
+		WebdavFolderImpl documentImpl = new WebdavFolderImpl(parentIdEncoded);
+		return documentImpl;
+	}
+
+	@Override
+	public boolean hasContent() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public ContentStream getContent() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setContent(ContentStream content) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 
 }

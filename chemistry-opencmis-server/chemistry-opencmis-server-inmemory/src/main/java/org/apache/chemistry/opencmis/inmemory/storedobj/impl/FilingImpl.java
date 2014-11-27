@@ -28,7 +28,7 @@ public class FilingImpl extends StoredObjectImpl implements Fileable, MultiFilin
 
     private List<String> parentIds = new ArrayList<String>(1);
 
-    FilingImpl() {
+    protected FilingImpl() {
         super();
     }
 

@@ -1,6 +1,7 @@
 package org.up.liferay.webdav;
 
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -9,19 +10,26 @@ import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.ExtensionsData;
 import org.apache.chemistry.opencmis.commons.data.FailedToDeleteData;
+import org.apache.chemistry.opencmis.commons.data.ObjectData;
 import org.apache.chemistry.opencmis.commons.data.Properties;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
 import org.apache.chemistry.opencmis.commons.definitions.TypeDefinitionContainer;
 import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
+import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisInvalidArgumentException;
+import org.apache.chemistry.opencmis.commons.impl.dataobjects.ObjectDataImpl;
 import org.apache.chemistry.opencmis.commons.impl.jaxb.DeleteContentStream;
 import org.apache.chemistry.opencmis.commons.spi.Holder;
 import org.apache.chemistry.opencmis.inmemory.server.InMemoryService;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoreManager;
+import org.apache.chemistry.opencmis.inmemory.storedobj.api.StoredObject;
 import org.apache.chemistry.opencmis.inmemory.types.DocumentTypeCreationHelper;
+import org.apache.chemistry.opencmis.inmemory.types.PropertyCreationHelper;
+import org.apache.chemistry.opencmis.server.impl.webservices.AbstractUsernameTokenAuthHandler.ObjectFactory;
+import org.apache.chemistry.opencmis.server.support.TypeManager;
 import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +58,19 @@ public class WebdavService extends InMemoryService {
 		
 	}
 	
+	@Override
+	public void moveObject(String repositoryId, Holder<String> objectId,
+			String targetFolderId, String sourceFolderId,
+			ExtensionsData extension) {
+		String objectIdEncoded = objectId.getValue();		
+		String sourceFolderIdEncoded = WebdavIdDecoderAndEncoder.encode(sourceFolderId);
+		WebdavObjectStore objectStore = new WebdavObjectStore(repositoryId);
+		String newObjectIdEncoded = targetFolderId + objectIdEncoded.replace(sourceFolderIdEncoded, "");
+		objectStore.rename(objectIdEncoded, newObjectIdEncoded);		
+//		super.moveObject(repositoryId, objectId, targetFolderId, sourceFolderId,
+//				extension);
+	}
 		
-	
 	
 	@Override
 	public FailedToDeleteData deleteTree(String repositoryId, String folderId,
@@ -204,20 +223,45 @@ public class WebdavService extends InMemoryService {
 		return aces;
 	}
 	
-	@Override
-	public Acl applyAcl(String repositoryId, String objectId, Acl addAces,
-			Acl removeAces, AclPropagation aclPropagation,
-			ExtensionsData extension) {
-		// TODO Auto-generated method stub
-		return super.applyAcl(repositoryId, objectId, addAces, removeAces,
-				aclPropagation, extension);
-	}
+//	@Override
+//	public Acl applyAcl(String repositoryId, String objectId, Acl addAces,
+//			Acl removeAces, AclPropagation aclPropagation,
+//			ExtensionsData extension) {
+//		// TODO Auto-generated method stub
+//		return super.applyAcl(repositoryId, objectId, addAces, removeAces,
+//				aclPropagation, extension);
+//	}
+//	
+//	@Override
+//	public void applyPolicy(String repositoryId, String policyId,
+//			String objectId, ExtensionsData extension) {
+//		// TODO Auto-generated method stub
+//		super.applyPolicy(repositoryId, policyId, objectId, extension);
+//	}
 	
 	@Override
-	public void applyPolicy(String repositoryId, String policyId,
-			String objectId, ExtensionsData extension) {
-		// TODO Auto-generated method stub
-		super.applyPolicy(repositoryId, policyId, objectId, extension);
+	public ObjectData getObjectByPath(String repositoryId, String path,
+			String filter, Boolean includeAllowableActions,
+			IncludeRelationships includeRelationships, String renditionFilter,
+			Boolean includePolicyIds, Boolean includeAcl,
+			ExtensionsData extension) {
+		
+		WebdavObjectStore objectStore = new WebdavObjectStore(repositoryId);
+		
+		
+		StoredObject resultObject =  objectStore.getObjectById(WebdavIdDecoderAndEncoder.encode(path));
+		
+		TypeManager tm = super.getStoreManager().getTypeManager(repositoryId);
+		List<String> requestedIds = Collections.singletonList(resultObject.getId());
+		Properties props = PropertyCreationHelper.getPropertiesFromObject(resultObject, objectStore, tm, requestedIds, false);
+		
+		ObjectDataImpl dataImpl = new ObjectDataImpl();
+		dataImpl.setProperties(props);
+		
+		return dataImpl;
+//		return super.getObjectByPath(repositoryId, path, filter,
+//				includeAllowableActions, includeRelationships, renditionFilter,
+//				includePolicyIds, includeAcl, extension);
 	}
 
 }

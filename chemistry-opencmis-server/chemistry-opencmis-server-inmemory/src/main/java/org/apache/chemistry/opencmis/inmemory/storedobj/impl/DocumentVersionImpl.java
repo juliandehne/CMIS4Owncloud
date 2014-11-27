@@ -37,6 +37,7 @@ import org.apache.chemistry.opencmis.inmemory.FilterParser;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.MultiFiling;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
+import org.up.liferay.webdav.WebdavDocumentImpl;
 
 /**
  * A class representing a single version of a document
@@ -47,7 +48,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
             .getConfigurationValueAsLong(ConfigConstants.MAX_CONTENT_SIZE_KB);
 
     private ContentStream fContent;
-    private final VersionedDocumentImpl fContainer; // the document this version
+    private final VersionedDocument fContainer; // the document this version
                                                     // belongs to
     private String fComment; // checkin comment
     private boolean fIsMajor;
@@ -56,7 +57,7 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
     public DocumentVersionImpl(String repositoryId, VersionedDocument container, VersioningState verState) {
         super();
         setRepositoryId(repositoryId);
-        fContainer = (VersionedDocumentImpl) container;
+        fContainer =  container;
         fIsMajor = verState == VersioningState.MAJOR || verState == null;
         fIsPwc = verState == VersioningState.CHECKEDOUT;
         fProperties = new HashMap<String, PropertyData<?>>();
@@ -303,12 +304,12 @@ public class DocumentVersionImpl extends StoredObjectImpl implements DocumentVer
 
     @Override
     public void addParentId(String parentId) {
-        fContainer.addParentId(parentId);
+        ((WebdavDocumentImpl)fContainer).addParentId(parentId);
     }
 
     @Override
     public void removeParentId(String parentId) {
-        fContainer.removeParentId(parentId);
+    	((WebdavDocumentImpl)fContainer).removeParentId(parentId);
     }
 
 }

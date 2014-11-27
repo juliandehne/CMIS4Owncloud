@@ -361,7 +361,7 @@ public class StoredObjectImpl implements StoredObject {
      * CMIS_LAST_MODIFICATION_DATE, CMIS_CHANGE_TOKEN system properties to the
      * list of properties with current values
      */
-    protected void setSystemBasePropertiesWhenCreatedDirect(String name, String typeId, String user) {
+    public void setSystemBasePropertiesWhenCreatedDirect(String name, String typeId, String user) {
         // Note that initial creation and modification date is set in
         // constructor.
         setModifiedBy(user);

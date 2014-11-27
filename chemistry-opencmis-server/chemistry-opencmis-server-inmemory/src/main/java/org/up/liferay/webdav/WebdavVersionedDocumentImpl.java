@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.chemistry.opencmis.inmemory.storedobj.impl;
+package org.up.liferay.webdav;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,14 +36,16 @@ import org.apache.chemistry.opencmis.inmemory.storedobj.api.DocumentVersion;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Fileable;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.Filing;
 import org.apache.chemistry.opencmis.inmemory.storedobj.api.VersionedDocument;
+import org.apache.chemistry.opencmis.inmemory.storedobj.impl.DocumentVersionImpl;
+import org.apache.chemistry.opencmis.inmemory.storedobj.impl.FilingImpl;
 
-public class VersionedDocumentImpl extends FilingImpl implements VersionedDocument {
+public class WebdavVersionedDocumentImpl extends FilingImpl implements VersionedDocument {
 
     private boolean fIsCheckedOut;
     private String fCheckedOutUser;
     private final List<DocumentVersion> fVersions;
 
-    public VersionedDocumentImpl() {
+    public WebdavVersionedDocumentImpl() {
         super();
         fVersions = new ArrayList<DocumentVersion>();
         fIsCheckedOut = false;
